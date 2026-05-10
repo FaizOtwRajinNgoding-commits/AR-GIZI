@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 28
-  productGUID: a0b46b51e07be764e96535abe2d8fd7f
+  productGUID: 65b256b6b0e0238408569f9599156c49
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: DefaultCompany
-  productName: ZiboApp
+  productName: AR-GIZI1
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -844,14 +844,14 @@ PlayerSettings:
   editorAssembliesCompatibilityLevel: 1
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: ZiboApp
+  metroPackageName: AR-GIZI1
   metroPackageVersion: 
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
-  metroApplicationDescription: ZiboApp
+  metroApplicationDescription: AR-GIZI1
   wsaImages: {}
   metroTileShortName: 
   metroTileShowName: 0
@@ -923,11 +923,11 @@ PlayerSettings:
   activeInputHandler: 1
   windowsGamepadBackendHint: 0
   enableDirectStorage: 0
-  cloudProjectId: 54f80b3e-5e77-45f0-9094-a51f0488cdf5
+  cloudProjectId: e26e4962-0e6f-4b37-b985-ea30c9ae83c6
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: ZiboApp 2026-05-10_16-02-57
-  organizationId: shifanraihan
+  projectName: AR-GIZI1
+  organizationId: faiz07346
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
