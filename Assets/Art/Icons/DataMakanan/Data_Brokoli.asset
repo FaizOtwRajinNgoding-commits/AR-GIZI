@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7a62e388430321498e69b42007611ad, type: 3}
   m_Name: Data_Brokoli
   m_EditorClassIdentifier: Assembly-CSharp::FoodData
-  namaMakanan: 
-  gambarMakanan: {fileID: 0}
-  jenisGizi: 
+  namaMakanan: Brokoli
+  gambarMakanan: {fileID: 21300000, guid: c6d6150a319502046a0065393d1b9809, type: 3}
+  jenisGizi: 03000000

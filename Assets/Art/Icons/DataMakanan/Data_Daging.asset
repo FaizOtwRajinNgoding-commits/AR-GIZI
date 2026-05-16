@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7a62e388430321498e69b42007611ad, type: 3}
   m_Name: Data_Daging
   m_EditorClassIdentifier: Assembly-CSharp::FoodData
-  namaMakanan: 
-  gambarMakanan: {fileID: 0}
-  jenisGizi: 0
+  namaMakanan: Daging
+  gambarMakanan: {fileID: 21300000, guid: 9593adb11d6cf0543b7bda18d40e103b, type: 3}
+  jenisGizi: 0100000002000000

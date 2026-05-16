@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7a62e388430321498e69b42007611ad, type: 3}
   m_Name: Data_Apel
   m_EditorClassIdentifier: Assembly-CSharp::FoodData
-  namaMakanan: 
-  gambarMakanan: {fileID: 0}
-  jenisGizi: 
+  namaMakanan: Apel
+  gambarMakanan: {fileID: 21300000, guid: 5c9ebd759dffa8240a3b56a82ac812f5, type: 3}
+  jenisGizi: 03000000

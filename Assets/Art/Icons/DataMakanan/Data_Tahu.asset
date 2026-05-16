@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7a62e388430321498e69b42007611ad, type: 3}
   m_Name: Data_Tahu
   m_EditorClassIdentifier: Assembly-CSharp::FoodData
-  namaMakanan: 
-  gambarMakanan: {fileID: 0}
-  jenisGizi: 0
+  namaMakanan: Tahu
+  gambarMakanan: {fileID: 21300000, guid: fbc2b22561578e44c98df29ddfad486a, type: 3}
+  jenisGizi: 01000000

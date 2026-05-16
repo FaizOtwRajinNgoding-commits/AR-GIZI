@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7a62e388430321498e69b42007611ad, type: 3}
   m_Name: Data_Tempe
   m_EditorClassIdentifier: Assembly-CSharp::FoodData
-  namaMakanan: 
-  gambarMakanan: {fileID: 0}
-  jenisGizi: 0
+  namaMakanan: Tempe
+  gambarMakanan: {fileID: 21300000, guid: b78c36296d7f3b94eb1e3e99ae257994, type: 3}
+  jenisGizi: 01000000
