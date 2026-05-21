@@ -79,8 +79,8 @@ public class GameManager : MonoBehaviour
             
             // FIX TIMER: Hanya set ke 120 detik saat baru PERTAMA KALI menginjak level 7
             // Di level 8, 9, dan 10 dia gak akan meriset timernya lagi
-            if (currentLevel == 7 && timer > 120f) {
-                timer = 120f;
+            if (currentLevel == 7 && timer > 100f) {
+                timer = 100f;
             }
         }
 
