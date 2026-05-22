@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -35,7 +36,7 @@ public class GeminiResponseContent { public List<GeminiPart> parts; }
 public class GeminiQuizManager : MonoBehaviour
 {
     [Header("API Configuration")]
-    [SerializeField] private string apiKey = "AIzaSyCXJOajlqpVHQBDL13sLd8hcIaWV4BwrrY";
+    [SerializeField] private string apiKey = "";
     private string geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=";
 
     [Header("UI Canvas Gameplay References")]
@@ -60,6 +61,27 @@ public class GeminiQuizManager : MonoBehaviour
     private Coroutine timerCoroutine;
     private bool isAnswering = false;
     private int score = 0;
+
+    void Awake()
+    {
+        LoadApiKey();
+    }
+
+    void LoadApiKey()
+    {
+        string filePath = Path.Combine(Application.streamingAssetsPath, "config.txt");
+
+        if (File.Exists(filePath))
+        {
+            // Paksa timpa apa pun isi variabel apiKey dengan data dari config.txt
+            apiKey = File.ReadAllText(filePath).Trim();
+            Debug.Log($"API Key berhasil dimuat dari file lokal! Karakter depan: {apiKey.Substring(0, 5)}...");
+        }
+        else
+        {
+            Debug.LogError($"File API Key tidak ditemukan di: {filePath}");
+        }
+    }
 
     public void StartSoloQuiz()
     {
