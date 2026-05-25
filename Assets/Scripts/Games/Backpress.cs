@@ -7,13 +7,6 @@ public class Backpress : MonoBehaviour {
 	// berfungsi untuk keluar aplikasi menggunakan tombol back
 	public string SceneName;
 	public GameObject popupPanel;
-	void Update()
-	{
-		if (Input.GetKeyDown(KeyCode.Escape))
-        {
-			SceneManager.LoadScene(SceneName);
-        }
-	}
 
 	// Dipanggil saat tombol Back ditekan
 	public void ShowPopup()
