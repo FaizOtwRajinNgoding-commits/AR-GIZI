@@ -64,4 +64,19 @@ public class QuizFlowManager : MonoBehaviour
         // Fungsi tombol back ke menu utama game awal
         SceneManager.LoadScene("MainMenu");
     }
+
+    public void KeluarDariQuizKePilihMode()
+    {
+        // Matikan gameplay dan semua panel feedback kuis
+        canvasQuizGameplay.SetActive(false);
+        canvasQuizFeedback.SetActive(false);
+        
+        // Nyalakan kembali menu utama kuis dan panel pilih mode
+        canvasQuizMenu.SetActive(true);
+        panelPilihMode.SetActive(true);
+        
+        // Pastikan panel room guru/murid dalam kondisi tertutup awal
+        panelCreateRoom.SetActive(false);
+        panelJoinRoom.SetActive(false);
+    }
 }

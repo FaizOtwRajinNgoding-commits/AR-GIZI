@@ -52,11 +52,16 @@ public class GeminiQuizManager : MonoBehaviour
 
     [Header("UI Feedback References")]
     [SerializeField] private TextMeshProUGUI feedbackTitleText; 
-    [SerializeField] private TextMeshProUGUI feedbackExplanationText; 
+    [SerializeField] private TextMeshProUGUI feedbackExplanationText;
+
+    [Header("UI Separate Panels (Fase 2)")]
+    [SerializeField] private GameObject panelPopupFeedback; 
+    [SerializeField] private GameObject panelEndFeedback;   
+    [SerializeField] private TextMeshProUGUI endFeedbackText;
 
     private List<Question> quizDataList = new List<Question>();
     private int currentQuestionIndex = 0;
-    private int totalQuestions = 15;
+    private int totalQuestions = 5;
     private float timePerQuestion = 20f;
     private Coroutine timerCoroutine;
     private bool isAnswering = false;
@@ -69,19 +74,19 @@ public class GeminiQuizManager : MonoBehaviour
 
     void LoadApiKey()
     {
-        string filePath = Path.Combine(Application.streamingAssetsPath, "config.txt");
+        // Menggunakan Resources.Load, trik paling sakti dan aman lintas platform!
+        TextAsset keyAsset = Resources.Load<TextAsset>("config");
 
-        if (File.Exists(filePath))
+        if (keyAsset != null)
         {
-            // Paksa timpa apa pun isi variabel apiKey dengan data dari config.txt
-            apiKey = File.ReadAllText(filePath).Trim();
-            Debug.Log($"API Key berhasil dimuat dari file lokal! Karakter depan: {apiKey.Substring(0, 5)}...");
+            apiKey = keyAsset.text.Trim();
+            Debug.Log($"[Resources] API Key sukses dimuat! Karakter depan: {apiKey.Substring(0, 5)}...");
         }
         else
         {
-            Debug.LogError($"File API Key tidak ditemukan di: {filePath}");
+            Debug.LogError("File config.txt tidak ditemukan di folder Assets/Resources/ bro!");
         }
-    }
+        }
 
     public void StartSoloQuiz()
     {
@@ -232,7 +237,9 @@ public class GeminiQuizManager : MonoBehaviour
         ToggleButtonsInteractable(false);
 
         Question currentQuestion = quizDataList[currentQuestionIndex];
-        canvasQuizFeedback.SetActive(true); 
+        canvasQuizFeedback.SetActive(true);
+        panelPopupFeedback.SetActive(true);
+        panelEndFeedback.SetActive(false);
 
         if (selectedOption == "")
         {
@@ -269,11 +276,23 @@ public class GeminiQuizManager : MonoBehaviour
         }
     }
 
+// Fungsi baru untuk menerima limpahan soal dari Firebase (Multiplayer)
+public void StartMultiplayerQuiz(string rawJsonDariFirebase)
+{
+    currentQuestionIndex = 0;
+    score = 0;
+    quizDataList.Clear();
+    
+    // Langsung lempar ke fungsi parsing bawaan lu kemarin!
+    ParseAndStartQuiz(rawJsonDariFirebase); 
+}
+
     void EndQuiz()
     {
         canvasQuizGameplay.SetActive(false);
         canvasQuizFeedback.SetActive(true);
-        feedbackTitleText.text = "Kuis Selesai!";
-        feedbackExplanationText.text = $"Total Skor Kamu: {score} dari {totalQuestions * 10} poin!";
+        panelPopupFeedback.SetActive(false); // Matikan popup benar/salah biasa
+        panelEndFeedback.SetActive(true);
+        endFeedbackText.text = $"KUIS SELESAI!\n\nTotal Skor Kamu:\n<size=60><color=#2ecc71>{score}</color></size> dari {totalQuestions * 10} poin!";
     }
 }
