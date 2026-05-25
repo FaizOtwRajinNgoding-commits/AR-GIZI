@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<<< Updated upstream:Assets/Plugins/Android/settingsTemplate.gradle.meta
 guid: 1ac1d2127adc61d42a4503118bd9a9b0
 DefaultImporter:
+========
+guid: 43ae0c96cc73a2248901486cd176de7b
+TextScriptImporter:
+>>>>>>>> Stashed changes:Assets/StreamingAssets/google-services-desktop.json.meta
   externalObjects: {}
   userData: 
   assetBundleName: 
