@@ -5,8 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuController : MonoBehaviour
 {
-    public string ARScene;
     public string GameScene;
+
+    public string ARScene;
     public string QuizScene;
     // Seret game object "Popup_GameMenu" dari hierarchy ke slot ini di Inspector
     [SerializeField] private GameObject popupGameMenu; 
@@ -23,16 +24,17 @@ public class MainMenuController : MonoBehaviour
         popupGameMenu.SetActive(true);
     }
 
+    public void BukaAR()
+    {
+        SceneManager.LoadScene("ARScene");
+    }
+
     // Fungsi ini dipasang di OnClick() tombol CLOSE (X) di dalam popup
     public void TutupPopupGame()
     {
         popupGameMenu.SetActive(false);
     }
 
-    public void MulaiAR()
-    {
-        SceneManager.LoadScene(ARScene);
-    }
     public void LoadQuizScene()
     {
         // Pastikan "QuizScene" udah lu daftarkan di File -> Build Settings
