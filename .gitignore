@@ -110,5 +110,5 @@ InitTestScene*.unity*
 /[Aa]ssets/StreamingAssets/config.txt.meta
 /[Aa]ssets/Resources/config.txt
 /[Aa]ssets/Resources/config.txt.meta
-/[Aa]ssets/google.services.json
-/[Aa]ssets/google.services.json.meta
+/[Aa]ssets/google-services.json
+/[Aa]ssets/google-services.json.meta
