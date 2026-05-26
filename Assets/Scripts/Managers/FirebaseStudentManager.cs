@@ -25,8 +25,15 @@ public class FirebaseStudentManager : MonoBehaviour
             DependencyStatus dependencyStatus = task.Result;
             if (dependencyStatus == DependencyStatus.Available)
             {
-                dbReference = FirebaseDatabase.GetInstance("https://zibo-ar-lidm-default-rtdb.asia-southeast1.firebasedatabase.app/").RootReference;
-                textStatusSiswa.text = "Firebase Siswa Siap.";
+            // 1. Ambil instance database-nya dulu
+            FirebaseDatabase dbInstance = FirebaseDatabase.GetInstance("https://zibo-ar-lidm-default-rtdb.asia-southeast1.firebasedatabase.app/");
+            
+            // 2. Matikan cache lokal juga di sisi siswa!
+            dbInstance.SetPersistenceEnabled(false);
+            
+            // 3. Baru ambil RootReference-nya
+            dbReference = dbInstance.RootReference;
+            textStatusSiswa.text = "Firebase Siswa Siap.";
             }
             else
             {

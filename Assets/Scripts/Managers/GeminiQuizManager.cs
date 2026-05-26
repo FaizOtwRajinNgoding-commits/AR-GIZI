@@ -40,6 +40,7 @@ public class GeminiQuizManager : MonoBehaviour
     private string geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=";
 
     [Header("UI Canvas Gameplay References")]
+    [SerializeField] private GameObject canvasQuizMenu;
     [SerializeField] private GameObject canvasQuizGameplay;
     [SerializeField] private GameObject canvasQuizFeedback;
     [SerializeField] private TextMeshProUGUI timerText;
@@ -86,7 +87,7 @@ public class GeminiQuizManager : MonoBehaviour
         {
             Debug.LogError("File config.txt tidak ditemukan di folder Assets/Resources/ bro!");
         }
-        }
+    }
 
     public void StartSoloQuiz()
     {
@@ -282,6 +283,10 @@ public void StartMultiplayerQuiz(string rawJsonDariFirebase)
     currentQuestionIndex = 0;
     score = 0;
     quizDataList.Clear();
+    
+    // FIX: Otomatis matikan Menu dan nyalakan Gameplay Screen
+    if (canvasQuizMenu != null) canvasQuizMenu.SetActive(false);
+    if (canvasQuizGameplay != null) canvasQuizGameplay.SetActive(true);
     
     // Langsung lempar ke fungsi parsing bawaan lu kemarin!
     ParseAndStartQuiz(rawJsonDariFirebase); 

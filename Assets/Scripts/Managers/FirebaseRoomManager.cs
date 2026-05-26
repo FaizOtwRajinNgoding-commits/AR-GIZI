@@ -25,8 +25,15 @@ public class FirebaseRoomManager : MonoBehaviour
             DependencyStatus dependencyStatus = task.Result;
             if (dependencyStatus == DependencyStatus.Available)
             {
-                dbReference = FirebaseDatabase.GetInstance("https://zibo-ar-lidm-default-rtdb.asia-southeast1.firebasedatabase.app/").RootReference;
-                Debug.Log("Firebase Realtime Database Berhasil Terhubung di Sisi Guru!");
+            // 1. Ambil instance database-nya dulu
+            FirebaseDatabase dbInstance = FirebaseDatabase.GetInstance("https://zibo-ar-lidm-default-rtdb.asia-southeast1.firebasedatabase.app/");
+            
+            // 2. Matikan cache lokal agar tidak berebutan file dengan clone ParrelSync!
+            dbInstance.SetPersistenceEnabled(false);
+            
+            // 3. Baru ambil RootReference-nya
+            dbReference = dbInstance.RootReference;
+            Debug.Log("Firebase Realtime Database Berhasil Terhubung di Sisi Guru!");
             }
             else
             {
@@ -84,7 +91,8 @@ public class FirebaseRoomManager : MonoBehaviour
             string rawJsonFromGemini = request.downloadHandler.text;
 
             // Push ke Firebase
-            dbReference.Child("rooms").Child(roomId).Child("questions").SetRawJsonValueAsync(rawJsonFromGemini);
+            // KODE BARU (MENYIMPAN SEBAGAI TEKS STRING UTUH)
+            dbReference.Child("rooms").Child(roomId).Child("questions").SetValueAsync(rawJsonFromGemini);   
             dbReference.Child("rooms").Child(roomId).Child("roomStatus").SetValueAsync("waiting");
 
             textStatusLoading.text = "Room siap! Menunggu siswa bergabung...";
@@ -112,7 +120,17 @@ public class FirebaseRoomManager : MonoBehaviour
 
     private void LoadLocalKey()
     {
-        string filePath = System.IO.Path.Combine(Application.streamingAssetsPath, "config.txt");
-        if (System.IO.File.Exists(filePath)) apiKey = System.IO.File.ReadAllText(filePath).Trim();
+         // Menggunakan Resources.Load, trik paling sakti dan aman lintas platform!
+        TextAsset keyAsset = Resources.Load<TextAsset>("config");
+
+        if (keyAsset != null)
+        {
+            apiKey = keyAsset.text.Trim();
+            Debug.Log($"[Resources] API Key sukses dimuat! Karakter depan: {apiKey.Substring(0, 5)}...");
+        }
+        else
+        {
+            Debug.LogError("File config.txt tidak ditemukan di folder Assets/Resources/ bro!");
+        }
     }
 }
