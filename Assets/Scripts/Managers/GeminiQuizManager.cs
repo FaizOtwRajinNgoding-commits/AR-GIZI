@@ -278,18 +278,37 @@ public class GeminiQuizManager : MonoBehaviour
     }
 
 // Fungsi baru untuk menerima limpahan soal dari Firebase (Multiplayer)
-public void StartMultiplayerQuiz(string rawJsonDariFirebase)
+public void StartMultiplayerQuiz(string cleanJsonDariFirebase)
 {
     currentQuestionIndex = 0;
     score = 0;
     quizDataList.Clear();
     
-    // FIX: Otomatis matikan Menu dan nyalakan Gameplay Screen
-    if (canvasQuizMenu != null) canvasQuizMenu.SetActive(false);
-    if (canvasQuizGameplay != null) canvasQuizGameplay.SetActive(true);
-    
-    // Langsung lempar ke fungsi parsing bawaan lu kemarin!
-    ParseAndStartQuiz(rawJsonDariFirebase); 
+    try
+    {
+        // LANGSUNG lompati parsing Google Gemini, langsung tembak ke QuizContainer kuis bersih!
+        QuizContainer container = JsonUtility.FromJson<QuizContainer>(cleanJsonDariFirebase);
+        
+        if (container != null && container.questions != null && container.questions.Count > 0)
+        {
+            quizDataList = container.questions;
+            
+            // Aktifkan Canvas Gameplay kuis untuk siswa
+            if (canvasQuizGameplay != null) canvasQuizGameplay.SetActive(true);
+            
+            DisplayQuestion();
+        }
+        else
+        {
+            questionText.text = "Format kuis multiplayer kosong atau tidak cocok.";
+            Debug.LogError("Format kuis dari Firebase tidak valid atau kosong!");
+        }
+    }
+    catch (System.Exception e)
+    {
+        questionText.text = "Gagal memproses soal dari ruang tunggu.";
+        Debug.LogError("Multiplayer Parsing Error: " + e.Message);
+    }
 }
 
     void EndQuiz()
