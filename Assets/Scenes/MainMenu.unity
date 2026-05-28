@@ -214,7 +214,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1639109141}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: ButtonSFX, Assembly-CSharp
         m_MethodName: ClickSound
         m_Mode: 1
@@ -953,7 +953,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1639109141}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: ButtonSFX, Assembly-CSharp
         m_MethodName: ClickSound
         m_Mode: 1
@@ -1003,6 +1003,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 514359871}
   m_CullTransparentMesh: 1
+--- !u!1 &541820738
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 541820740}
+  - component: {fileID: 541820739}
+  m_Layer: 0
+  m_Name: SoundSFX
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &541820739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 541820738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a010f09a191ee5f4fbb55374ce423cb4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonSFX
+  buttonOn: {fileID: 1132369086}
+  buttonOff: {fileID: 1709320397}
+--- !u!4 &541820740
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 541820738}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 450.6256, y: 288.5175, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &566348199
 GameObject:
   m_ObjectHideFlags: 0
@@ -1778,7 +1824,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1639109141}
+      - m_Target: {fileID: 541820739}
         m_TargetAssemblyTypeName: ButtonSFX, Assembly-CSharp
         m_MethodName: ToggleBGM
         m_Mode: 1
@@ -2060,7 +2106,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1639109141}
+      - m_Target: {fileID: 541820739}
         m_TargetAssemblyTypeName: ButtonSFX, Assembly-CSharp
         m_MethodName: ClickSound
         m_Mode: 1
@@ -2520,7 +2566,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1639109141}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: ButtonSFX, Assembly-CSharp
         m_MethodName: ClickSound
         m_Mode: 1
@@ -2581,9 +2627,9 @@ GameObject:
   - component: {fileID: 1639109140}
   - component: {fileID: 1639109139}
   - component: {fileID: 1639109138}
-  - component: {fileID: 1639109141}
+  - component: {fileID: 1639109142}
   m_Layer: 0
-  m_Name: SoundSetting
+  m_Name: SoundBGM
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2602,7 +2648,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoundManager
   audioSource: {fileID: 1639109139}
-  button: {fileID: 8300000, guid: da0dd5386971eee41941a05828c3bd07, type: 3}
+  SfxSource: {fileID: 1639109142}
+  button: {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
 --- !u!82 &1639109139
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2715,20 +2762,103 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1639109141
-MonoBehaviour:
+--- !u!82 &1639109142
+AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1639109137}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a010f09a191ee5f4fbb55374ce423cb4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ButtonSFX
-  buttonOn: {fileID: 1132369086}
-  buttonOff: {fileID: 1709320397}
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1659247148
 GameObject:
   m_ObjectHideFlags: 0
@@ -2898,7 +3028,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1639109141}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: ButtonSFX, Assembly-CSharp
         m_MethodName: ClickSound
         m_Mode: 1
@@ -3042,7 +3172,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1639109141}
+      - m_Target: {fileID: 541820739}
         m_TargetAssemblyTypeName: ButtonSFX, Assembly-CSharp
         m_MethodName: ClickSound
         m_Mode: 1
@@ -3222,7 +3352,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1639109141}
+      - m_Target: {fileID: 541820739}
         m_TargetAssemblyTypeName: ButtonSFX, Assembly-CSharp
         m_MethodName: ToggleBGM
         m_Mode: 1
@@ -3441,7 +3571,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1639109141}
+      - m_Target: {fileID: 541820739}
         m_TargetAssemblyTypeName: ButtonSFX, Assembly-CSharp
         m_MethodName: ClickSound
         m_Mode: 1
@@ -3861,7 +3991,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1639109141}
+      - m_Target: {fileID: 541820739}
         m_TargetAssemblyTypeName: ButtonSFX, Assembly-CSharp
         m_MethodName: ClickSound
         m_Mode: 1
@@ -4273,3 +4403,4 @@ SceneRoots:
   - {fileID: 1544178883}
   - {fileID: 1687812589}
   - {fileID: 1639109140}
+  - {fileID: 541820740}
