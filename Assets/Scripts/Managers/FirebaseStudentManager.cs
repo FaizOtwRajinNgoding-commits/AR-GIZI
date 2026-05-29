@@ -20,6 +20,7 @@ public class FirebaseStudentManager : MonoBehaviour
     [Header("Waiting Room UI Student References")]
     [SerializeField] private GameObject panelJoinRoom;         // Panel menu ngetik kode awal siswa
     [SerializeField] private GameObject panelWaitingRoom;        // Panel waiting room siswa
+    [SerializeField] private GameObject panelPopupKeluar;
     [SerializeField] private TextMeshProUGUI textWaitingKodeSiswa; // Menampilkan Kode Room di atas
     [SerializeField] private TextMeshProUGUI textStatusLoadingSiswa; // Menampilkan status ("Menunggu guru...")
     [SerializeField] private Transform studentListContainer;     // Content dari Scroll View sisi Siswa
@@ -115,7 +116,7 @@ public class FirebaseStudentManager : MonoBehaviour
             {
                 string namaSiswa = studentSnapshot.Key;
                 GameObject go = Instantiate(studentNamePrefab, studentListContainer);
-                go.GetComponent<TextMeshProUGUI>().text = "👤 " + namaSiswa;
+                go.GetComponent<TextMeshProUGUI>().text = "" + namaSiswa;
             }
         }
     }
@@ -156,8 +157,39 @@ public class FirebaseStudentManager : MonoBehaviour
     }
 
     // ========================================================
+    // FUNGSI BARU: UPDATE SKOR AKHIR DAN STATUS SISWA KE FIREBASE
+    // ========================================================
+    public void UpdateSkorAkhirSiswa(int skorAkhir)
+    {
+        if (dbReference != null && !string.IsNullOrEmpty(savedCodeInput) && !string.IsNullOrEmpty(savedNameInput))
+        {
+            // Tembak skor akhir hasil pengerjaan siswa
+            dbReference.Child("rooms").Child(savedCodeInput).Child("students").Child(savedNameInput).Child("score").SetValueAsync(skorAkhir);
+            
+            // Ubah status menjadi finished agar di dashboard guru langsung berubah jadi hijau "SELESAI"
+            dbReference.Child("rooms").Child(savedCodeInput).Child("students").Child(savedNameInput).Child("status").SetValueAsync("finished");
+            
+            Debug.Log($"[Firebase] Berhasil submit skor untuk {savedNameInput}: {skorAkhir} dengan status SELESAI!");
+        }
+        else
+        {
+            Debug.LogError("[Firebase] Gagal update skor akhir karena data Room ID atau Nama Siswa kosong!");
+        }
+    }
+
+    // ========================================================
     // AKSI KETIKA MURID KLIK POPUP KELUAR (YA)
     // ========================================================
+
+    public void BukaPopupKeluar()
+    {
+        panelPopupKeluar.SetActive(true);
+    }
+
+    public void KonfirmasiKeluarTIDAK()
+    {
+        panelPopupKeluar.SetActive(false);
+    }
     public void KlikKeluarWaitingRoomSiswa()
     {
         if (!string.IsNullOrEmpty(savedCodeInput) && !string.IsNullOrEmpty(savedNameInput))

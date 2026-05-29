@@ -29,7 +29,6 @@ public class GeminiCandidate { public GeminiResponseContent content; }
 [Serializable]
 public class GeminiResponseContent { public List<GeminiPart> parts; }
 
-
 // ==========================================
 // 2. SCRIPT UTAMA MANAGER
 // ==========================================
@@ -60,6 +59,11 @@ public class GeminiQuizManager : MonoBehaviour
     [SerializeField] private GameObject panelEndFeedback;   
     [SerializeField] private TextMeshProUGUI endFeedbackText;
 
+    [Header("Multiplayer Room Setup")]
+    [SerializeField] private GameObject panelGameplaySiswa;  // Drag Panel_GameplaySiswa ke sini
+    [SerializeField] private GameObject panelDashboardGuru;   // Drag Panel_dashboardGuru ke sini
+    [SerializeField] private FirebaseStudentManager firebaseStudentManager; // Drag object script murid ke sini
+
     private List<Question> quizDataList = new List<Question>();
     private int currentQuestionIndex = 0;
     private int totalQuestions = 5;
@@ -70,6 +74,28 @@ public class GeminiQuizManager : MonoBehaviour
 
     void Awake()
     {
+        // 1. AUTO-ASSIGN: Cari FirebaseStudentManager secara otomatis di dalam scene
+        if (firebaseStudentManager == null)
+        {
+            firebaseStudentManager = FindAnyObjectByType<FirebaseStudentManager>();
+            if (firebaseStudentManager != null)
+            {
+                Debug.Log("[Auto-Assign] FirebaseStudentManager berhasil ditemukan otomatis oleh GeminiQuizManager bro!");
+            }
+        }
+
+        // 2. AUTO-ASSIGN PANEL: Jika slot panel kosong, coba cari berdasarkan nama objek di hierarchy
+        if (panelGameplaySiswa == null)
+        {
+            GameObject goSiswa = GameObject.Find("Panel_gameplaySiswa"); // Sesuaikan dengan nama persis di hierarchy lu
+            if (goSiswa != null) panelGameplaySiswa = goSiswa;
+        }
+
+        if (panelDashboardGuru == null)
+        {
+            GameObject goGuru = GameObject.Find("Panel_dashboardGuru"); // Sesuaikan dengan nama persis di hierarchy lu
+            if (goGuru != null) panelDashboardGuru = goGuru;
+        }
         LoadApiKey();
     }
 
@@ -278,35 +304,43 @@ public class GeminiQuizManager : MonoBehaviour
     }
 
 // Fungsi baru untuk menerima limpahan soal dari Firebase (Multiplayer)
-public void StartMultiplayerQuiz(string cleanJsonDariFirebase)
-{
+    public void StartMultiplayerQuiz(string cleanJsonDariFirebase)
+    {
     currentQuestionIndex = 0;
     score = 0;
     quizDataList.Clear();
     
     try
     {
-        // LANGSUNG lompati parsing Google Gemini, langsung tembak ke QuizContainer kuis bersih!
         QuizContainer container = JsonUtility.FromJson<QuizContainer>(cleanJsonDariFirebase);
         
         if (container != null && container.questions != null && container.questions.Count > 0)
         {
             quizDataList = container.questions;
             
-            // Aktifkan Canvas Gameplay kuis untuk siswa
+            // --- BAGIAN INI WAJIB ADA JANGAN SAMPAI KELIPAT ATAU TERHAPUS ---
             if (canvasQuizGameplay != null) canvasQuizGameplay.SetActive(true);
+            
+            if (panelGameplaySiswa != null) 
+            {
+                panelGameplaySiswa.SetActive(true);  // Ini yang bikin murid otomatis masuk kuis!
+                Debug.Log("Panel Gameplay Siswa diaktifkan otomatis.");
+            }
+            else {
+                Debug.LogError("panelGameplaySiswa masih NULL di GeminiQuizManager!");
+            }
+
+            if (panelDashboardGuru != null) panelDashboardGuru.SetActive(false); 
             
             DisplayQuestion();
         }
         else
         {
             questionText.text = "Format kuis multiplayer kosong atau tidak cocok.";
-            Debug.LogError("Format kuis dari Firebase tidak valid atau kosong!");
         }
     }
     catch (System.Exception e)
     {
-        questionText.text = "Gagal memproses soal dari ruang tunggu.";
         Debug.LogError("Multiplayer Parsing Error: " + e.Message);
     }
 }
@@ -315,8 +349,20 @@ public void StartMultiplayerQuiz(string cleanJsonDariFirebase)
     {
         canvasQuizGameplay.SetActive(false);
         canvasQuizFeedback.SetActive(true);
-        panelPopupFeedback.SetActive(false); // Matikan popup benar/salah biasa
+        panelPopupFeedback.SetActive(false); 
         panelEndFeedback.SetActive(true);
-        endFeedbackText.text = $"KUIS SELESAI!\n\nTotal Skor Kamu:\n<size=60><color=#2ecc71>{score}</color></size> dari {totalQuestions * 10} poin!";
+        
+        // Pengaturan teks skor bawaan lu (sesuaikan dengan kode asli lu bro)
+        endFeedbackText.text = $"KUIS SELESAI!\n\nTotal Skor Kamu:\n<color=green>{score}</color>";
+
+        // --- TEMBAK NILAI & STATUS KE FIREBASE SAAT MASUK MENU INFO NILAI ---
+        if (firebaseStudentManager != null)
+        {
+            firebaseStudentManager.UpdateSkorAkhirSiswa(score);
+        }
+        else
+        {
+            Debug.LogWarning("FirebaseStudentManager belum di-drag ke Inspector GeminiQuizManager, skor gagal dikirim otomatis.");
+        }
     }
 }
