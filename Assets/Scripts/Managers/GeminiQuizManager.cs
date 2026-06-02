@@ -36,7 +36,7 @@ public class GeminiQuizManager : MonoBehaviour
 {
     [Header("API Configuration")]
     [SerializeField] private string apiKey = "";
-    private string geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=";
+    private string geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=";
 
     [Header("UI Canvas Gameplay References")]
     [SerializeField] private GameObject canvasQuizMenu;
