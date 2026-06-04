@@ -41,6 +41,7 @@ public class FirebaseRoomManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textStatusSelesai;   
     [SerializeField] private Transform tableContentContainer;    // Content dari Scroll View di dashboard guru
     [SerializeField] private GameObject tableRowPrefab;          // Prefab TableRowPrefab yang sudah dipasang script TableRowItem
+    [SerializeField] private GameObject panelKeluarDashboard;
 
     [Header("Script References")]
     [SerializeField] private QuizFlowManager quizFlowManager; // Referensi untuk pindah panel halaman utama
@@ -152,6 +153,56 @@ public class FirebaseRoomManager : MonoBehaviour
         panelPopupMulai.SetActive(false); // Tutup popup, kembali nunggu di waiting room
     }
 
+    // ========================================================
+    // POPUP 3: KONFIRMASI KELUAR (Pada Dashboard Guru)
+    // ========================================================
+    public void KlikTombolKeluarDashboard()
+    {
+        if (panelKeluarDashboard != null)
+        {
+            panelKeluarDashboard.SetActive(true); // Munculkan popup konfirmasi
+        }
+    }
+
+    public void BatalKeluarDashboard()
+    {
+        panelKeluarDashboard.SetActive(false); // Sembunyikan kembali popup
+    }
+
+    public void KonfirmasiKeluarDashboard()
+    {
+        // if (string.IsNullOrEmpty(roomId) || dbReference == null)
+        // {
+        //     // Jika belum bikin room tapi udah mau back, langsung balik ke menu utama
+        //     KembaliKeMenuUtamaResetUI();
+        //     return;
+        // }
+
+        textStatusLoading.text = "Menutup room dan membersihkan data...";
+        
+        // 1. Putus Hubungan Realtime Listener di Firebase agar tidak leak memory
+        dbReference.Child("rooms").Child(roomId).Child("students").ValueChanged -= HandleRealtimeDashboardGuru;
+
+        // 2. Set status room di Firebase menjadi "finished" agar aplikasi siswa tahu room telah bubar
+        dbReference.Child("rooms").Child(roomId).Child("roomStatus").SetValueAsync("finished")
+            .ContinueWithOnMainThread(task => {
+                if (task.IsCompletedSuccessfully)
+                {
+                    Debug.Log($"Room {roomId} berhasil diset menjadi 'finished' di cloud.");
+                }
+                else
+                {
+                    Debug.LogError("Gagal memperbarui status room ke Firebase: " + task.Exception);
+                }
+
+                panelKeluarDashboard.SetActive(false);
+                panelDashboardGuru.SetActive(false);
+                panelWaitingRoom.SetActive(false);
+                panelCreateRoom.SetActive(true);
+                roomId = null;
+
+            });
+    }
 
     // --- GENERATE SOAL GEMINI ---
     private IEnumerator FetchGeminiQuestionsCoroutine()

@@ -7,6 +7,7 @@ public class QuizFlowManager : MonoBehaviour
     [SerializeField] private GameObject canvasQuizMenu;
     [SerializeField] private GameObject canvasQuizGameplay;
     [SerializeField] private GameObject canvasQuizFeedback;
+    [SerializeField] private GameObject panelQuizSolo;
 
     [Header("Menu Panels")]
     [SerializeField] private GameObject panelPilihMode;
@@ -20,6 +21,7 @@ public class QuizFlowManager : MonoBehaviour
         panelPilihMode.SetActive(true);
         
         canvasQuizGameplay.SetActive(false);
+        panelQuizSolo.SetActive(false);
         canvasQuizFeedback.SetActive(false);
         panelCreateRoom.SetActive(false);
         panelJoinRoom.SetActive(false);
@@ -32,6 +34,7 @@ public class QuizFlowManager : MonoBehaviour
         // Matikan menu utama kuis, langsung nyalakan gameplay kuis offline
         canvasQuizMenu.SetActive(false);
         canvasQuizGameplay.SetActive(true);
+        panelQuizSolo.SetActive(true);
         
         // PANGGIL FUNGSI AMBIL SOAL GEMINI DI SINI (Fase 1 kemarin)
         Debug.Log("Memulai Solo Quiz Mode...");
@@ -69,6 +72,7 @@ public class QuizFlowManager : MonoBehaviour
     {
         // Matikan gameplay dan semua panel feedback kuis
         canvasQuizGameplay.SetActive(false);
+        panelQuizSolo.SetActive(false);
         canvasQuizFeedback.SetActive(false);
         
         // Nyalakan kembali menu utama kuis dan panel pilih mode
