@@ -7,9 +7,10 @@ public class Backpress : MonoBehaviour {
 	// berfungsi untuk keluar aplikasi menggunakan tombol back
 	public string SceneName;
 	public GameObject popupPanel;
+    public GameObject popupPanelPiring;
 
 	// Dipanggil saat tombol Back ditekan
-	public void ShowPopup()
+	public void ShowPopupZat()
     {
         popupPanel.SetActive(true);
     }
@@ -22,6 +23,24 @@ public class Backpress : MonoBehaviour {
 
     // Tombol "Iya"
     public void ConfirmExit()
+    {
+        SceneManager.LoadScene(SceneName);
+    }
+
+    // Untuk Piring
+    public void ShowPopupPiring()
+    {
+        popupPanelPiring.SetActive(true);
+    }
+
+    // Tombol "Tidak"
+    public void CancelExitPiring()
+    {
+        popupPanelPiring.SetActive(false);
+    }
+
+    // Tombol "Iya"
+    public void ConfirmExitPiring()
     {
         SceneManager.LoadScene(SceneName);
     }
