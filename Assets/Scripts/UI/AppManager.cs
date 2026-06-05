@@ -6,19 +6,19 @@ using UnityEngine.SceneManagement;
 public class MainMenuController : MonoBehaviour
 {
     public string GameScene;
-
     public string ARScene;
     public string QuizScene;
-    // Seret game object "Popup_GameMenu" dari hierarchy ke slot ini di Inspector
+    
     [SerializeField] private GameObject popupGameMenu; 
+
+    // 1. KUNCI UTAMA: Variabel statis untuk menyimpan mode game yang dipilih
+    public static string ModeGameTerpilih = "ZatGizi";
 
     void Start()
     {
-        // Pas game pertama kali jalan, pastiin popup-nya ngumpet dulu
         popupGameMenu.SetActive(false);
     }
 
-    // Fungsi ini dipasang di OnClick() tombol STIK GAME lu
     public void BukaPopupGame()
     {
         popupGameMenu.SetActive(true);
@@ -29,7 +29,6 @@ public class MainMenuController : MonoBehaviour
         SceneManager.LoadScene("ARScene");
     }
 
-    // Fungsi ini dipasang di OnClick() tombol CLOSE (X) di dalam popup
     public void TutupPopupGame()
     {
         popupGameMenu.SetActive(false);
@@ -37,10 +36,24 @@ public class MainMenuController : MonoBehaviour
 
     public void LoadQuizScene()
     {
-        // Pastikan "QuizScene" udah lu daftarkan di File -> Build Settings
         SceneManager.LoadScene("QuizScene");
     }
 
+    // 2. FUNGSI BARU: Jika siswa memilih game Drag & Drop Zat Gizi
+    public void PilihGameZatGizi()
+    {
+        ModeGameTerpilih = "ZatGizi"; // Set tandanya
+        SceneManager.LoadScene("GameMenu"); // Load scene game
+    }
+
+    // 3. FUNGSI BARU: Jika siswa memilih game Piring-Ku
+    public void PilihGamePiringku()
+    {
+        ModeGameTerpilih = "Piringku"; // Set tandanya
+        SceneManager.LoadScene("GameMenu"); // Load scene game
+    }
+
+    // Fungsi lama ini bisa lu hapus atau diemin aja
     public void LoadGameScene()
     {
         SceneManager.LoadScene("GameMenu");
