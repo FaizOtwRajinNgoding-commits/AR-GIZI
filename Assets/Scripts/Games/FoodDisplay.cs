@@ -1,13 +1,18 @@
 using UnityEngine;
-using UnityEngine.UI; // Wajib ada karena kita pakai UI Image
+using UnityEngine.UI; 
 
 public class FoodDisplay : MonoBehaviour
 {
-    public FoodData data; // Tempat naruh "KTP" makanan (Scriptable Object)
+    public FoodData data; 
 
     void Start()
     {
-        // Baris ini yang otomatis ganti gambar pas game mulai
+        InisialisasiGambar();
+    }
+
+    // Buat fungsi baru agar bisa ditembak langsung dari GameManager
+    public void InisialisasiGambar()
+    {
         if (data != null)
         {
             GetComponent<Image>().sprite = data.gambarMakanan;
