@@ -7,7 +7,7 @@ public class PopUp : MonoBehaviour
     public AnimationCurve scaleCurve;
 
     private Coroutine animationCoroutine;
-    private float totalDuration = 0.25f;
+    private float totalDuration = 0.6f;
 
     void OnEnable()
     {
