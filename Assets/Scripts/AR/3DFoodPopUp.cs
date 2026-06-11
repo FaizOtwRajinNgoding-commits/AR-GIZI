@@ -3,21 +3,20 @@ using UnityEngine;
 
 public class FoodPopUp : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     [Header("3D PopUp Animation")]
-    public AnimationCurve scaleCurve;
+    public AnimationCurve scaleCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
     public float totalDuration = 0.3f;
 
     private Vector3 initialScale;
     private Coroutine animationCoroutine;
     private bool hasCacheScale = false;
 
-
     void Awake()
     {
-        ChaceIntitialScale();
+        CacheInitialScale();
     }
-    void ChaceIntitialScale()
+
+    void CacheInitialScale()
     {
         if (!hasCacheScale)
         {
@@ -26,15 +25,27 @@ public class FoodPopUp : MonoBehaviour
         }
     }
 
+    // Fungsi untuk memunculkan objek dengan animasi
     public void MainkanAnimasi()
     {
-        ChaceIntitialScale();
+        CacheInitialScale();
 
         if (animationCoroutine != null)
         {
             StopCoroutine(animationCoroutine);
         }
         animationCoroutine = StartCoroutine(PlayPopUpAR());
+    }
+
+    // Fungsi untuk menyembunyikan objek secara instan (Scale jadi 0)
+    public void Sembunyikan()
+    {
+        CacheInitialScale();
+        if (animationCoroutine != null)
+        {
+            StopCoroutine(animationCoroutine);
+        }
+        transform.localScale = Vector3.zero;
     }
 
     IEnumerator PlayPopUpAR()
@@ -46,7 +57,9 @@ public class FoodPopUp : MonoBehaviour
         {
             timer += Time.deltaTime;
 
-            float curveValue = scaleCurve.Evaluate(timer);
+            // Menggunakan waktu ternormalisasi (0 hingga 1) agar pas dengan Curve Unity
+            float normalizedTime = timer / totalDuration;
+            float curveValue = scaleCurve.Evaluate(normalizedTime);
 
             transform.localScale = initialScale * curveValue;
             yield return null;
