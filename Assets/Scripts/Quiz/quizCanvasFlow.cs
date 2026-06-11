@@ -8,6 +8,7 @@ public class QuizFlowManager : MonoBehaviour
     [SerializeField] private GameObject canvasQuizGameplay;
     [SerializeField] private GameObject canvasQuizFeedback;
     [SerializeField] private GameObject panelQuizSolo;
+    [SerializeField] private GameObject panelDashboardGuru;
 
     [Header("Menu Panels")]
     [SerializeField] private GameObject panelPilihMode;
@@ -22,6 +23,7 @@ public class QuizFlowManager : MonoBehaviour
         
         canvasQuizGameplay.SetActive(false);
         panelQuizSolo.SetActive(false);
+        panelDashboardGuru.SetActive(false);
         canvasQuizFeedback.SetActive(false);
         panelCreateRoom.SetActive(false);
         panelJoinRoom.SetActive(false);
@@ -35,6 +37,7 @@ public class QuizFlowManager : MonoBehaviour
         canvasQuizMenu.SetActive(false);
         canvasQuizGameplay.SetActive(true);
         panelQuizSolo.SetActive(true);
+        panelDashboardGuru.SetActive(false);
         
         // PANGGIL FUNGSI AMBIL SOAL GEMINI DI SINI (Fase 1 kemarin)
         Debug.Log("Memulai Solo Quiz Mode...");

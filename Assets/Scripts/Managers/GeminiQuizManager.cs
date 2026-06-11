@@ -61,6 +61,7 @@ public class GeminiQuizManager : MonoBehaviour
 
     [Header("Multiplayer Room Setup")]
     [SerializeField] private GameObject panelGameplaySiswa;  // Drag Panel_GameplaySiswa ke sini
+    [SerializeField] private GameObject popupKeluarGameplay;
     [SerializeField] private GameObject panelDashboardGuru;   // Drag Panel_dashboardGuru ke sini
     [SerializeField] private FirebaseStudentManager firebaseStudentManager; // Drag object script murid ke sini
 
@@ -345,11 +346,57 @@ public class GeminiQuizManager : MonoBehaviour
     }
 }
 
+// 1. HUBUNGKAN FUNGSI INI KE ON CLICK TOMBOL BACK DI PANEL GAMEPLAY SISWA LU
+    public void KlikTombolBackGameplay()
+    {
+        if (popupKeluarGameplay != null)
+        {
+            popupKeluarGameplay.SetActive(true); // Cuma memunculkan popup konfirmasi, GAK langsung keluar!
+            Debug.Log("Popup konfirmasi keluar gameplay diaktifkan.");
+        }
+        else
+        {
+            Debug.LogError("popupKeluarGameplay masih NULL di Inspector, drag dulu bro!");
+        }
+    }
+
+    // 2. HUBUNGKAN FUNGSI INI KE TOMBOL "YA" (Siswa fix mau keluar)
+    public void KonfirmasiKeluarGameplayYA()
+    {
+        // Tutup popup-nya terlebih dahulu
+        if (popupKeluarGameplay != null) popupKeluarGameplay.SetActive(false);
+
+        if (firebaseStudentManager != null)
+        {
+            // Matikan Canvas Gameplay Siswa biar layarnya langsung hilang (Responsif)
+            if (canvasQuizGameplay != null) canvasQuizGameplay.SetActive(false);
+
+            // Tembak data ke Firebase bahwa murid ini statusnya "canceled"
+            firebaseStudentManager.SiswaKeluarTengahGameplay();
+            Debug.Log("Siswa mengonfirmasi keluar kuis tengah jalan.");
+        }
+        else
+        {
+            Debug.LogError("FirebaseStudentManager belum ter-assign di GeminiQuizManager, bro!");
+        }
+    }
+
+    // 3. HUBUNGKAN FUNGSI INI KE TOMBOL "TIDAK" (Siswa gak sengaja pencet / batal keluar)
+    public void KonfirmasiKeluarGameplayTIDAK()
+    {
+        if (popupKeluarGameplay != null)
+        {
+            popupKeluarGameplay.SetActive(false); // Sembunyikan lagi popup-nya, kuis otomatis lanjut!
+            Debug.Log("Siswa membatalkan keluar kuis, permainan dilanjutkan.");
+        }
+    }
+
     void EndQuiz()
     {
         canvasQuizGameplay.SetActive(false);
         canvasQuizFeedback.SetActive(true);
         panelPopupFeedback.SetActive(false); 
+        popupKeluarGameplay.SetActive(false);
         panelEndFeedback.SetActive(true);
         
         // Pengaturan teks skor bawaan lu (sesuaikan dengan kode asli lu bro)

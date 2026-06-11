@@ -21,6 +21,7 @@ public class FirebaseStudentManager : MonoBehaviour
     [SerializeField] private GameObject panelJoinRoom;         // Panel menu ngetik kode awal siswa
     [SerializeField] private GameObject panelWaitingRoom;        // Panel waiting room siswa
     [SerializeField] private GameObject panelPopupKeluar;
+    // [SerializeField] private GameObject popupKeluarGameplay;
     [SerializeField] private TextMeshProUGUI textWaitingKodeSiswa; // Menampilkan Kode Room di atas
     [SerializeField] private TextMeshProUGUI textStatusLoadingSiswa; // Menampilkan status ("Menunggu guru...")
     [SerializeField] private Transform studentListContainer;     // Content dari Scroll View sisi Siswa
@@ -209,6 +210,29 @@ public class FirebaseStudentManager : MonoBehaviour
         textStatusSiswa.text = "Kamu keluar dari ruang tunggu kuis.";
     }
 
+    public void SiswaKeluarTengahGameplay()
+    {
+        if (!string.IsNullOrEmpty(savedCodeInput) && !string.IsNullOrEmpty(savedNameInput))
+        {
+            // 1. Matikan pendengaran data biar gak bentrok atau memory leak
+            LepasSemuaListener();
+
+            // 2. Set status siswa di Firebase menjadi "canceled" (TIDAK DINGANUR/DIHAPUS, tapi diubah statusnya)
+            dbReference.Child("rooms").Child(savedCodeInput).Child("students").Child(savedNameInput).Child("status").SetValueAsync("canceled").ContinueWithOnMainThread(task => {
+                if (task.IsCompleted)
+                {
+                    Debug.Log($"[Gameplay] Siswa {savedNameInput} berhasil set status 'canceled' di Firebase.");
+                }
+            });
+        }
+
+        // 3. Kembalikan UI ke menu join room awal
+        panelWaitingRoom.SetActive(false);
+        panelJoinRoom.SetActive(true);
+        textStatusSiswa.text = "Kamu keluar dari permainan kuis tengah jalan.";
+    }
+
+    
     private void LepasSemuaListener()
     {
         if (dbReference != null && !string.IsNullOrEmpty(savedCodeInput))

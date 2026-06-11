@@ -310,6 +310,7 @@ public class FirebaseRoomManager : MonoBehaviour
 
         int totalSiswa = 0;
         int siswaSelesai = 0;
+        int siswaDihitungNilai = 0; // Pengaman untuk pembagi rata-rata kelas
         float totalNilaiSemuaSiswa = 0;
 
         if (args.Snapshot.Exists)
@@ -331,12 +332,24 @@ public class FirebaseRoomManager : MonoBehaviour
                     statusSiswa = studentSnapshot.Child("status").Value.ToString();
                 }
 
+                // --- LOGIKA FILTER STATISTIK KELAS ---
                 if (statusSiswa == "finished")
                 {
                     siswaSelesai++;
+                    totalNilaiSemuaSiswa += skorSiswa;
+                    siswaDihitungNilai++;
                 }
-
-                totalNilaiSemuaSiswa += skorSiswa;
+                else if (statusSiswa == "canceled")
+                {
+                    // Siswa keluar kuis tengah jalan.
+                    // Total siswa tetap bertambah (biar presensi akurat), tapi nilai & pembagi rata-rata di-skip!
+                }
+                else
+                {
+                    // Status "playing" atau "joined" (Sedang mengerjakan)
+                    totalNilaiSemuaSiswa += skorSiswa;
+                    siswaDihitungNilai++;
+                }
 
                 // Spawn baris baru dan isi datanya per kolom Excel
                 GameObject newRow = Instantiate(tableRowPrefab, tableContentContainer);
@@ -345,26 +358,32 @@ public class FirebaseRoomManager : MonoBehaviour
                 if (rowItem != null)
                 {
                     rowItem.textNama.text = namaSiswa;
-                    rowItem.textSkor.text = skorSiswa.ToString();
                     
-                    // Beri warna pembeda pada status biar makin cantik monitor gurunya
+                    // --- LOGIKA UPDATE TAMPILAN BARIS TABEL ---
                     if (statusSiswa == "finished")
                     {
-                        rowItem.textStatus.text = "<color=#2ecc71>SELESAI</color>";
+                        rowItem.textSkor.text = skorSiswa.ToString();
+                        rowItem.textStatus.text = "<color=#2ecc71>SELESAI</color>"; // Hijau
+                    }
+                    else if (statusSiswa == "canceled")
+                    {
+                        rowItem.textSkor.text = "-"; // Set skor jadi strip karena dia keluar kuis
+                        rowItem.textStatus.text = "<color=#e74c3c>KELUAR QUIZ</color>"; // Merah
                     }
                     else
                     {
-                        rowItem.textStatus.text = "<color=#f39c12>MENGERJAKAN</color>";
+                        rowItem.textSkor.text = skorSiswa.ToString();
+                        rowItem.textStatus.text = "<color=#f39c12>MENGERJAKAN</color>"; // Oranye
                     }
                 }
             }
         }
 
-        // Hitung nilai rata-rata
+        // Hitung rata-rata kelas dengan pembagi yang aman dari siswa canceled maupun pembagian dengan angka 0
         float rataRataKelas = 0;
-        if (totalSiswa > 0)
+        if (siswaDihitungNilai > 0)
         {
-            rataRataKelas = totalNilaiSemuaSiswa / totalSiswa;
+            rataRataKelas = totalNilaiSemuaSiswa / siswaDihitungNilai;
         }
 
         // Tampilkan kalkulasi ke monitor atas Guru
