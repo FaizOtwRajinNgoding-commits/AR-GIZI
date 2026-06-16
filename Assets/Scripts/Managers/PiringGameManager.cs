@@ -7,309 +7,210 @@ public class PiringGameManager : MonoBehaviour
 {
     public static PiringGameManager Instance;
 
-    // Mapping Object untuk mendaftarkan makanan berdasarkan rumpun Isi Piringku
-    [System.Serializable]
-    public struct PiringFoodMapping
+    [Header("Easy Chart Lite Link (Bypass Error Version)")]
+    [SerializeField] private GameObject pieChartUtama; 
+
+    [Header("Studi Kasus (Cuma Isi Teks Cerita Saja di Inspector!)")]
+    [SerializeField] [TextArea(2, 5)] private List<string> daftarCeritaStudiKasus;
+    [SerializeField] private TextMeshProUGUI textStudiKasusUI;
+
+    [Header("Etalase Wadah References (Seret Objek Wadah dari Hierarchy)")]
+    [SerializeField] private Transform wadahPokok;
+    [SerializeField] private Transform wadahSayuran;
+    [SerializeField] private Transform wadahLaukPauk;
+    [SerializeField] private Transform wadahBuah;
+
+    [Header("Piring & Prefab References")]
+    [SerializeField] private Transform piringGridParent; 
+    [SerializeField] private GameObject prefabTombolMakanan; 
+
+    [Header("Popup & Feedback UI")]
+    [SerializeField] private GameObject panelPopupFeedback;
+    [SerializeField] private TextMeshProUGUI textFeedbackMessege;
+
+    // List internal hasil auto-scan dari UI etalase lu
+    private List<FoodData> listDataPokok = new List<FoodData>();
+    private List<FoodData> listDataSayur = new List<FoodData>();
+    private List<FoodData> listDataLauk = new List<FoodData>();
+    private List<FoodData> listDataBuah = new List<FoodData>();
+
+    private int currentPokok = 0;
+    private int currentSayur = 0;
+    private int currentLauk = 0;
+    private int currentBuah = 0;
+
+    void Awake()
     {
-        public FoodData.TipeGizi tipeGizi; // Karbohidrat/Protein/Serat/Mineral
-        public List<FoodData> daftarMakanan; // List ScriptableObject makanan yang cocok
-    }
-
-    [Header("Food Mapping Data")]
-    [SerializeField] private List<PiringFoodMapping> semuaKategoriMakanan;
-
-    [Header("UI Canvas & Panel References")]
-    [SerializeField] private Transform panelTempatMunculMakanan; // Panel horizontal di bawah keranjang
-    [SerializeField] private GameObject prefabTombolMakanan; // Prefab UI untuk menampilkan pilihan makanan
-    [SerializeField] private Transform piringGridParent; // Objek Piring yang dipasangi Grid Layout Group
-
-    [Header("UI Text Persentase Angka")]
-    [SerializeField] private TextMeshProUGUI textPersenPokok;
-    [SerializeField] private TextMeshProUGUI textPersenSayur;
-    [SerializeField] private TextMeshProUGUI textPersenLauk;
-    [SerializeField] private TextMeshProUGUI textPersenBuah;
-    [SerializeField] private TextMeshProUGUI textLevelIndicator;
-    [SerializeField] private TextMeshProUGUI textTimer;
-
-    [Header("UI Bar Fill Elements")]
-    [SerializeField] private Image barMakananPokok; 
-    [SerializeField] private Image barSayuran;
-    [SerializeField] private Image barLaukPauk;
-    [SerializeField] private Image barBuahBuahan;
-
-    [Header("Feedback & Popups")]
-    [SerializeField] private TextMeshProUGUI textPeringatanZibo; 
-    [SerializeField] private GameObject panelPopupWarning;
-    [SerializeField] private GameObject buttonNextLevel;
-
-    private float currentPokok, currentSayur, currentLauk, currentBuah;
-    private float timeLeft = 70f;
-    private bool isGameActive = false;
-    private int currentLevel = 1;
-
-    void Awake() 
-    { 
-        Instance = this; 
+        Instance = this;
     }
 
     void Start()
     {
-        // Supaya pas lu pencet Play langsung di scene GameMenu (buat testing),
-        // game Piringku bisa langsung otomatis berjalan dan isGameActive berubah jadi true!
-        MulaiGamePiringku();
+        panelPopupFeedback.SetActive(false);
+        
+        // JALANKAN AUTO-SCAN: Ambil data gizi langsung dari tombol-tombol yang lu susun di UI!
+        KumpulkanDataDariEtalase();
+
+        KlikRefreshStudiKasus(); 
     }
 
-    void Update()
+    // Fungsi pembantu untuk scan otomatis isi objek wadah di UI Hierarchy
+    private void KumpulkanDataDariEtalase()
     {
-        // Cek apakah game sudah aktif/dimulai
-        if (isGameActive)
+        ScanWadahGizi(wadahPokok, listDataPokok);
+        ScanWadahGizi(wadahSayuran, listDataSayur);
+        ScanWadahGizi(wadahLaukPauk, listDataLauk);
+        ScanWadahGizi(wadahBuah, listDataBuah);
+    }
+
+    private void ScanWadahGizi(Transform wadah, List<FoodData> targetList)
+    {
+        if (wadah == null) return;
+        foreach (Transform child in wadah)
         {
-            // Jalankan hitung mundur persis seperti di GameManager.cs lu bro!
-            timeLeft -= Time.deltaTime;
-    
-            // Update tampilan teks timer ke layar secara realtime
-            if (textTimer != null)
+            FoodDisplay display = child.GetComponent<FoodDisplay>();
+            if (display != null && display.data != null)
             {
-                textTimer.text = "Waktu: " + Mathf.Ceil(timeLeft) + "s";
-            }
-    
-            // Kondisi jika waktu habis
-            if (timeLeft <= 0)
-            {
-                timeLeft = 0;
-                isGameActive = false;
-                TampilkanPeringatan("<color=red>Waktu Habis! Ayo coba lagi dan susun piring gizi seimbangmu!</color>");
+                if (!targetList.Contains(display.data))
+                {
+                    targetList.Add(display.data);
+                }
             }
         }
     }
 
+    // Fungsi jembatan untuk dipanggil dari SceneCanvasSwitcher
     public void MulaiGamePiringku()
     {
-        currentLevel = 1;
-        GenerateLevelAcak();
+        KlikRefreshStudiKasus();
     }
 
-    public void GenerateLevelAcak()
+    public void TambahBahanKePiring(FoodData data, GameObject itemKloning)
     {
-        textLevelIndicator.text = "LEVEL " + currentLevel;
-        panelPopupWarning.SetActive(false);
-        buttonNextLevel.SetActive(false);
+        itemKloning.transform.SetParent(piringGridParent);
         
-        // 1. Bersihkan piring dari sisa level sebelumnya
-        ClearPiring(); 
-    
-        float[] opsiPokokSayur = { 0f, 11f, 22f };
-        float[] opsiLaukBuah = { 0f, 8.5f };
-    
-        // 2. Tentukan persentase acak bawaan level
-        currentPokok = opsiPokokSayur[Random.Range(0, opsiPokokSayur.Length)];
-        currentSayur = opsiPokokSayur[Random.Range(0, opsiPokokSayur.Length)];
-        currentLauk = opsiLaukBuah[Random.Range(0, opsiLaukBuah.Length)];
-        currentBuah = opsiLaukBuah[Random.Range(0, opsiLaukBuah.Length)];
-    
-        if (currentPokok == 22f && currentSayur == 22f && currentLauk == 8.5f && currentBuah == 8.5f)
-        {
-            currentPokok = 0f;
-        }
-    
-        // 🚀 3. LOGIKA BARU: Hitung berapa jumlah item nyata yang mewakili persentase di atas
-        int jmlPokok = Mathf.RoundToInt(currentPokok / 11f);
-        int jmlSayur = Mathf.RoundToInt(currentSayur / 11f);
-        int jmlLauk = Mathf.RoundToInt(currentLauk / 8.5f);
-        int jmlBuah = Mathf.RoundToInt(currentBuah / 8.5f);
-    
-        // 🚀 4. Eksekusi pemunculan makanan otomatis ke atas piring sesuai hitungan
-        SpawnItemBawaanKePiring(FoodData.TipeGizi.Karbohidrat, jmlPokok);
-        SpawnItemBawaanKePiring(FoodData.TipeGizi.Serat, jmlSayur);
-        SpawnItemBawaanKePiring(FoodData.TipeGizi.Protein, jmlLauk);
-        SpawnItemBawaanKePiring(FoodData.TipeGizi.Mineral, jmlBuah);
-    
-        // 5. Perbarui bar UI dan teks indikator angka gizi
-        UpdateVisualDanAngkaUI();
+        // Perbaikan Komponen ke DraggableItemPiring
+        DraggableItemPiring dragScript = itemKloning.GetComponent<DraggableItemPiring>();
+        if (dragScript != null) dragScript.enabled = false;
+
+        Button btn = itemKloning.GetComponent<Button>();
+        if (btn == null) btn = itemKloning.AddComponent<Button>();
         
-        timeLeft = 80f; // Set durasi main 80 detik
-        isGameActive = true;
+        btn.onClick.RemoveAllListeners();
+        btn.onClick.AddListener(() => HapusBahanDariPiring(data, itemKloning));
+
+        HitungGizi(data.jenisGizi[0], 1);
+        UpdateVisualPieChart();
     }
 
-    public void TutupPanelWarning()
+    public void HapusBahanDariPiring(FoodData data, GameObject itemPiring)
     {
-        panelPopupWarning.SetActive(false); // Menyembunyikan panel warning gizi
+        HitungGizi(data.jenisGizi[0], -1);
+        Destroy(itemPiring);
+        Invoke("UpdateVisualPieChart", 0.05f);
     }
 
-    // MEKANIK POIN 3: Munculin daftar makanan pas keranjang gizi di-klik
-    public void AmbilMakananDariKeranjang(string namaKategori)
+    private void HitungGizi(FoodData.TipeGizi tipe, int nilai)
     {
-        if (!isGameActive) return;
+        if (tipe == FoodData.TipeGizi.Karbohidrat) currentPokok += nilai;
+        else if (tipe == FoodData.TipeGizi.Serat) currentSayur += nilai;
+        else if (tipe == FoodData.TipeGizi.Protein) currentLauk += nilai;
+        else if (tipe == FoodData.TipeGizi.Mineral) currentBuah += nilai;
 
-        // Bersihkan dulu sisa makanan dari keranjang sebelumnya
-        foreach (Transform child in panelTempatMunculMakanan)
-        {
-            Destroy(child.gameObject);
-        }
-
-        FoodData.TipeGizi giziDicari = FoodData.TipeGizi.Karbohidrat;
-        if (namaKategori == "protein") giziDicari = FoodData.TipeGizi.Protein;
-        else if (namaKategori == "serat") giziDicari = FoodData.TipeGizi.Serat;
-        else if (namaKategori == "mineral") giziDicari = FoodData.TipeGizi.Mineral;
-
-        // Cari daftarnya di Mapping Object Inspector
-        foreach (var mapping in semuaKategoriMakanan)
-        {
-            if (mapping.tipeGizi == giziDicari)
-            {
-                foreach (FoodData dataFood in mapping.daftarMakanan)
-                {
-                    // Spawn tombol item makanannya ke panel pemilihan bawah keranjang
-                    GameObject tombolBaru = Instantiate(prefabTombolMakanan, panelTempatMunculMakanan);
-                    
-                    // Set gambar makanannya menggunakan script FoodDisplay bawaan lu
-                    FoodDisplay fd = tombolBaru.GetComponent<FoodDisplay>();
-                    if (fd != null)
-                    {
-                      fd.data = dataFood;
-                      fd.InisialisasiGambar(); // Paksa prefab langsung memunculkan gambar makanannya seketika  
-                    } 
-                }
-                break;
-            }
-        }
+        currentPokok = Mathf.Max(0, currentPokok);
+        currentSayur = Mathf.Max(0, currentSayur);
+        currentLauk = Mathf.Max(0, currentLauk);
+        currentBuah = Mathf.Max(0, currentBuah);
     }
 
-    public void TambahBahanKePiring(FoodData.TipeGizi tipe, GameObject itemObyek)
+    private void UpdateVisualPieChart()
     {
-        if (!isGameActive) return;
+        if (pieChartUtama == null) return;
 
-        if (tipe == FoodData.TipeGizi.Karbohidrat)
+        List<float> dataGiziTerbaru = new List<float>()
         {
-            if (currentPokok + 11f > 33f) { TampilkanPeringatan("Waduh, Makanan Pokokmu sudah penuh!"); Destroy(itemObyek); return; }
-            currentPokok += 11f;
-        }
-        else if (tipe == FoodData.TipeGizi.Serat)
-        {
-            if (currentSayur + 11f > 33f) { TampilkanPeringatan("Eits, Sayurannya kebanyakan!"); Destroy(itemObyek); return; }
-            currentSayur += 11f;
-        }
-        else if (tipe == FoodData.TipeGizi.Protein)
-        {
-            if (currentLauk + 8.5f > 17f) { TampilkanPeringatan("Waduh, Laukmu udah cukup tuh!"); Destroy(itemObyek); return; }
-            currentLauk += 8.5f;
-        }
-        else if (tipe == FoodData.TipeGizi.Mineral)
-        {
-            if (currentBuah + 8.5f > 17f) { TampilkanPeringatan("Buah-buahannya sudah cukup manis!"); Destroy(itemObyek); return; }
-            currentBuah += 8.5f;
-        }
+            (float)currentPokok,
+            (float)currentSayur,
+            (float)currentLauk,
+            (float)currentBuah
+        };
 
-        // Poin Utama: Pindahkan objek makanan agar masuk ke susunan grid rapi di piring
-        itemObyek.transform.SetParent(piringGridParent);
-        
-        // Matikan script DraggableItem bawaan lu biar gak bisa ditarik-tarik lagi pas udah di piring
-        if(itemObyek.GetComponent<DraggableItem>() != null)
-        {
-            Destroy(itemObyek.GetComponent<DraggableItem>());
-        }
-
-        UpdateVisualDanAngkaUI();
-        CekKondisiMenang();
+        pieChartUtama.SendMessage("Plot", dataGiziTerbaru, SendMessageOptions.DontRequireReceiver);
     }
 
-    private void UpdateVisualDanAngkaUI()
+    public void KlikRefreshStudiKasus()
     {
-        // Update Bar Fill
-        barMakananPokok.fillAmount = currentPokok / 33f;
-        barSayuran.fillAmount = currentSayur / 33f;
-        barLaukPauk.fillAmount = currentLauk / 17f;
-        barBuahBuahan.fillAmount = currentBuah / 17f;
+        if (daftarCeritaStudiKasus.Count == 0) return;
 
-        // Update Angka Teks Persen (Permintaan Poin 3)
-        textPersenPokok.text = currentPokok.ToString("F1") + "% / 33%";
-        textPersenSayur.text = currentSayur.ToString("F1") + "% / 33%";
-        textPersenLauk.text = currentLauk.ToString("F1") + "% / 17%";
-        textPersenBuah.text = currentBuah.ToString("F1") + "% / 17%";
-    }
-
-    private void CekKondisiMenang()
-    {
-        if (Mathf.Approximately(currentPokok, 33f) && 
-            Mathf.Approximately(currentSayur, 33f) && 
-            Mathf.Approximately(currentLauk, 17f) && 
-            Mathf.Approximately(currentBuah, 17f))
-        {
-            isGameActive = false; 
-            buttonNextLevel.SetActive(true); 
-            TampilkanPeringatan("<color=green>Hebat! Piring Gizi Seimbangmu Sempurna!</color>");
-        }
-    }
-
-    public void KlikNextLevel()
-    {
-        currentLevel++;
-        GenerateLevelAcak();
-    }
-
-    private void TampilkanPeringatan(string pesan)
-    {
-        textPeringatanZibo.text = pesan;
-        panelPopupWarning.SetActive(true);
-    }
-
-    private void ClearPiring()
-    {
         foreach (Transform child in piringGridParent)
         {
             Destroy(child.gameObject);
         }
+
+        currentPokok = 0; currentSayur = 0; currentLauk = 0; currentBuah = 0;
+
+        int indeksAcak = Random.Range(0, daftarCeritaStudiKasus.Count);
+        textStudiKasusUI.text = daftarCeritaStudiKasus[indeksAcak];
+
+        // Tentukan jumlah makanan acak awal yang nangkring di piring
+        int randomPokok = Random.Range(0, 3); 
+        int randomSayur = Random.Range(0, 2); 
+        int randomLauk = Random.Range(0, 2); 
+        int randomBuah = Random.Range(0, 2); 
+
+        SpawnItemBawaan(FoodData.TipeGizi.Karbohidrat, randomPokok);
+        SpawnItemBawaan(FoodData.TipeGizi.Serat, randomSayur);
+        SpawnItemBawaan(FoodData.TipeGizi.Protein, randomLauk);
+        SpawnItemBawaan(FoodData.TipeGizi.Mineral, randomBuah);
+
+        Invoke("UpdateVisualPieChart", 0.05f);
     }
 
-    private void TriggerGameOver()
-    {
-        isGameActive = false;
-        TampilkanPeringatan("<color=red>WAKTU HABIS! Yuk Coba Lagi.</color>");
-        Invoke("MulaiGamePiringku", 3f);
-    }
-
-    // 🔍 Fungsi untuk mengambil data makanan acak berdasarkan tipe gizinya
-    private FoodData AmbilMakananAcakBerdasarkanGizi(FoodData.TipeGizi tipe)
-    {
-        foreach (var kategori in semuaKategoriMakanan)
-        {
-            if (kategori.tipeGizi == tipe && kategori.daftarMakanan.Count > 0)
-            {
-                int randIndex = Random.Range(0, kategori.daftarMakanan.Count);
-                return kategori.daftarMakanan[randIndex];
-            }
-        }
-        return null;
-    }
-
-    // 🍽️ Fungsi untuk otomatis memunculkan makanan bawaan level ke atas piring
-    private void SpawnItemBawaanKePiring(FoodData.TipeGizi tipe, int jumlah)
+    private void SpawnItemBawaan(FoodData.TipeGizi tipe, int jumlah)
     {
         for (int i = 0; i < jumlah; i++)
         {
-            FoodData dataFood = AmbilMakananAcakBerdasarkanGizi(tipe);
-            if (dataFood != null && piringGridParent != null && prefabTombolMakanan != null)
+            FoodData dataAcak = AmbilMakananAcakBerdasarkanGizi(tipe);
+            if (dataAcak != null)
             {
-                // Spawn ke dalam Grid Piring
-                GameObject itemPiring = Instantiate(prefabTombolMakanan, piringGridParent);
-
-                // Pasang gambar makanannya
-                FoodDisplay fd = itemPiring.GetComponent<FoodDisplay>();
-                if (fd != null)
-                {
-                    fd.data = dataFood;
-                    fd.InisialisasiGambar();
-                }
-
-                // PENTING: Matikan fungsi drag-nya agar makanan bawaan level 
-                // tidak bisa di-drag keluar piring oleh anak-anak (bersifat permanen)
-                DraggableItem dragScript = itemPiring.GetComponent<DraggableItem>();
-                if (dragScript != null)
-                {
-                    dragScript.enabled = false;
-                }
+                GameObject itemBawaan = Instantiate(prefabTombolMakanan, piringGridParent);
+                itemBawaan.GetComponent<FoodDisplay>().data = dataAcak;
+                itemBawaan.GetComponent<FoodDisplay>().InisialisasiGambar();
+                
+                // Perbaikan Komponen ke DraggableItemPiring
+                DraggableItemPiring dragScript = itemBawaan.GetComponent<DraggableItemPiring>();
+                if (dragScript != null) dragScript.enabled = false;
+                
+                HitungGizi(tipe, 1);
             }
         }
     }
 
+    private FoodData AmbilMakananAcakBerdasarkanGizi(FoodData.TipeGizi tipe)
+    {
+        if (tipe == FoodData.TipeGizi.Karbohidrat && listDataPokok.Count > 0) return listDataPokok[Random.Range(0, listDataPokok.Count)];
+        if (tipe == FoodData.TipeGizi.Serat && listDataSayur.Count > 0) return listDataSayur[Random.Range(0, listDataSayur.Count)];
+        if (tipe == FoodData.TipeGizi.Protein && listDataLauk.Count > 0) return listDataLauk[Random.Range(0, listDataLauk.Count)];
+        if (tipe == FoodData.TipeGizi.Mineral && listDataBuah.Count > 0) return listDataBuah[Random.Range(0, listDataBuah.Count)];
+        return null;
+    }
+
+    public void KlikCekIsiPiringku()
+    {
+        panelPopupFeedback.SetActive(true);
+
+        if (currentPokok == 3 && currentSayur == 3 && currentLauk == 2 && currentBuah == 2)
+        {
+            textFeedbackMessege.text = "<color=green>HEBAT! 🎉\nKomposisi Piringmu Sempurna Gizi Seimbang!</color>";
+        }
+        else
+        {
+            textFeedbackMessege.text = "<color=red>WADUH, BELUM SEIMBANG! ❌\nYuk, perhatikan lagi grafik lingkaran gizi dan sesuaikan jumlahnya ya!</color>";
+        }
+    }
+
+    public void TutupPopupFeedback()
+    {
+        panelPopupFeedback.SetActive(false);
+    }
 }

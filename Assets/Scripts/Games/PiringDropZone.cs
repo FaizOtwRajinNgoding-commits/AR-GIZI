@@ -11,11 +11,14 @@ public class PiringDropZone : MonoBehaviour, IDropHandler
         {
             FoodDisplay display = droppedObject.GetComponent<FoodDisplay>();
             
-            if (display != null && display.data != null)
+            // 🛠️ PERBAIKAN DI SINI: Deteksi DraggableItemPiring, bukan DraggableItem lama!
+            DraggableItemPiring dragPiring = droppedObject.GetComponent<DraggableItemPiring>();
+            
+            // Pastikan yang masuk piring adalah item hasil kloningan etalase
+            if (display != null && display.data != null && dragPiring != null && dragPiring.isClone)
             {
-                // Eksekusi pemindahan parent dan kalkulasi gizi ke manager
-                FoodData.TipeGizi giziMakanan = display.data.jenisGizi[0];
-                PiringGameManager.Instance.TambahBahanKePiring(giziMakanan, droppedObject);
+                // Daftarkan makanan ke PiringGameManager
+                PiringGameManager.Instance.TambahBahanKePiring(display.data, droppedObject);
             }
         }
     }

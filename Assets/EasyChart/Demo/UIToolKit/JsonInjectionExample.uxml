@@ -1,0 +1,6 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="BarDemo" src="project://database/Assets/EasyChart/LibraryUxml/EasyChartFreeDemo/Bar/BarDemo.uxml?fileID=9197481963319205126&amp;guid=1836e18f210a06748862cfb0dfd124a1&amp;type=3#BarDemo" />
+    <ui:Template name="PieDemo 6" src="project://database/Assets/EasyChart/LibraryUxml/EasyChartFreeDemo/Pie/PieDemo%206.uxml?fileID=9197481963319205126&amp;guid=08191ba94fe5e50409eddc94f08e4ce3&amp;type=3#PieDemo 6" />
+    <ui:Instance template="BarDemo" name="Bar1" />
+    <ui:Instance template="PieDemo 6" name="Pie" />
+</ui:UXML>
