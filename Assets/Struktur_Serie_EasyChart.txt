@@ -1,0 +1,17 @@
+============= STRUKTUR INTERNAL SERIE =============
+Tipe Serie Asli: EasyChart.Serie
+-> Field: System.String name
+-> Field: System.String id
+-> Field: EasyChart.SerieType type
+-> Field: System.Boolean visible
+-> Field: EasyChart.BaseSerieSettings settings
+-> Field: EasyChart.BaseSerieSettings _cachedLineSettings
+-> Field: EasyChart.BaseSerieSettings _cachedBarSettings
+-> Field: EasyChart.BaseSerieSettings _cachedPieSettings
+-> Field: EasyChart.BaseSerieSettings _cachedRingChartSettings
+-> Field: EasyChart.BaseSerieSettings _cachedScatterSettings
+-> Field: EasyChart.BaseSerieSettings _cachedRadarSettings
+-> Field: EasyChart.BaseSerieSettings _cachedHeatmapSettings
+-> Field: EasyChart.SerieLabelSettings labelSettings
+-> Field: EasyChart.LegendOverrideSettings legendOverride
+-> Field: System.Collections.Generic.List`1[[EasyChart.SeriesData, EasyChart.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]] seriesData

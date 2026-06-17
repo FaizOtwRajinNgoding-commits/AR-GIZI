@@ -1,0 +1,23 @@
+============= STRUKTUR INTERNAL CHARTDATA =============
+Tipe Data Asli: EasyChart.ChartData
+
+=== [DAFTAR FIELD / VARIABEL DALAM] ===
+-> Field: EasyChart.CoordinateSystemType CoordinateSystem
+-> Field: EasyChart.CartesianMapping Cartesian
+-> Field: EasyChart.Cartesian3DMapping Cartesian3D
+-> Field: System.Collections.Generic.List`1[[EasyChart.AxisConfig, EasyChart.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]] Axes
+-> Field: EasyChart.AxisId XAxisId
+-> Field: EasyChart.AxisId YAxisId
+-> Field: EasyChart.AxisId ZAxisId
+-> Field: EasyChart.CartesianGridSettings CartesianGrid
+-> Field: EasyChart.Cartesian3DGridSettings Cartesian3DGrid
+-> Field: EasyChart.HoverSettings Hover
+-> Field: EasyChart.PolarAxesSettings PolarAxes
+-> Field: EasyChart.PlotSettings Plot
+-> Field: System.Collections.Generic.List`1[[EasyChart.Serie, EasyChart.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]] Series
+-> Field: EasyChart.LegendSettings legend
+-> Field: EasyChart.TextureFXSettings backgroundFX
+-> Field: System.Single animationDuration
+
+=== [DAFTAR PROPERTI DALAM] ===
+=======================================================

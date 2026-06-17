@@ -1,0 +1,4 @@
+============= DETAIL METODE UTAMA CHARTELEMENT =============
+Tipe data dari Properti 'Data': EasyChart.ChartData
+-> Fungsi: SetData(EasyChart.ChartData data)
+===========================================================

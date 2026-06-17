@@ -9,7 +9,7 @@ public class DraggableItemPiring : MonoBehaviour, IBeginDragHandler, IDragHandle
     private Vector2 posisiAwal;
     private Canvas canvas;
 
-    [HideInInspector] public bool isClone = false; // Penanda apakah ini item hasil kloning atau master etalase
+    [HideInInspector] public bool isClone = false; 
 
     void Awake()
     {
@@ -20,27 +20,26 @@ public class DraggableItemPiring : MonoBehaviour, IBeginDragHandler, IDragHandle
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        // JIKA INI ITEM MASTER DI ETALASE, MAKA KLONING DIRINYA
         if (!isClone)
         {
-            // Buat duplikat di Canvas utama biar gak keteledor di dalam scroll/panel etalase
             GameObject cloneObj = Instantiate(gameObject, canvas.transform);
             
-            // 🛠️ DI SINI PERBAIKANNYA: Panggil DraggableItemPiring, bukan DraggableItem!
+            // 🛠️ PERBAIKAN BUG: Ambil komponen DraggableItemPiring, bukan DraggableItem lama!
             DraggableItemPiring cloneScript = cloneObj.GetComponent<DraggableItemPiring>();
             
             if (cloneScript != null)
             {
-                cloneScript.isClone = true; // Set bahwa objek baru ini adalah kloningan yang boleh dimanipulasi
-                
-                // Oper kendali drag dari kursor/sentuhan ke objek kloningan secara instan!
-                eventData.pointerDrag = cloneObj;
-                cloneScript.OnBeginDrag(eventData);
+                cloneScript.isClone = true;
             }
+            
+            // 🛠️ PERBAIKAN ROTASI: Paksa objek kloningan tegak lurus sejak mulai di-drag
+            cloneObj.transform.localRotation = Quaternion.identity;
+            
+            eventData.pointerDrag = cloneObj;
+            if (cloneScript != null) cloneScript.OnBeginDrag(eventData);
             return;
         }
 
-        // Logika drag normal untuk objek kloningan
         posisiAwal = rectTransform.anchoredPosition;
         canvasGroup.alpha = 0.6f;
         canvasGroup.blocksRaycasts = false;
@@ -67,7 +66,6 @@ public class DraggableItemPiring : MonoBehaviour, IBeginDragHandler, IDragHandle
         canvasGroup.alpha = 1f;
         canvasGroup.blocksRaycasts = true;
 
-        // Jika dilepas tidak di atas piring (DropZone), langsung hancurkan biar gak nyampah di layar
         if (transform.parent == canvas.transform)
         {
             Destroy(gameObject);

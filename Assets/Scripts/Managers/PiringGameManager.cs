@@ -51,7 +51,40 @@ public class PiringGameManager : MonoBehaviour
         // JALANKAN AUTO-SCAN: Ambil data gizi langsung dari tombol-tombol yang lu susun di UI!
         KumpulkanDataDariEtalase();
 
-        KlikRefreshStudiKasus(); 
+        KlikRefreshStudiKasus();
+
+        // 🛠️ SCRIPT SCANNER JALUR NINJA BY MIN:
+        if (pieChartUtama != null)
+        {
+            Debug.Log("<color=cyan>================= START SCANNING EASYCHART =================</color>");
+            Component[] components = pieChartUtama.GetComponents<Component>();
+            foreach (var comp in components)
+            {
+                if (comp == null) continue;
+                string typeName = comp.GetType().FullName;
+                
+                // Cek apakah komponen ini bagian dari library EasyChart
+                if (typeName.Contains("EasyChart"))
+                {
+                    Debug.Log($"<color=yellow>[KOMPONEN DITEMUKAN]: {typeName}</color>");
+                    
+                    // Bongkar semua fungsi/method publiknya
+                    var methods = comp.GetType().GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.DeclaredOnly);
+                    foreach (var m in methods)
+                    {
+                        Debug.Log($"   -> Nama Fungsi: <color=green>{m.Name}()</color>");
+                    }
+                    
+                    // Bongkar semua variabel/property publiknya
+                    var properties = comp.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.DeclaredOnly);
+                    foreach (var p in properties)
+                    {
+                        Debug.Log($"   -> Nama Properti: <color=orange>{p.Name}</color>");
+                    }
+                }
+            }
+            Debug.Log("<color=cyan>================== END SCANNING EASYCHART ==================</color>");
+        }
     }
 
     // Fungsi pembantu untuk scan otomatis isi objek wadah di UI Hierarchy
@@ -89,7 +122,18 @@ public class PiringGameManager : MonoBehaviour
     {
         itemKloning.transform.SetParent(piringGridParent);
         
-        // Perbaikan Komponen ke DraggableItemPiring
+        // 🛠️ RE-SCALE & RESET ROTASI: Paksa tegak lurus dan ikuti skala default Grid
+        itemKloning.transform.localRotation = Quaternion.identity;
+        itemKloning.transform.localScale = Vector3.one; 
+
+        // 🛠️ PERBAIKAN UTAMA: Paksa reset CanvasGroup agar opacity kembali terang (1f) dan BISA DIKLIK!
+        CanvasGroup cg = itemKloning.GetComponent<CanvasGroup>();
+        if (cg != null)
+        {
+            cg.alpha = 1f;
+            cg.blocksRaycasts = true;
+        }
+
         DraggableItemPiring dragScript = itemKloning.GetComponent<DraggableItemPiring>();
         if (dragScript != null) dragScript.enabled = false;
 
@@ -127,15 +171,108 @@ public class PiringGameManager : MonoBehaviour
     {
         if (pieChartUtama == null) return;
 
-        List<float> dataGiziTerbaru = new List<float>()
+        var bridge = pieChartUtama.GetComponent<EasyChart.UGUI.UGUIChartBridge>();
+        if (bridge != null)
         {
-            (float)currentPokok,
-            (float)currentSayur,
-            (float)currentLauk,
-            (float)currentBuah
-        };
+            var targetChart = bridge.ChartElement;
+            if (targetChart != null && targetChart.Data != null)
+            {
+                try
+                {
+                    // 1. Ambil field 'Series' dari ChartData via Reflection biar AMAN dari error private/public access
+                    var seriesField = targetChart.Data.GetType().GetField("Series", 
+                        System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    
+                    if (seriesField != null)
+                    {
+                        var seriesList = seriesField.GetValue(targetChart.Data) as System.Collections.IList;
+                        
+                        if (seriesList != null && seriesList.Count > 0)
+                        {
+                            // Kita ambil Serie pertama (karena Pie Chart biasanya cuma pakai 1 deret Serie data)
+                            var firstSerie = seriesList[0];
+                            
+                            // 📝 SEKALIAN LOG: Kita cetak isi Serie ke file teks buat jaga-jaga kalau strukturnya unik
+                            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                            sb.AppendLine("============= STRUKTUR INTERNAL SERIE =============");
+                            sb.AppendLine($"Tipe Serie Asli: {firstSerie.GetType().FullName}");
+                            
+                            var fields = firstSerie.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                            foreach (var f in fields) sb.AppendLine($"-> Field: {f.FieldType.FullName} {f.Name}");
+                            
+                            var props = firstSerie.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                            foreach (var p in props) sb.AppendLine($"-> Properti: {p.PropertyType.FullName} {p.Name}");
+                            
+                            System.IO.File.WriteAllText(Application.dataPath + "/Struktur_Serie_EasyChart.txt", sb.ToString());
 
-        pieChartUtama.SendMessage("Plot", dataGiziTerbaru, SendMessageOptions.DontRequireReceiver);
+                            // 🛠️ AKSI PENYUNTIKAN OTOMATIS (Smart Proxy Search)
+                            foreach (var f in fields)
+                            {
+                                // Cari field di dalam Serie yang bertipe koleksi/list data gizi (Array atau Generic List)
+                                if (f.FieldType.IsGenericType || f.FieldType.IsArray)
+                                {
+                                    object listObj = f.GetValue(firstSerie);
+                                    if (listObj != null)
+                                    {
+                                        var enumerable = listObj as System.Collections.IEnumerable;
+                                        if (enumerable != null)
+                                        {
+                                            int index = 0;
+                                            foreach (var item in enumerable)
+                                            {
+                                                if (item == null) continue;
+                                                
+                                                // Tentukan target nilai gizi baru berdasarkan urutan indeks potongan data pie chart
+                                                float nilaiGiziBaru = 0;
+                                                if (index == 0) nilaiGiziBaru = currentPokok;
+                                                else if (index == 1) nilaiGiziBaru = currentSayur;
+                                                else if (index == 2) nilaiGiziBaru = currentLauk;
+                                                else if (index == 3) nilaiGiziBaru = currentBuah;
+
+                                                // Cari & tembak field angka di dalam item gizi (contoh: value, x, y)
+                                                var itemFields = item.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                                                foreach (var itemF in itemFields)
+                                                {
+                                                    if (itemF.Name.ToLower() == "value" || itemF.Name.ToLower() == "y")
+                                                    {
+                                                        // Konversi otomatis ke tipe aslinya (float/double/int) biar gak crash
+                                                        object valConverted = System.Convert.ChangeType(nilaiGiziBaru, itemF.FieldType);
+                                                        itemF.SetValue(item, valConverted);
+                                                    }
+                                                }
+
+                                                // Cari & tembak properti angka di dalam item gizi
+                                                var itemProps = item.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                                                foreach (var itemP in itemProps)
+                                                {
+                                                    if (itemP.CanWrite && (itemP.Name.ToLower() == "value" || itemP.Name.ToLower() == "y"))
+                                                    {
+                                                        object valConverted = System.Convert.ChangeType(nilaiGiziBaru, itemP.PropertyType);
+                                                        itemP.SetValue(item, valConverted, null);
+                                                    }
+                                                }
+                                                index++;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Perbarui data internal chart
+                    targetChart.SetData(targetChart.Data);
+                    targetChart.RefreshData();
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogError("[Min Error] Gagal eksekusi refleksi: " + ex.Message);
+                }
+
+                // Paksa komponen jembatan UI Toolkit merender ulang visualnya di Canvas
+                bridge.Refresh();
+            }
+        }
     }
 
     public void KlikRefreshStudiKasus()
@@ -177,9 +314,17 @@ public class PiringGameManager : MonoBehaviour
                 itemBawaan.GetComponent<FoodDisplay>().data = dataAcak;
                 itemBawaan.GetComponent<FoodDisplay>().InisialisasiGambar();
                 
-                // Perbaikan Komponen ke DraggableItemPiring
+                // Matikan fungsi drag-nya agar makanan bawaan tidak bisa di-drag keluar piring
                 DraggableItemPiring dragScript = itemBawaan.GetComponent<DraggableItemPiring>();
                 if (dragScript != null) dragScript.enabled = false;
+                
+                // 🛠️ PERBAIKAN BUG DI SINI: Suntikkan fungsi klik agar makanan bawaan bisa dihapus!
+                Button btn = itemBawaan.GetComponent<Button>();
+                if (btn == null) btn = itemBawaan.AddComponent<Button>();
+                
+                btn.onClick.RemoveAllListeners();
+                FoodData dataLokal = dataAcak; // Mengunci referensi data gizi di dalam loop
+                btn.onClick.AddListener(() => HapusBahanDariPiring(dataLokal, itemBawaan));
                 
                 HitungGizi(tipe, 1);
             }
@@ -201,11 +346,11 @@ public class PiringGameManager : MonoBehaviour
 
         if (currentPokok == 3 && currentSayur == 3 && currentLauk == 2 && currentBuah == 2)
         {
-            textFeedbackMessege.text = "<color=green>HEBAT! 🎉\nKomposisi Piringmu Sempurna Gizi Seimbang!</color>";
+            textFeedbackMessege.text = "<color=green>HEBAT!\nKomposisi Piringmu Sempurna Gizi Seimbang!</color>";
         }
         else
         {
-            textFeedbackMessege.text = "<color=red>WADUH, BELUM SEIMBANG! ❌\nYuk, perhatikan lagi grafik lingkaran gizi dan sesuaikan jumlahnya ya!</color>";
+            textFeedbackMessege.text = "<color=red>WADUH, BELUM SEIMBANG!\nYuk, perhatikan lagi grafik lingkaran gizi dan sesuaikan jumlahnya ya!</color>";
         }
     }
 

@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7a62e388430321498e69b42007611ad, type: 3}
   m_Name: Data_Alpukat
   m_EditorClassIdentifier: Assembly-CSharp::FoodData
-  namaMakanan: Mangga
-  gambarMakanan: {fileID: 21300000, guid: d9306b0533d3ef64d9da7452dfcca953, type: 3}
+  namaMakanan: Alpukat
+  gambarMakanan: {fileID: 21300000, guid: 285b3b29203278042947cb303d03fd74, type: 3}
   jenisGizi: 04000000
