@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: PieDemo 5
   m_EditorClassIdentifier: 
   chartName: PieDemo 5
-  chartId: 3dc3eb17350d4afe85483ec68671d152
-  coordinateSystem: 2
+  chartId: 60cc54090ef64486a99ee41aef8b8eb0
+  coordinateSystem: 3
   cartesian:
     xAxisId: 0
     yAxisId: 2
@@ -531,7 +531,7 @@ MonoBehaviour:
     enabled: 1
     position: 2
     fontSize: 12
-    color: {r: 1, g: 1, b: 1, a: 1}
+    color: {r: 0.1, g: 0.1, b: 0.1, a: 1}
     backgroundColor: {r: 0, g: 0, b: 0, a: 0}
     itemSpacing: 10
     offset: {x: 30, y: 0}
@@ -567,7 +567,7 @@ MonoBehaviour:
       rid: -2
     labelSettings:
       enabled: 1
-      color: {r: 1, g: 1, b: 1, a: 1}
+      color: {r: 0.078431375, g: 0.078431375, b: 0.078431375, a: 1}
       fontSize: 10
       decimalPlaces: 2
       showName: 0
@@ -585,12 +585,12 @@ MonoBehaviour:
       iconSize: {x: -1, y: -1}
       iconRadius: -1
       useColor: 0
-      color: {r: 1, g: 1, b: 1, a: 1}
+      color: {r: 0.078431375, g: 0.078431375, b: 0.078431375, a: 1}
     seriesData:
     - id: 894e326fbbf14fe8b829161f9beeda40
       x: 0
-      value: 0
-      y: 0
+      value: 2
+      y: 2
       z: 0
       w: 0
       v: 0
@@ -609,8 +609,8 @@ MonoBehaviour:
       color: {r: 0.22995521, g: 0.30340245, b: 0.9496855, a: 1}
     - id: b5dda34c85964897823ccb3bcda21233
       x: 2
-      value: 0
-      y: 0
+      value: 1
+      y: 1
       z: 0
       w: 0
       v: 0
@@ -619,8 +619,8 @@ MonoBehaviour:
       color: {r: 0.1333333, g: 0.5450981, b: 0.1333333, a: 1}
     - id: e0b7ffd6aff54221bbefc0af29d0ab9f
       x: 3
-      value: 0
-      y: 0
+      value: 1
+      y: 1
       z: 0
       w: 0
       v: 0
@@ -639,7 +639,7 @@ MonoBehaviour:
           show: 1
           size: 30
           textureFill:
-            texture: {fileID: 2800000, guid: 473304d7c3963844f96bc9fdfaf6cce4, type: 3}
+            texture: {fileID: 0}
             tiling: {x: 1, y: 1}
             offset: {x: 0, y: 0}
             color: {r: 0.9811321, g: 0.9765041, b: 0.9765041, a: 1}
@@ -738,7 +738,7 @@ MonoBehaviour:
           valueDisplayStyle: 2
           position: 1
           fontSize: 12
-          color: {r: 1, g: 1, b: 1, a: 1}
+          color: {r: 0, g: 0, b: 0, a: 1}
           backgroundColor: {r: 0, g: 0, b: 0, a: 0}
           itemSpacing: 10
           offset: {x: -27.5, y: -23.1}

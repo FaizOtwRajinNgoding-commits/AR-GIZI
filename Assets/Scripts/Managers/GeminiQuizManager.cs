@@ -363,21 +363,29 @@ public class GeminiQuizManager : MonoBehaviour
     // 2. HUBUNGKAN FUNGSI INI KE TOMBOL "YA" (Siswa fix mau keluar)
     public void KonfirmasiKeluarGameplayYA()
     {
-        // Tutup popup-nya terlebih dahulu
+        // 1. Tutup popup konfirmasinya terlebih dahulu biar gak numpuk
         if (popupKeluarGameplay != null) popupKeluarGameplay.SetActive(false);
 
+        // 2. STOP COUNTDOWN TIMER (Sapu jagat agar timer latar belakang mati total!)
+        StopAllCoroutines();
+        Debug.Log("Semua coroutine dan timer gameplay berhasil dihentikan.");
+
+        // 3. MATIKAN CANVAS GAMEPLAY & AKTIFKAN KEMBALI CANVAS MENU UTAMA
+        // Kode ini ditaruh di luar IF agar mode SOLO maupun MULTIPLAYER sama-sama bisa balik ke menu!
+        if (canvasQuizGameplay != null) canvasQuizGameplay.SetActive(false);
+        if (canvasQuizMenu != null) canvasQuizMenu.SetActive(true); 
+
+        // 4. JALANKAN LOGIKA TAMBAHAN KHUSUS MULTIPLAYER (JIKA FIREBASE AKTIF)
         if (firebaseStudentManager != null)
         {
-            // Matikan Canvas Gameplay Siswa biar layarnya langsung hilang (Responsif)
-            if (canvasQuizGameplay != null) canvasQuizGameplay.SetActive(false);
-
             // Tembak data ke Firebase bahwa murid ini statusnya "canceled"
             firebaseStudentManager.SiswaKeluarTengahGameplay();
-            Debug.Log("Siswa mengonfirmasi keluar kuis tengah jalan.");
+            Debug.Log("Siswa mengonfirmasi keluar kuis MULTIPLAYER tengah jalan.");
         }
         else
         {
-            Debug.LogError("FirebaseStudentManager belum ter-assign di GeminiQuizManager, bro!");
+            // Jika masuk ke sini, artinya siswa sedang bermain kuis mode SOLO
+            Debug.Log("Siswa mengonfirmasi keluar kuis SOLO, kembali ke menu utama.");
         }
     }
 
