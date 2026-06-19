@@ -401,7 +401,7 @@ public class FirebaseRoomManager : MonoBehaviour
 
     private string GenerateRandomRoomCode(int length)
     {
-        const string chars = "ABCDEFGHJKLMNOPQRSTUVWXYZ0123456789";
+        const string chars = "ABCDEFGHJKLMNOPQRSTUVWXYZ123456789";
         System.Random random = new System.Random();
         char[] stringChars = new char[length];
         for (int i = 0; i < stringChars.Length; i++) {

@@ -402,6 +402,7 @@ public class GeminiQuizManager : MonoBehaviour
     void EndQuiz()
     {
         canvasQuizGameplay.SetActive(false);
+        canvasQuizMenu.SetActive(false);
         canvasQuizFeedback.SetActive(true);
         panelPopupFeedback.SetActive(false); 
         popupKeluarGameplay.SetActive(false);

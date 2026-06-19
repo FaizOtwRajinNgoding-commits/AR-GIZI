@@ -82,6 +82,7 @@ public class FirebaseStudentManager : MonoBehaviour
                 dbReference.Child("rooms").Child(savedCodeInput).Child("students").Child(savedNameInput).Child("status").SetValueAsync("joined");
 
                 panelJoinRoom.SetActive(false);
+                panelPopupKeluar.SetActive(false);
                 panelWaitingRoom.SetActive(true);
                 
                 textWaitingKodeSiswa.text = "KODE ROOM: " + savedCodeInput;
