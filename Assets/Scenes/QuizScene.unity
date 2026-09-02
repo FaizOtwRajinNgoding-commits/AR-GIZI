@@ -7776,7 +7776,7 @@ RectTransform:
   m_GameObject: {fileID: 1117582388}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.2374, y: 2.2374, z: 2.2374}
+  m_LocalScale: {x: 6.7122, y: 6.7122, z: 6.7122}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1316687622}
@@ -15319,17 +15319,17 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0.2
       value: 1.5
-      inSlope: 3.592712
-      outSlope: 3.592712
+      inSlope: 3.4354239
+      outSlope: 3.4354239
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 1
+      time: 0.6
       value: 1.248339
-      inSlope: -0.31457618
-      outSlope: -0.31457618
+      inSlope: -0.6291523
+      outSlope: -0.6291523
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
