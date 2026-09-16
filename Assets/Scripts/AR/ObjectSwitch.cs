@@ -10,6 +10,7 @@ public class ObjectSwitch : MonoBehaviour
     private FoodPopUp makananAnim;
     private FoodPopUp panel;
     private FoodPopUp characterAnim;
+    private Carousel1 carousel;
     private bool isPanelActive = false;
     private bool isCharacterActive = false;
 
@@ -18,8 +19,11 @@ public class ObjectSwitch : MonoBehaviour
         // Otomatis mengambil komponen FoodPopUp dari GameObject yang lu masukkan
         if (makananObject != null) makananAnim = makananObject.GetComponent<FoodPopUp>();
         if (characterObject != null) characterAnim = characterObject.GetComponent<FoodPopUp>();
-        if (panelInfo != null) panel = panelInfo.GetComponent<FoodPopUp>();
-
+        if (panelInfo != null) 
+        {
+            panel = panelInfo.GetComponent<FoodPopUp>();
+            carousel = panelInfo.GetComponentInChildren<Carousel1>();
+        }
         ResetStatus();
     }
 
@@ -28,8 +32,9 @@ public class ObjectSwitch : MonoBehaviour
         isPanelActive = false;
         isCharacterActive = false;
         if (panel != null) panel.Sembunyikan();
+        if (carousel != null) carousel.HideButton();
         if (makananAnim != null) makananAnim.Sembunyikan(); 
-        if (characterAnim != null) characterAnim.MainkanAnimasi(); 
+        if (characterAnim != null) characterAnim.MainkanAnimasi();
     }
 
     public void InfoPanel()
@@ -39,9 +44,11 @@ public class ObjectSwitch : MonoBehaviour
         if (isPanelActive)
         {
             if (panel != null) panel.MainkanAnimasi();
+            if (carousel != null) carousel.ResetCarousel();
         } else
         {
             if (panel != null) panel.Sembunyikan();
+            if (carousel != null) carousel.HideButton();
         }
     }
 
