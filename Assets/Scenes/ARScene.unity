@@ -3674,7 +3674,8 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 6b89419327dc0d54aba5cb82a617e270, type: 2}
+      objectReference: {fileID: 22100000, guid: 2fd00206ee7a0c34da1c274f9ae6f329,
+        type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -10342,17 +10343,17 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 5
-      outSlope: 5
+      inSlope: 3.5
+      outSlope: 3.5
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
       outWeight: 0.33333334
     - serializedVersion: 3
       time: 0.2
-      value: 1
-      inSlope: 1.881275
-      outSlope: 1.881275
+      value: 0.7
+      inSlope: 1.506275
+      outSlope: 1.506275
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -10360,8 +10361,8 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0.6
       value: 0.50502
-      inSlope: -1.2374499
-      outSlope: -1.2374499
+      inSlope: -0.48744988
+      outSlope: -0.48744988
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
