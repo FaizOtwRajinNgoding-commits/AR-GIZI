@@ -22,6 +22,11 @@ public class PiringGameManager : MonoBehaviour
 
     [Header("Piring & Prefab References")]
     [SerializeField] private Transform piringGridParent; 
+    // 4 Wadah Spesifik Baru untuk pembagian kuadran gizi
+    [SerializeField] private Transform wadahPiringPokok;
+    [SerializeField] private Transform wadahPiringSayur;
+    [SerializeField] private Transform wadahPiringLauk;
+    [SerializeField] private Transform wadahPiringBuah;
     [SerializeField] private GameObject prefabTombolMakanan; 
 
     [Header("Popup & Feedback UI")]
@@ -120,13 +125,42 @@ public class PiringGameManager : MonoBehaviour
 
     public void TambahBahanKePiring(FoodData data, GameObject itemKloning)
     {
-        itemKloning.transform.SetParent(piringGridParent);
+        if (data == null || itemKloning == null) return;
+
+        // 1. Tentukan target wadah secara dinamis berdasarkan tipe gizi makanan (data.jenisGizi[0])
+        Transform targetWadah = piringGridParent; // Fallback ke parent utama jika wadah spesifik di inspector kosong
+
+        if (data.jenisGizi != null && data.jenisGizi.Count > 0)
+        {
+            FoodData.TipeGizi tipe = data.jenisGizi[0];
+            
+            if (tipe == FoodData.TipeGizi.Karbohidrat && wadahPiringPokok != null)
+            {
+                targetWadah = wadahPiringPokok;
+            }
+            else if (tipe == FoodData.TipeGizi.Serat && wadahPiringSayur != null)
+            {
+                targetWadah = wadahPiringSayur;
+            }
+            else if (tipe == FoodData.TipeGizi.Protein && wadahPiringLauk != null)
+            {
+                targetWadah = wadahPiringLauk;
+            }
+            else if (tipe == FoodData.TipeGizi.Mineral && wadahPiringBuah != null)
+            {
+                targetWadah = wadahPiringBuah;
+            }
+        }
+
+        // 2. Pindahkan objek makanan kloningan ke wadah kuadran piring yang tepat
+        // Menggunakan 'false' agar ukuran UI Toolkit / UGUI Layout Group mengontrol skalanya dengan benar
+        itemKloning.transform.SetParent(targetWadah, false);
         
-        // 🛠️ RE-SCALE & RESET ROTASI: Paksa tegak lurus dan ikuti skala default Grid
+        // 🛠️ RE-SCALE & RESET ROTASI (Tetap Dipertahankan dari Script Asli Lu!)
         itemKloning.transform.localRotation = Quaternion.identity;
         itemKloning.transform.localScale = Vector3.one; 
 
-        // 🛠️ PERBAIKAN UTAMA: Paksa reset CanvasGroup agar opacity kembali terang (1f) dan BISA DIKLIK!
+        // 🛠️ PERBAIKAN UTAMA (Tetap Dipertahankan dari Script Asli Lu!): Paksa reset CanvasGroup agar opacity kembali terang (1f) dan BISA DIKLIK!
         CanvasGroup cg = itemKloning.GetComponent<CanvasGroup>();
         if (cg != null)
         {
@@ -134,16 +168,24 @@ public class PiringGameManager : MonoBehaviour
             cg.blocksRaycasts = true;
         }
 
+        // Matikan script drag-nya agar makanan tidak melayang-layang lagi saat sudah masuk piring
         DraggableItemPiring dragScript = itemKloning.GetComponent<DraggableItemPiring>();
         if (dragScript != null) dragScript.enabled = false;
 
+        // Atur ulang listener tombolnya agar bisa dihapus dari piring saat diklik
         Button btn = itemKloning.GetComponent<Button>();
         if (btn == null) btn = itemKloning.AddComponent<Button>();
         
-        btn.onClick.RemoveAllListeners();
+        btn.onClick.RemoveAllListeners(); // Bersihkan fungsi klik lama dari etalase
         btn.onClick.AddListener(() => HapusBahanDariPiring(data, itemKloning));
 
-        HitungGizi(data.jenisGizi[0], 1);
+        // 3. Jalankan kalkulasi penambahan gizi ke variabel internal (currentPokok, dll)
+        if (data.jenisGizi != null && data.jenisGizi.Count > 0)
+        {
+            HitungGizi(data.jenisGizi[0], 1);
+        }
+
+        // 4. Update visual grafik Pie Chart secara real-time
         UpdateVisualPieChart();
     }
 
@@ -277,12 +319,15 @@ public class PiringGameManager : MonoBehaviour
 
     public void KlikRefreshStudiKasus()
     {
-        if (daftarCeritaStudiKasus.Count == 0) return;
+        // 1. Bersihkan makanan lama HANYA dari dalam 4 wadah gizi (Jangan hancurkan wadahnya!)
+        if (wadahPiringPokok != null) foreach (Transform child in wadahPiringPokok) Destroy(child.gameObject);
+        if (wadahPiringSayur != null) foreach (Transform child in wadahPiringSayur) Destroy(child.gameObject);
+        if (wadahPiringLauk != null) foreach (Transform child in wadahPiringLauk) Destroy(child.gameObject);
+        if (wadahPiringBuah != null) foreach (Transform child in wadahPiringBuah) Destroy(child.gameObject);
 
-        foreach (Transform child in piringGridParent)
-        {
-            Destroy(child.gameObject);
-        }
+        // 📝 CATATAN MIN: Baris pembunuh yang kemarin menghapus 4 wadah lu sudah gw lenyapkan dari sini!
+
+        if (daftarCeritaStudiKasus.Count == 0) return;
 
         currentPokok = 0; currentSayur = 0; currentLauk = 0; currentBuah = 0;
 
@@ -295,6 +340,7 @@ public class PiringGameManager : MonoBehaviour
         int randomLauk = Random.Range(0, 2); 
         int randomBuah = Random.Range(0, 2); 
 
+        // 2. Spawn item bawaan langsung ke wadah porsinya masing-masing
         SpawnItemBawaan(FoodData.TipeGizi.Karbohidrat, randomPokok);
         SpawnItemBawaan(FoodData.TipeGizi.Serat, randomSayur);
         SpawnItemBawaan(FoodData.TipeGizi.Protein, randomLauk);
@@ -310,7 +356,15 @@ public class PiringGameManager : MonoBehaviour
             FoodData dataAcak = AmbilMakananAcakBerdasarkanGizi(tipe);
             if (dataAcak != null)
             {
-                GameObject itemBawaan = Instantiate(prefabTombolMakanan, piringGridParent);
+                // Tentukan wadah spesifik berdasarkan tipe gizi sejak awal lahir
+                Transform targetWadah = piringGridParent; // Fallback
+                if (tipe == FoodData.TipeGizi.Karbohidrat && wadahPiringPokok != null) targetWadah = wadahPiringPokok;
+                else if (tipe == FoodData.TipeGizi.Serat && wadahPiringSayur != null) targetWadah = wadahPiringSayur;
+                else if (tipe == FoodData.TipeGizi.Protein && wadahPiringLauk != null) targetWadah = wadahPiringLauk;
+                else if (tipe == FoodData.TipeGizi.Mineral && wadahPiringBuah != null) targetWadah = wadahPiringBuah;
+
+                // Spawn langsung menjadi anak dari wadah spesifik tersebut
+                GameObject itemBawaan = Instantiate(prefabTombolMakanan, targetWadah);
                 itemBawaan.GetComponent<FoodDisplay>().data = dataAcak;
                 itemBawaan.GetComponent<FoodDisplay>().InisialisasiGambar();
                 
@@ -318,7 +372,7 @@ public class PiringGameManager : MonoBehaviour
                 DraggableItemPiring dragScript = itemBawaan.GetComponent<DraggableItemPiring>();
                 if (dragScript != null) dragScript.enabled = false;
                 
-                // 🛠️ PERBAIKAN BUG DI SINI: Suntikkan fungsi klik agar makanan bawaan bisa dihapus!
+                // Suntikkan fungsi klik agar makanan bawaan bisa dihapus!
                 Button btn = itemBawaan.GetComponent<Button>();
                 if (btn == null) btn = itemBawaan.AddComponent<Button>();
                 

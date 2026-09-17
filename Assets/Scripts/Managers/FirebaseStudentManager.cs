@@ -41,6 +41,7 @@ public class FirebaseStudentManager : MonoBehaviour
                 dbInstance.SetPersistenceEnabled(false);
                 dbReference = dbInstance.RootReference;
                 textStatusSiswa.text = "Firebase Siswa Siap.";
+                Debug.Log("Firebase Realtime Database Berhasil Terhubung di Sisi Murid!");
             }
         });
     }

@@ -45,6 +45,10 @@ public class GeminiQuizManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI numberQuizText;
     [SerializeField] private TextMeshProUGUI questionText;
+
+    [Header("UI Solo Quiz Setup")]
+    [SerializeField] private GameObject panelPilihMode;
+    [SerializeField] private GameObject panelPilihJumlahSoal;
     
     [Header("UI Buttons")]
     [SerializeField] private Button[] optionButtons; 
@@ -81,7 +85,7 @@ public class GeminiQuizManager : MonoBehaviour
             firebaseStudentManager = FindAnyObjectByType<FirebaseStudentManager>();
             if (firebaseStudentManager != null)
             {
-                Debug.Log("[Auto-Assign] FirebaseStudentManager berhasil ditemukan otomatis oleh GeminiQuizManager bro!");
+                Debug.Log("[Auto-Assign] FirebaseStudentManager berhasil ditemukan otomatis oleh GeminiQuizManager!");
             }
         }
 
@@ -116,6 +120,36 @@ public class GeminiQuizManager : MonoBehaviour
         }
     }
 
+    public void BukaPanelPilihJumlahSoal()
+    {
+        if (panelPilihJumlahSoal != null)
+        {
+            panelPilihJumlahSoal.SetActive(true);
+            panelPilihMode.SetActive(false);
+        }
+    }
+
+    public void PilihJumlahSoalDanMulai(int jumlah)
+    {
+        totalQuestions = jumlah; // Mengubah variabel totalQuestions sesuai pilihan siswa
+
+        // Matikan menu & popup, aktifkan arena gameplay
+        if (panelPilihJumlahSoal != null) panelPilihJumlahSoal.SetActive(false);
+        if (canvasQuizMenu != null) canvasQuizMenu.SetActive(false);
+        if (canvasQuizGameplay != null) canvasQuizGameplay.SetActive(true);
+        if (panelGameplaySiswa != null) panelGameplaySiswa.SetActive(true);
+
+        StartSoloQuiz(); // Jalankan request Gemini dengan jumlah soal baru!
+    }
+
+    public void BatalPilihJumlahSoal()
+    {
+        if (panelPilihJumlahSoal != null)
+        {
+            panelPilihJumlahSoal.SetActive(false);
+            panelPilihMode.SetActive(true);
+        }
+    }
     public void StartSoloQuiz()
     {
         currentQuestionIndex = 0;
