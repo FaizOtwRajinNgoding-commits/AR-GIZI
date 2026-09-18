@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Firebase;
+using Firebase.Auth;
 using Firebase.Database;
 using Firebase.Extensions;
 
@@ -37,11 +38,24 @@ public class FirebaseStudentManager : MonoBehaviour
             DependencyStatus dependencyStatus = task.Result;
             if (dependencyStatus == DependencyStatus.Available)
             {
-                FirebaseDatabase dbInstance = FirebaseDatabase.GetInstance("https://zibo-ar-lidm-default-rtdb.asia-southeast1.firebasedatabase.app/");
-                dbInstance.SetPersistenceEnabled(false);
-                dbReference = dbInstance.RootReference;
-                textStatusSiswa.text = "Firebase Siswa Siap.";
-                Debug.Log("Firebase Realtime Database Berhasil Terhubung di Sisi Murid!");
+                // 2. JALANKAN LOGIN ANONIM SISWA
+                FirebaseAuth.DefaultInstance.SignInAnonymouslyAsync().ContinueWithOnMainThread(authTask => {
+                    if (authTask.IsCompletedSuccessfully)
+                    {
+                        dbReference = FirebaseDatabase.GetInstance("https://zibo-ar-lidm-default-rtdb.asia-southeast1.firebasedatabase.app/").RootReference;
+                        textStatusSiswa.text = "Firebase Siswa Siap (Authenticated).";
+                        Debug.Log("[Siswa] Login Anonim & Firebase RTDB Berhasil!");
+                    }
+                    else
+                    {
+                        textStatusSiswa.text = "Gagal Auth Firebase.";
+                        Debug.LogError("[Siswa] Gagal Login Anonim: " + authTask.Exception);
+                    }
+                });
+            }
+            else
+            {
+                textStatusSiswa.text = "Gagal inisialisasi Firebase.";
             }
         });
     }

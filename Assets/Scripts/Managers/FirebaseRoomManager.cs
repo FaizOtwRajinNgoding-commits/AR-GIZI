@@ -4,6 +4,7 @@ using System.Text;
 using UnityEngine;
 using TMPro;
 using Firebase;
+using Firebase.Auth;
 using Firebase.Database;
 using Firebase.Extensions; 
 using UnityEngine.Networking;
@@ -52,12 +53,26 @@ public class FirebaseRoomManager : MonoBehaviour
             DependencyStatus dependencyStatus = task.Result;
             if (dependencyStatus == DependencyStatus.Available)
             {
-                FirebaseDatabase dbInstance = FirebaseDatabase.GetInstance("https://zibo-ar-lidm-default-rtdb.asia-southeast1.firebasedatabase.app/");
-                dbInstance.SetPersistenceEnabled(false);
-                dbReference = dbInstance.RootReference;
-                Debug.Log("Firebase Realtime Database Berhasil Terhubung di Sisi Guru!");
+                // 2. JALANKAN LOGIN ANONIM TERLEBIH DAHULU
+                FirebaseAuth.DefaultInstance.SignInAnonymouslyAsync().ContinueWithOnMainThread(authTask => {
+                    if (authTask.IsCompletedSuccessfully)
+                    {
+                        FirebaseDatabase dbInstance = FirebaseDatabase.GetInstance("https://zibo-ar-lidm-default-rtdb.asia-southeast1.firebasedatabase.app/");
+                        dbReference = dbInstance.RootReference;
+                        Debug.Log("[Guru] Login Anonim & Firebase RTDB Berhasil!");
+                    }
+                    else
+                    {
+                        Debug.LogError("[Guru] Gagal Login Anonim: " + authTask.Exception);
+                    }
+                });
+            }
+            else
+            {
+                Debug.LogError("Gagal inisialisasi Firebase Guru: " + dependencyStatus);
             }
         });
+
         LoadLocalKey();
     }
 
@@ -73,6 +88,9 @@ public class FirebaseRoomManager : MonoBehaviour
         
         dbReference.Child("rooms").Child(roomId).Child("roomStatus").SetValueAsync("waiting");
         textStatusLoading.text = "Room siap! Menunggu siswa bergabung...";
+
+        // Function Hapus Room Code apabila HP Guru Mati
+        dbReference.Child("rooms").Child(roomId).OnDisconnect().RemoveValue();
 
         dbReference.Child("rooms").Child(roomId).Child("students").ValueChanged += HandleSiswaBergabung;
     }
@@ -106,23 +124,22 @@ public class FirebaseRoomManager : MonoBehaviour
 
     public void KonfirmasiKeluarYA()
     {
-        panelPopupKeluar.SetActive(false);
+        if (panelPopupKeluar != null) panelPopupKeluar.SetActive(false);
 
-        if (!string.IsNullOrEmpty(roomId))
+        if (!string.IsNullOrEmpty(roomId) && dbReference != null)
         {
-            // 1. Matikan fungsi telinga/listener biar ga memory leak
+            // 1. Putus listener listener Waiting Room
             dbReference.Child("rooms").Child(roomId).Child("students").ValueChanged -= HandleSiswaBergabung;
 
-            // 2. Beritahu Firebase kalau room dibatalkan (Biar HP Murid otomatis keluar juga nanti)
-            dbReference.Child("rooms").Child(roomId).Child("roomStatus").SetValueAsync("cancelled");
+            // 2. Jalankan pembersihan otomatis dengan status "cancelled"
+            StartCoroutine(RoutineHapusRoomPermanen(roomId, "cancelled"));
+            roomId = null;
         }
 
-        // 3. Kembalikan Panel UI Guru ke menu pilih mode utama
+        // 3. Reset UI ke menu utama
         panelWaitingRoom.SetActive(false);
-        if (quizFlowManager != null)
-        {
-            quizFlowManager.KembaliKePilihMode();
-        }
+        if (panelCreateRoom != null) panelCreateRoom.SetActive(true);
+        if (quizFlowManager != null) quizFlowManager.KembaliKePilihMode();
     }
 
     public void KonfirmasiKeluarTIDAK()
@@ -171,37 +188,43 @@ public class FirebaseRoomManager : MonoBehaviour
 
     public void KonfirmasiKeluarDashboard()
     {
-        // if (string.IsNullOrEmpty(roomId) || dbReference == null)
-        // {
-        //     // Jika belum bikin room tapi udah mau back, langsung balik ke menu utama
-        //     KembaliKeMenuUtamaResetUI();
-        //     return;
-        // }
+        if (panelKeluarDashboard != null) panelKeluarDashboard.SetActive(false);
 
-        textStatusLoading.text = "Menutup room dan membersihkan data...";
-        
-        // 1. Putus Hubungan Realtime Listener di Firebase agar tidak leak memory
-        dbReference.Child("rooms").Child(roomId).Child("students").ValueChanged -= HandleRealtimeDashboardGuru;
+        if (!string.IsNullOrEmpty(roomId) && dbReference != null)
+        {
+            // 1. Putus listener listener Dashboard Realtime
+            dbReference.Child("rooms").Child(roomId).Child("students").ValueChanged -= HandleRealtimeDashboardGuru;
 
-        // 2. Set status room di Firebase menjadi "finished" agar aplikasi siswa tahu room telah bubar
-        dbReference.Child("rooms").Child(roomId).Child("roomStatus").SetValueAsync("finished")
-            .ContinueWithOnMainThread(task => {
-                if (task.IsCompletedSuccessfully)
-                {
-                    Debug.Log($"Room {roomId} berhasil diset menjadi 'finished' di cloud.");
-                }
-                else
-                {
-                    Debug.LogError("Gagal memperbarui status room ke Firebase: " + task.Exception);
-                }
+            // 2. Jalankan pembersihan otomatis dengan status "finished"
+            StartCoroutine(RoutineHapusRoomPermanen(roomId, "finished"));
+            roomId = null;
+        }
 
-                panelKeluarDashboard.SetActive(false);
-                panelDashboardGuru.SetActive(false);
-                panelWaitingRoom.SetActive(false);
-                panelCreateRoom.SetActive(true);
-                roomId = null;
+        // 3. Reset UI Dashboard kembali ke menu pembuatan room
+        if (canvasQuizGameplay != null) canvasQuizGameplay.SetActive(false);
+        if (panelDashboardGuru != null) panelDashboardGuru.SetActive(false);
+        if (panelWaitingRoom != null) panelWaitingRoom.SetActive(false);
+        if (panelCreateRoom != null) panelCreateRoom.SetActive(true);
 
-            });
+        if (quizFlowManager != null) quizFlowManager.KembaliKePilihMode();
+    }
+
+    private IEnumerator RoutineHapusRoomPermanen(string targetRoomId, string finalStatus)
+    {
+        if (dbReference == null || string.IsNullOrEmpty(targetRoomId)) yield break;
+
+        // A. Batalkan listener OnDisconnect agar server tidak bingung
+        dbReference.Child("rooms").Child(targetRoomId).OnDisconnect().Cancel();
+
+        // B. Kirim sinyal status akhir ke Firebase ("cancelled" / "finished")
+        dbReference.Child("rooms").Child(targetRoomId).Child("roomStatus").SetValueAsync(finalStatus);
+
+        // C. Jeda 3 detik agar aplikasi di HP Siswa sempat membaca status tersebut dan tertendang keluar
+        yield return new WaitForSeconds(3f);
+
+        // D. Hapus node room sepenuhnya dari Firebase
+        dbReference.Child("rooms").Child(targetRoomId).RemoveValueAsync();
+        Debug.Log($"[Auto-Cleanup] Room {targetRoomId} dengan status '{finalStatus}' berhasil dihapus bersih dari Firebase!");
     }
 
     // --- GENERATE SOAL GEMINI ---
