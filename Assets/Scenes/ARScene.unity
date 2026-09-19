@@ -1172,6 +1172,7 @@ MonoBehaviour:
   makananObject: {fileID: 299975947}
   characterObject: {fileID: 1670428804}
   panelInfo: {fileID: 1758049340}
+  UI: {fileID: 0}
 --- !u!114 &242958803
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1989,6 +1990,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ARMenu
   BackMenu: MainMenu
   popupMenu: {fileID: 1240436246}
+  buttonSwitch: {fileID: 1809468368}
+  buttonInpo: {fileID: 211251798}
 --- !u!1 &524489441
 GameObject:
   m_ObjectHideFlags: 0
@@ -2514,6 +2517,7 @@ MonoBehaviour:
   makananObject: {fileID: 1647825748}
   characterObject: {fileID: 1708189980}
   panelInfo: {fileID: 792108629}
+  UI: {fileID: 0}
 --- !u!114 &604681058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2853,6 +2857,7 @@ MonoBehaviour:
   makananObject: {fileID: 1062623030}
   characterObject: {fileID: 839476307}
   panelInfo: {fileID: 941475547}
+  UI: {fileID: 0}
 --- !u!114 &647246929
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6161,6 +6166,7 @@ MonoBehaviour:
   makananObject: {fileID: 318093477}
   characterObject: {fileID: 2108507581}
   panelInfo: {fileID: 1098365646}
+  UI: {fileID: 0}
 --- !u!114 &1199453561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7300,6 +7306,7 @@ MonoBehaviour:
   makananObject: {fileID: 719150103}
   characterObject: {fileID: 763209212}
   panelInfo: {fileID: 1597952245}
+  UI: {fileID: 0}
 --- !u!114 &1575142797
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8232,6 +8239,7 @@ MonoBehaviour:
   makananObject: {fileID: 1510106643}
   characterObject: {fileID: 1770759627}
   panelInfo: {fileID: 524489441}
+  UI: {fileID: 0}
 --- !u!114 &1696531128
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8883,11 +8891,35 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 524436970}
+        m_TargetAssemblyTypeName: ARMenu, Assembly-CSharp
+        m_MethodName: ShowButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnTargetLost:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1739588018}
         m_TargetAssemblyTypeName: Carousel1, Assembly-CSharp
+        m_MethodName: HideButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 524436970}
+        m_TargetAssemblyTypeName: ARMenu, Assembly-CSharp
         m_MethodName: HideButton
         m_Mode: 1
         m_Arguments:
@@ -8958,6 +8990,7 @@ MonoBehaviour:
   makananObject: {fileID: 11995676}
   characterObject: {fileID: 794627550}
   panelInfo: {fileID: 561399223}
+  UI: {fileID: 0}
 --- !u!114 &1728992482
 MonoBehaviour:
   m_ObjectHideFlags: 0
