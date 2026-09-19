@@ -143,27 +143,39 @@ public class FirebaseStudentManager : MonoBehaviour
     {
         if (args.DatabaseError != null) return;
 
-        if (args.Snapshot.Exists)
+        if (args.Snapshot.Exists && args.Snapshot.Value != null)
         {
             string statusTerbaru = args.Snapshot.Value.ToString();
 
-            // KONDISI A: Guru Memulai Game
             if (statusTerbaru == "started")
             {
                 textStatusLoadingSiswa.text = "Guru mulai memproses soal Gemini...";
                 LepasSemuaListener();
 
                 dbReference.Child("rooms").Child(savedCodeInput).Child("questions").GetValueAsync().ContinueWithOnMainThread(task => {
-                    if (task.IsCompleted && task.Result.Exists)
+                    // FIX FATAL C# TASK BUG: Cek !IsFaulted dan !IsCanceled agar aman dari AggregateException
+                    if (!task.IsFaulted && !task.IsCanceled && task.Result != null && task.Result.Exists)
                     {
                         string rawJsonQuestions = task.Result.Value.ToString();
                         panelWaitingRoom.SetActive(false);
-                        geminiQuizManager.StartMultiplayerQuiz(rawJsonQuestions);
+                        
+                        if (geminiQuizManager != null)
+                        {
+                            geminiQuizManager.StartMultiplayerQuiz(rawJsonQuestions);
+                        }
+                        else
+                        {
+                            Debug.LogError("[Siswa] GeminiQuizManager NULL di Inspector!");
+                        }
+                    }
+                    else
+                    {
+                        textStatusLoadingSiswa.text = "Gagal mengambil soal dari server. Periksa koneksi!";
+                        Debug.LogError("[Siswa] Task Fetch Soal Error: " + task.Exception);
                     }
                 });
             }
-            // KONDISI B: Guru Keluar / Membatalkan Room (Auto-Kick Murid)
-            else if (statusTerbaru == "cancelled")
+            else if (statusTerbaru == "cancelled" || statusTerbaru == "finished")
             {
                 LepasSemuaListener();
                 panelWaitingRoom.SetActive(false);
