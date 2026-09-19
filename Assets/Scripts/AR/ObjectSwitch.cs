@@ -6,11 +6,13 @@ public class ObjectSwitch : MonoBehaviour
     public GameObject makananObject;
     public GameObject characterObject;
     public GameObject panelInfo;
+    public GameObject UI;
 
     private FoodPopUp makananAnim;
     private FoodPopUp panel;
     private FoodPopUp characterAnim;
     private Carousel1 carousel;
+    private ARMenu manageAR;
     private bool isPanelActive = false;
     private bool isCharacterActive = false;
 
@@ -19,11 +21,13 @@ public class ObjectSwitch : MonoBehaviour
         // Otomatis mengambil komponen FoodPopUp dari GameObject yang lu masukkan
         if (makananObject != null) makananAnim = makananObject.GetComponent<FoodPopUp>();
         if (characterObject != null) characterAnim = characterObject.GetComponent<FoodPopUp>();
+        if (UI != null) manageAR = UI.GetComponent<ARMenu>(); 
         if (panelInfo != null) 
         {
             panel = panelInfo.GetComponent<FoodPopUp>();
             carousel = panelInfo.GetComponentInChildren<Carousel1>();
         }
+        
         ResetStatus();
     }
 
@@ -31,6 +35,7 @@ public class ObjectSwitch : MonoBehaviour
     {
         isPanelActive = false;
         isCharacterActive = false;
+        if (manageAR != null) manageAR.HideButton();
         if (panel != null) panel.Sembunyikan();
         if (carousel != null) carousel.HideButton();
         if (makananAnim != null) makananAnim.Sembunyikan(); 
@@ -39,17 +44,19 @@ public class ObjectSwitch : MonoBehaviour
 
     public void InfoPanel()
     {
-        isPanelActive = !isPanelActive;
+        bool isMarkerActive = (characterObject != null && characterObject.activeInHierarchy) || (makananObject != null && makananObject.activeInHierarchy);
+        if (!isMarkerActive) return;
 
+        isPanelActive = !isPanelActive;
         if (isPanelActive)
-        {
-            if (panel != null) panel.MainkanAnimasi();
-            if (carousel != null) carousel.ResetCarousel();
-        } else
-        {
-            if (panel != null) panel.Sembunyikan();
-            if (carousel != null) carousel.HideButton();
-        }
+            {
+                if (panel != null) panel.MainkanAnimasi();
+                if (carousel != null) carousel.ResetCarousel();
+            } else
+            {
+                if (panel != null) panel.Sembunyikan();
+                if (carousel != null) carousel.HideButton();
+            }
     }
 
     public void SwitchObject()
