@@ -1,0 +1,184 @@
+{
+  "questions": [
+    {
+      "questionText": "Budi merasa lemas saat berolahraga di sekolah. Makanan apa yang sebaiknya dikonsumsi Budi sebagai sumber energi utama?",
+      "optionA": "Nasi putih dan roti",
+      "optionB": "Air putih saja",
+      "optionC": "Garam dapur",
+      "optionD": "Permen manis",
+      "correctAnswer": "A",
+      "explanation": "Nasi dan roti mengandung karbohidrat yang berfungsi sebagai sumber energi utama bagi tubuh."
+    },
+    {
+      "questionText": "Siti ingin memiliki tulang dan gigi yang kuat. Zat gizi serta minuman apa yang sangat membantu pertumbuhan tulangnya?",
+      "optionA": "Kalsium dari Susu",
+      "optionB": "Lemak dari Minyak",
+      "optionC": "Vitamin C dari Jeruk",
+      "optionD": "Zat Besi dari Bayam",
+      "correctAnswer": "A",
+      "explanation": "Kalsium yang terkandung dalam susu sangat penting untuk pembentukan dan kekuatan tulang serta gigi."
+    },
+    {
+      "questionText": "Doni sering mengalami sariawan dan gusi berdarah. Buah apa yang baik dikonsumsi Doni untuk mengatasi masalah tersebut?",
+      "optionA": "Jeruk yang kaya Vitamin C",
+      "optionB": "Daging sapi",
+      "optionC": "Nasi goreng",
+      "optionD": "Tahu goreng",
+      "correctAnswer": "A",
+      "explanation": "Vitamin C pada buah jeruk menjaga kesehatan gusi dan membantu menyembuhkan sariawan."
+    },
+    {
+      "questionText": "Mengapa kita harus mengonsumsi makanan yang bervariasi setiap hari?",
+      "optionA": "Agar tidak ada satu pun zat gizi yang kekurangan dalam tubuh",
+      "optionB": "Agar perut terasa sangat penuh",
+      "optionC": "Karena harga makanan berbeda-beda",
+      "optionD": "Supaya tidak perlu minum air",
+      "correctAnswer": "A",
+      "explanation": "Tidak ada satu jenis makanan yang mengandung seluruh zat gizi lengkap, sehingga kita perlu makan beragam makanan."
+    },
+    {
+      "questionText": "Ibu memasak ikan dan telur untuk lauk makan siang. Protein di dalam ikan dan telur berguna untuk...",
+      "optionA": "Pertumbuhan dan memperbaiki sel tubuh yang rusak",
+      "optionB": "Mencerna makanan di usus",
+      "optionC": "Memberikan rasa manis pada darah",
+      "optionD": "Membuat napas menjadi lebih panjang",
+      "correctAnswer": "A",
+      "explanation": "Protein berfungsi sebagai zat pembangun untuk pertumbuhan dan perbaikan jaringan tubuh."
+    },
+    {
+      "questionText": "Manakah di antara pilihan berikut yang merupakan contoh zat gizi mikro yang dibutuhkan tubuh dalam jumlah sedikit namun penting?",
+      "optionA": "Vitamin dan Mineral",
+      "optionB": "Karbohidrat dan Air",
+      "optionC": "Protein dan Lemak",
+      "optionD": "Glukosa dan Sereal",
+      "correctAnswer": "A",
+      "explanation": "Vitamin dan mineral disebut zat gizi mikro karena dibutuhkan tubuh dalam jumlah kecil tetapi vital."
+    },
+    {
+      "questionText": "Edo jarang makan sayuran hijau seperti bayam dan kangkung. Edo berisiko kekurangan zat besi yang menyebabkan...",
+      "optionA": "Tubuh cepat lelah dan kurang darah (Anemia)",
+      "optionB": "Gigi patah",
+      "optionC": "Mata kabur saat terang",
+      "optionD": "Kulit menjadi gatal",
+      "correctAnswer": "A",
+      "explanation": "Zat besi berfungsi membentu sel darah merah. Kekurangannya menyebabkan anemia dan tubuh cepat lelah."
+    },
+    {
+      "questionText": "Apa fungsi utama dari air minum bagi tubuh anak-anak saat beraktivitas seharian?",
+      "optionA": "Mencukupi cairan tubuh dan mencegah dehidrasi",
+      "optionB": "Menggantikan fungsi nasi",
+      "optionC": "Membuat otot menjadi besar secara instant",
+      "optionD": "Menambah rasa manis di lidah",
+      "correctAnswer": "A",
+      "explanation": "Air membantu menjaga keseimbangan cairan tubuh dan mencegah dehidrasi."
+    },
+    {
+      "questionText": "Buah wortel dikenal sangat baik untuk kesehatan mata karena banyak mengandung...",
+      "optionA": "Vitamin A",
+      "optionB": "Vitamin D",
+      "optionC": "Vitamin K",
+      "optionD": "Kalsium",
+      "correctAnswer": "A",
+      "explanation": "Vitamin A penting untuk menjaga fungsi penglihatan mata."
+    },
+    {
+      "questionText": "Makanan apa yang tergolong sebagai sumber protein nabati?",
+      "optionA": "Tempe dan Tahu",
+      "optionB": "Daging Ayam",
+      "optionC": "Ikan Tongkol",
+      "optionD": "Telur Puyuh",
+      "correctAnswer": "A",
+      "explanation": "Tempe dan tahu dibuat dari kedelai, sehingga tergolong sumber protein nabati (tumbuhan)."
+    },
+    {
+      "questionText": "Apa dampak negatif jika kita terlalu sering mengonsumsi makanan cepat saji (junk food) dan minuman bersoda?",
+      "optionA": "Risiko kegemukan (obesitas) dan kekurangan zat gizi penting",
+      "optionB": "Tubuh menjadi makin tinggi dengan cepat",
+      "optionC": "Daya ingat menjadi sangat tajam",
+      "optionD": "Tulang menjadi semakin kuat",
+      "correctAnswer": "A",
+      "explanation": "Junk food tinggi kalori dan gula tetapi rendah zat gizi, sehingga memicu obesitas."
+    },
+    {
+      "questionText": "Sinar matahari pagi membantu tubuh kita untuk memproduksi secara alami...",
+      "optionA": "Vitamin D",
+      "optionB": "Vitamin B12",
+      "optionC": "Protein",
+      "optionD": "Karbohidrat",
+      "correctAnswer": "A",
+      "explanation": "Paparan sinar matahari pagi membantu mengubah provitamin D di kulit menjadi Vitamin D aktif."
+    },
+    {
+      "questionText": "Sebelum makan, kebiasaan baik apa yang wajib dilakukan untuk mencegah kuman masuk ke dalam saluran pencernaan?",
+      "optionA": "Mencuci tangan dengan sabun dan air mengalir",
+      "optionB": "Berlari-lari kecil",
+      "optionC": "Menggosok gigi dengan garam",
+      "optionD": "Minum es teh manis",
+      "correctAnswer": "A",
+      "explanation": "Mencuci tangan memakai sabun menghilangkan kuman dan bakteri berbahaya sebelum memegang makanan."
+    },
+    {
+      "questionText": "Serat yang terdapat pada buah dan sayuran bermanfaat untuk...",
+      "optionA": "Melancarkan proses buang air besar (pencernaan)",
+      "optionB": "Menguatkan rambut",
+      "optionC": "Meningkatkan tinggi badan",
+      "optionD": "Membuat warna kulit lebih cerah",
+      "correctAnswer": "A",
+      "explanation": "Serat membantu melancarkan kerja usus dan mencegah sembelit/susah buang air besar."
+    },
+    {
+      "questionText": "Manakah kelompok makanan di bawah ini yang semuanya merupakan sumber karbohidrat?",
+      "optionA": "Singkong, Kentang, Nasi, dan Jagung",
+      "optionB": "Bayam, Daging, Susu, dan Telur",
+      "optionC": "Minyak, Mentega, Keju, dan Ikan",
+      "optionD": "Apel, Jeruk, Mangga, dan Pisang",
+      "correctAnswer": "A",
+      "explanation": "Singkong, kentang, nasi, dan jagung adalah bahan pangan kaya karbohidrat penyuplai energi."
+    },
+    {
+      "questionText": "Zat pembungkus dan pelindung organ dalam tubuh serta cadangan energi jangka panjang adalah fungsi dari...",
+      "optionA": "Lemak baik",
+      "optionB": "Vitamin C",
+      "optionC": "Zat Besi",
+      "optionD": "Kalsium",
+      "correctAnswer": "A",
+      "explanation": "Lemak berfungsi sebagai pelindung organ tubuh, isolator suhu, dan cadangan energi."
+    },
+    {
+      "questionText": "Rani merasa penglihatannya agak kabur saat malam hari atau di tempat redup. Rani disarankan mengonsumsi...",
+      "optionA": "Wortel dan Hati Ayam",
+      "optionB": "Garam dapur",
+      "optionC": "Air kelapa",
+      "optionD": "Kerupuk",
+      "correctAnswer": "A",
+      "explanation": "Wortel dan hati ayam kaya Vitamin A untuk mencegah rabun ayam/rabun dekat malam hari."
+    },
+    {
+      "questionText": "Garam beryodium digunakan dalam masakan untuk mencegah penyakit...",
+      "optionA": "Gondok",
+      "optionB": "Sariawan",
+      "optionC": "Batuk",
+      "optionD": "Maag",
+      "correctAnswer": "A",
+      "explanation": "Yodium adalah mineral penting untuk mencegah pembengkakan kelenjar tiroid (gondok)."
+    },
+    {
+      "questionText": "Gizi Seimbang digambarkan dengan slogan 'Isi Piringku'. Porsi terbanyak dalam satu piring terdiri dari...",
+      "optionA": "Makanan Pokok dan Sayuran",
+      "optionB": "Lauk Pauk dan Buah Manis",
+      "optionC": "Kue dan Es Krim",
+      "optionD": "Minyak dan Saus",
+      "correctAnswer": "A",
+      "explanation": "Panduan Isi Piringku menyeimbangkan 2/3 piring untuk makanan pokok & sayuran, serta 1/3 untuk lauk & buah."
+    },
+    {
+      "questionText": "Kekurangan protein pada anak-anak dalam jangka waktu lama dapat menyebabkan kondisi gangguan pertumbuhan yang disebut...",
+      "optionA": "Stunting",
+      "optionB": "Influenza",
+      "optionC": "Alergi",
+      "optionD": "Hiperaktif",
+      "correctAnswer": "A",
+      "explanation": "Stunting adalah kondisi gagal tumbuh pada anak akibat kekurangan gizi kronis, terutama protein."
+    }
+  ]
+}

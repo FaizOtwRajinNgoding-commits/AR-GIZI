@@ -9,7 +9,7 @@ using TMPro;
 using UnityEngine.Networking;
 
 // ==========================================
-// 1. STRUKTUR CLASS UNTUK REQUEST & RESPONSE API
+// 1. STRUKTUR CLASS REQUEST & RESPONSE API
 // ==========================================
 [Serializable]
 public class GeminiPart { public string text; }
@@ -47,8 +47,9 @@ public class GeminiQuizManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI questionText;
 
     [Header("UI Solo Quiz Setup")]
-    [SerializeField] private GameObject panelPilihMode;
-    [SerializeField] private GameObject panelPilihJumlahSoal;
+    [SerializeField] private GameObject panelAwal;
+    [SerializeField] private GameObject panelPilihMode;         // Panel Pemilihan Mode (Online / Offline)
+    [SerializeField] private GameObject panelPilihJumlahSoal;   // Panel Pemilihan Jumlah Soal (5, 10, 15)
     
     [Header("UI Buttons")]
     [SerializeField] private Button[] optionButtons; 
@@ -64,11 +65,13 @@ public class GeminiQuizManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI endFeedbackText;
 
     [Header("Multiplayer Room Setup")]
-    [SerializeField] private GameObject panelGameplaySiswa;  // Drag Panel_GameplaySiswa ke sini
+    [SerializeField] private GameObject panelGameplaySiswa;  
     [SerializeField] private GameObject popupKeluarGameplay;
-    [SerializeField] private GameObject panelDashboardGuru;   // Drag Panel_dashboardGuru ke sini
-    [SerializeField] private FirebaseStudentManager firebaseStudentManager; // Drag object script murid ke sini
+    [SerializeField] private GameObject panelDashboardGuru;   
+    [SerializeField] private FirebaseStudentManager firebaseStudentManager;
 
+    // --- STATE KONTROL ONLINE / OFFLINE ---
+    private bool isOfflineMode = false;
     private List<Question> quizDataList = new List<Question>();
     private int currentQuestionIndex = 0;
     private int totalQuestions = 5;
@@ -79,90 +82,180 @@ public class GeminiQuizManager : MonoBehaviour
 
     void Awake()
     {
-        // 1. AUTO-ASSIGN: Cari FirebaseStudentManager secara otomatis di dalam scene
         if (firebaseStudentManager == null)
         {
             firebaseStudentManager = FindAnyObjectByType<FirebaseStudentManager>();
             if (firebaseStudentManager != null)
             {
-                Debug.Log("[Auto-Assign] FirebaseStudentManager berhasil ditemukan otomatis oleh GeminiQuizManager!");
+                Debug.Log("[Auto-Assign] FirebaseStudentManager berhasil ditemukan otomatis!");
             }
         }
 
-        // 2. AUTO-ASSIGN PANEL: Jika slot panel kosong, coba cari berdasarkan nama objek di hierarchy
         if (panelGameplaySiswa == null)
         {
-            GameObject goSiswa = GameObject.Find("Panel_gameplaySiswa"); // Sesuaikan dengan nama persis di hierarchy lu
+            GameObject goSiswa = GameObject.Find("Panel_gameplaySiswa");
             if (goSiswa != null) panelGameplaySiswa = goSiswa;
         }
 
         if (panelDashboardGuru == null)
         {
-            GameObject goGuru = GameObject.Find("Panel_dashboardGuru"); // Sesuaikan dengan nama persis di hierarchy lu
+            GameObject goGuru = GameObject.Find("Panel_dashboardGuru");
             if (goGuru != null) panelDashboardGuru = goGuru;
         }
+
         LoadApiKey();
     }
 
     void LoadApiKey()
     {
-        // Menggunakan Resources.Load, trik paling sakti dan aman lintas platform!
         TextAsset keyAsset = Resources.Load<TextAsset>("config");
 
         if (keyAsset != null)
         {
             apiKey = keyAsset.text.Trim();
-            Debug.Log($"[Resources] API Key sukses dimuat! Karakter depan: {apiKey.Substring(0, 5)}...");
+            Debug.Log($"[Resources] API Key sukses dimuat!");
         }
         else
         {
-            Debug.LogError("File config.txt tidak ditemukan di folder Assets/Resources/ bro!");
+            Debug.LogError("File config.txt tidak ditemukan di folder Assets/Resources/!");
         }
     }
 
-    public void BukaPanelPilihJumlahSoal()
+    // ==========================================
+    // ALUR PEMILIHAN MODE & JUMLAH SOAL
+    // ==========================================
+    // Memilih Latihan Soal
+    public void pilihLatihanSoal()
     {
-        if (panelPilihJumlahSoal != null)
-        {
-            panelPilihJumlahSoal.SetActive(true);
-            panelPilihMode.SetActive(false);
-        }
+        panelAwal.SetActive(false);
+        panelPilihMode.SetActive(true);
     }
 
+    public void batalLatihanSoal()
+    {
+        panelPilihMode.SetActive(false);
+        panelAwal.SetActive(true);
+    }
+
+    // Hubungkan ke Tombol "Solo Quiz (Online AI)"
+    public void PilihModeSoloOnline()
+    {
+        isOfflineMode = false;
+        if (panelPilihMode != null) panelPilihMode.SetActive(false);
+        if (panelPilihJumlahSoal != null) panelPilihJumlahSoal.SetActive(true);
+        Debug.Log("[Solo Mode] Online Mode Dipilih.");
+    }
+
+    // Hubungkan ke Tombol "Solo Quiz (Offline / Tanpa Internet)"
+    public void PilihModeSoloOffline()
+    {
+        isOfflineMode = true;
+        if (panelPilihMode != null) panelPilihMode.SetActive(false);
+        if (panelPilihJumlahSoal != null) panelPilihJumlahSoal.SetActive(true);
+        Debug.Log("[Solo Mode] Offline Mode Dipilih.");
+    }
+
+    // Hubungkan ke Tombol Batal di Panel Pilih Jumlah Soal
+    public void BatalPilihJumlahSoal()
+    {
+        if (panelPilihJumlahSoal != null) panelPilihJumlahSoal.SetActive(false);
+        if (panelPilihMode != null) panelPilihMode.SetActive(true);
+    }
+
+    // Hubungkan ke Tombol Angka (5, 10, 15) di Panel Pilih Jumlah Soal
     public void PilihJumlahSoalDanMulai(int jumlah)
     {
-        totalQuestions = jumlah; // Mengubah variabel totalQuestions sesuai pilihan siswa
+        totalQuestions = jumlah;
 
-        // Matikan menu & popup, aktifkan arena gameplay
         if (panelPilihJumlahSoal != null) panelPilihJumlahSoal.SetActive(false);
         if (canvasQuizMenu != null) canvasQuizMenu.SetActive(false);
         if (canvasQuizGameplay != null) canvasQuizGameplay.SetActive(true);
         if (panelGameplaySiswa != null) panelGameplaySiswa.SetActive(true);
 
-        StartSoloQuiz(); // Jalankan request Gemini dengan jumlah soal baru!
-    }
-
-    public void BatalPilihJumlahSoal()
-    {
-        if (panelPilihJumlahSoal != null)
+        if (isOfflineMode)
         {
-            panelPilihJumlahSoal.SetActive(false);
-            panelPilihMode.SetActive(true);
+            StartSoloQuizOffline();
+        }
+        else
+        {
+            StartSoloQuizOnline();
         }
     }
-    public void StartSoloQuiz()
+
+    // ==========================================
+    // LOGIKA SOAL OFFLINE (LOCAL JSON BANK)
+    // ==========================================
+    private void StartSoloQuizOffline()
     {
         currentQuestionIndex = 0;
         score = 0;
         quizDataList.Clear();
-        
-        questionText.text = "Sedang membuat soal kuis gizi dengan AI...";
-        ToggleButtonsInteractable(false);
 
-        StartCoroutine(Fetch15QuestionsFromGemini());
+        TextAsset jsonBank = Resources.Load<TextAsset>("offline_quiz_bank");
+
+        if (jsonBank != null)
+        {
+            try
+            {
+                QuizContainer container = JsonUtility.FromJson<QuizContainer>(jsonBank.text);
+
+                if (container != null && container.questions != null && container.questions.Count > 0)
+                {
+                    List<Question> masterList = new List<Question>(container.questions);
+
+                    // --- ALGORITMA FISHER-YATES SHUFFLE (PENGACAKAN SOAL) ---
+                    System.Random rng = new System.Random();
+                    int n = masterList.Count;
+                    while (n > 1)
+                    {
+                        n--;
+                        int k = rng.Next(n + 1);
+                        Question value = masterList[k];
+                        masterList[k] = masterList[n];
+                        masterList[n] = value;
+                    }
+
+                    // Ambil sejumlah totalQuestions dari hasil pengacakan
+                    int limit = Mathf.Min(totalQuestions, masterList.Count);
+                    quizDataList = masterList.GetRange(0, limit);
+
+                    Debug.Log($"[Offline Quiz] Sukses memuat dan mengacak {quizDataList.Count} soal dari bank lokal!");
+                    DisplayQuestion();
+                }
+                else
+                {
+                    questionText.text = "Format file JSON bank soal lokal tidak sesuai.";
+                }
+            }
+            catch (Exception e)
+            {
+                questionText.text = "Gagal memproses bank soal lokal.";
+                Debug.LogError("[Offline Quiz] Error parsing JSON: " + e.Message);
+            }
+        }
+        else
+        {
+            questionText.text = "File offline_quiz_bank.json tidak ditemukan di Assets/Resources/";
+            Debug.LogError("[Offline Quiz] File offline_quiz_bank.json hilang!");
+        }
     }
 
-    IEnumerator Fetch15QuestionsFromGemini()
+    // ==========================================
+    // LOGIKA SOAL ONLINE (GEMINI API)
+    // ==========================================
+    private void StartSoloQuizOnline()
+    {
+        currentQuestionIndex = 0;
+        score = 0;
+        quizDataList.Clear();
+
+        questionText.text = "Sedang meracik soal dari AI Gemini...";
+        ToggleButtonsInteractable(false);
+
+        StartCoroutine(FetchQuestionsFromGemini());
+    }
+
+    IEnumerator FetchQuestionsFromGemini()
     {
         string fullUrl = geminiUrl + apiKey;
 
@@ -171,7 +264,6 @@ public class GeminiQuizManager : MonoBehaviour
                         "{\"questions\": [{\"questionText\":\"...\", \"optionA\":\"...\", \"optionB\":\"...\", \"optionC\":\"...\", \"optionD\":\"...\", \"correctAnswer\":\"A/B/C/D\", \"explanation\":\"...\"}]}. " +
                         "Jangan berikan teks tambahan atau penjelasan di luar format JSON. Jangan pakai format markdown ```json.";
 
-        // FIX 400: Bungkus ke Class Request, biarkan Unity melakukan auto-escape tanda kutip
         GeminiRequest requestBody = new GeminiRequest();
         requestBody.contents = new List<GeminiContent>
         {
@@ -199,7 +291,7 @@ public class GeminiQuizManager : MonoBehaviour
             }
             else
             {
-                questionText.text = "Gagal terhubung ke AI. Cek koneksi internet lu bro.";
+                questionText.text = "Gagal terhubung ke AI. Silakan periksa jaringan internet atau gunakan Mode Offline.";
                 Debug.LogError("Error Gemini API: " + request.error + " | Response: " + request.downloadHandler.text);
             }
         }
@@ -209,22 +301,18 @@ public class GeminiQuizManager : MonoBehaviour
     {
         try
         {
-            // FIX PARSING: Bongkar json respon Google API dulu bro
             GeminiResponse response = JsonUtility.FromJson<GeminiResponse>(rawJson);
-            
+
             if (response != null && response.candidates != null && response.candidates.Count > 0)
             {
-                // Ambil string text kuis murni yang ada di dalam response Gemini
                 string cleanJson = response.candidates[0].content.parts[0].text;
-                
-                // Antisipasi kalau Gemini nakal tetep ngasih tag markdown ```json
+
                 if (cleanJson.StartsWith("```json")) cleanJson = cleanJson.Replace("```json", "");
                 if (cleanJson.EndsWith("```")) cleanJson = cleanJson.Substring(0, cleanJson.Length - 3);
                 cleanJson = cleanJson.Trim();
 
-                // Baru masukkan ke container kuis kita
                 QuizContainer container = JsonUtility.FromJson<QuizContainer>(cleanJson);
-                
+
                 if (container != null && container.questions != null && container.questions.Count > 0)
                 {
                     quizDataList = container.questions;
@@ -240,13 +328,16 @@ public class GeminiQuizManager : MonoBehaviour
                 questionText.text = "AI tidak memberikan respon. Coba klik mulai ulang.";
             }
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             questionText.text = "Gagal memproses soal AI. Coba klik mulai ulang.";
             Debug.LogError("Parsing Error: " + e.Message);
         }
     }
 
+    // ==========================================
+    // GAMEPLAY CONTROLLER (DUNIA APLIKASI)
+    // ==========================================
     void DisplayQuestion()
     {
         if (currentQuestionIndex >= quizDataList.Count)
@@ -338,98 +429,70 @@ public class GeminiQuizManager : MonoBehaviour
         }
     }
 
-// Fungsi baru untuk menerima limpahan soal dari Firebase (Multiplayer)
     public void StartMultiplayerQuiz(string cleanJsonDariFirebase)
     {
-    currentQuestionIndex = 0;
-    score = 0;
-    quizDataList.Clear();
-    
-    try
-    {
-        QuizContainer container = JsonUtility.FromJson<QuizContainer>(cleanJsonDariFirebase);
-        
-        if (container != null && container.questions != null && container.questions.Count > 0)
+        currentQuestionIndex = 0;
+        score = 0;
+        quizDataList.Clear();
+
+        try
         {
-            quizDataList = container.questions;
-            
-            // --- BAGIAN INI WAJIB ADA JANGAN SAMPAI KELIPAT ATAU TERHAPUS ---
-            if (canvasQuizGameplay != null) canvasQuizGameplay.SetActive(true);
-            
-            if (panelGameplaySiswa != null) 
+            QuizContainer container = JsonUtility.FromJson<QuizContainer>(cleanJsonDariFirebase);
+
+            if (container != null && container.questions != null && container.questions.Count > 0)
             {
-                panelGameplaySiswa.SetActive(true);  // Ini yang bikin murid otomatis masuk kuis!
-                Debug.Log("Panel Gameplay Siswa diaktifkan otomatis.");
-            }
-            else {
-                Debug.LogError("panelGameplaySiswa masih NULL di GeminiQuizManager!");
-            }
+                quizDataList = container.questions;
 
-            if (panelDashboardGuru != null) panelDashboardGuru.SetActive(false); 
-            
-            DisplayQuestion();
+                if (canvasQuizGameplay != null) canvasQuizGameplay.SetActive(true);
+
+                if (panelGameplaySiswa != null) 
+                {
+                    panelGameplaySiswa.SetActive(true);
+                }
+
+                if (panelDashboardGuru != null) panelDashboardGuru.SetActive(false); 
+
+                DisplayQuestion();
+            }
+            else
+            {
+                questionText.text = "Format kuis multiplayer kosong atau tidak cocok.";
+            }
         }
-        else
+        catch (Exception e)
         {
-            questionText.text = "Format kuis multiplayer kosong atau tidak cocok.";
+            Debug.LogError("Multiplayer Parsing Error: " + e.Message);
         }
     }
-    catch (System.Exception e)
-    {
-        Debug.LogError("Multiplayer Parsing Error: " + e.Message);
-    }
-}
 
-// 1. HUBUNGKAN FUNGSI INI KE ON CLICK TOMBOL BACK DI PANEL GAMEPLAY SISWA LU
     public void KlikTombolBackGameplay()
     {
         if (popupKeluarGameplay != null)
         {
-            popupKeluarGameplay.SetActive(true); // Cuma memunculkan popup konfirmasi, GAK langsung keluar!
-            Debug.Log("Popup konfirmasi keluar gameplay diaktifkan.");
-        }
-        else
-        {
-            Debug.LogError("popupKeluarGameplay masih NULL di Inspector, drag dulu bro!");
+            popupKeluarGameplay.SetActive(true);
         }
     }
 
-    // 2. HUBUNGKAN FUNGSI INI KE TOMBOL "YA" (Siswa fix mau keluar)
     public void KonfirmasiKeluarGameplayYA()
     {
-        // 1. Tutup popup konfirmasinya terlebih dahulu biar gak numpuk
         if (popupKeluarGameplay != null) popupKeluarGameplay.SetActive(false);
 
-        // 2. STOP COUNTDOWN TIMER (Sapu jagat agar timer latar belakang mati total!)
         StopAllCoroutines();
-        Debug.Log("Semua coroutine dan timer gameplay berhasil dihentikan.");
 
-        // 3. MATIKAN CANVAS GAMEPLAY & AKTIFKAN KEMBALI CANVAS MENU UTAMA
-        // Kode ini ditaruh di luar IF agar mode SOLO maupun MULTIPLAYER sama-sama bisa balik ke menu!
         if (canvasQuizGameplay != null) canvasQuizGameplay.SetActive(false);
         if (canvasQuizMenu != null) canvasQuizMenu.SetActive(true); 
 
-        // 4. JALANKAN LOGIKA TAMBAHAN KHUSUS MULTIPLAYER (JIKA FIREBASE AKTIF)
-        if (firebaseStudentManager != null)
+        if (firebaseStudentManager != null && !isOfflineMode)
         {
-            // Tembak data ke Firebase bahwa murid ini statusnya "canceled"
             firebaseStudentManager.SiswaKeluarTengahGameplay();
-            Debug.Log("Siswa mengonfirmasi keluar kuis MULTIPLAYER tengah jalan.");
-        }
-        else
-        {
-            // Jika masuk ke sini, artinya siswa sedang bermain kuis mode SOLO
-            Debug.Log("Siswa mengonfirmasi keluar kuis SOLO, kembali ke menu utama.");
         }
     }
 
-    // 3. HUBUNGKAN FUNGSI INI KE TOMBOL "TIDAK" (Siswa gak sengaja pencet / batal keluar)
     public void KonfirmasiKeluarGameplayTIDAK()
     {
         if (popupKeluarGameplay != null)
         {
-            popupKeluarGameplay.SetActive(false); // Sembunyikan lagi popup-nya, kuis otomatis lanjut!
-            Debug.Log("Siswa membatalkan keluar kuis, permainan dilanjutkan.");
+            popupKeluarGameplay.SetActive(false);
         }
     }
 
@@ -441,18 +504,13 @@ public class GeminiQuizManager : MonoBehaviour
         panelPopupFeedback.SetActive(false); 
         popupKeluarGameplay.SetActive(false);
         panelEndFeedback.SetActive(true);
-        
-        // Pengaturan teks skor bawaan lu (sesuaikan dengan kode asli lu bro)
+
         endFeedbackText.text = $"KUIS SELESAI!\n\nTotal Skor Kamu:\n<color=green>{score}</color>";
 
-        // --- TEMBAK NILAI & STATUS KE FIREBASE SAAT MASUK MENU INFO NILAI ---
-        if (firebaseStudentManager != null)
+        // Tembak skor ke Firebase hanya jika tidak dalam mode Offline
+        if (!isOfflineMode && firebaseStudentManager != null)
         {
             firebaseStudentManager.UpdateSkorAkhirSiswa(score);
-        }
-        else
-        {
-            Debug.LogWarning("FirebaseStudentManager belum di-drag ke Inspector GeminiQuizManager, skor gagal dikirim otomatis.");
         }
     }
 }
