@@ -30,7 +30,33 @@ public class GeminiCandidate { public GeminiResponseContent content; }
 public class GeminiResponseContent { public List<GeminiPart> parts; }
 
 // ==========================================
-// 2. SCRIPT UTAMA MANAGER
+// 2. STRUKTUR DATA FASE 2: KANTIN SEHAT
+// ==========================================
+[Serializable]
+public class FoodItem
+{
+    public string foodName;            // Contoh: "Susu UHT Plain", "Es Lilin Sirup"
+    public Sprite foodSprite;          // Gambar Makanan/Minuman
+    public bool isHealthy;             // true = Sehat (+10), false = Buruk/Junk Food (+0)
+    [TextArea(2, 4)]
+    public string eduText;             // Teks Edukasi / Penjelasan Zibo
+}
+
+public class GeneratedKantinQuestion
+{
+    public FoodItem[] options = new FoodItem[4]; // 4 Slot pilihan (A, B, C, D)
+    public int correctIndex;                     // Indeks slot gambar sehat (0, 1, 2, atau 3)
+}
+
+public enum QuizPhase
+{
+    TeoriText,
+    TransitionPopup,
+    KantinSehat
+}
+
+// ==========================================
+// 3. SCRIPT UTAMA MANAGER
 // ==========================================
 public class GeminiQuizManager : MonoBehaviour
 {
@@ -51,7 +77,7 @@ public class GeminiQuizManager : MonoBehaviour
     [SerializeField] private GameObject panelPilihMode;         // Panel Pemilihan Mode (Online / Offline)
     [SerializeField] private GameObject panelPilihJumlahSoal;   // Panel Pemilihan Jumlah Soal (5, 10, 15)
     
-    [Header("UI Buttons")]
+    [Header("UI Buttons Teori (Fase 1)")]
     [SerializeField] private Button[] optionButtons; 
     [SerializeField] private TextMeshProUGUI[] optionTexts; 
 
@@ -59,7 +85,7 @@ public class GeminiQuizManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI feedbackTitleText; 
     [SerializeField] private TextMeshProUGUI feedbackExplanationText;
 
-    [Header("UI Separate Panels (Fase 2)")]
+    [Header("UI Separate Panels (Feedback & Result)")]
     [SerializeField] private GameObject panelPopupFeedback; 
     [SerializeField] private GameObject panelEndFeedback;   
     [SerializeField] private TextMeshProUGUI endFeedbackText;
@@ -70,11 +96,33 @@ public class GeminiQuizManager : MonoBehaviour
     [SerializeField] private GameObject panelDashboardGuru;   
     [SerializeField] private FirebaseStudentManager firebaseStudentManager;
 
-    // --- STATE KONTROL ONLINE / OFFLINE ---
+    // ==========================================
+    // FASE 2: SIMULASI KANTIN SEHAT UI & DATABASE
+    // ==========================================
+    [Header("Fase 2: Sub-Panels Gameplay")]
+    [SerializeField] private GameObject panelGameplayTeori;       // Sub-panel Soal Teks
+    [SerializeField] private GameObject panelKantinSehat;         // Sub-panel Soal Bergambar Kantin
+    [SerializeField] private GameObject panelTransisiKantin;      // Child Popup Transisi Bonus Stage (Di dalam Panel Kantin)
+
+    [Header("Fase 2: UI Elements Kantin Sehat")]
+    [SerializeField] private TextMeshProUGUI kantinQuestionText;
+    [SerializeField] private Button[] kantinOptionButtons;        // 4 Button kantin
+    [SerializeField] private Image[] kantinOptionImages;          // 4 Component Image di button kantin
+    [SerializeField] private TextMeshProUGUI[] kantinOptionNameTexts; // 4 Text nama makanan di button kantin
+
+    [Header("Fase 2: Database Makanan Lokal")]
+    [SerializeField] private List<FoodItem> healthyFoodList = new List<FoodItem>();   // Min 5 item sehat
+    [SerializeField] private List<FoodItem> unhealthyFoodList = new List<FoodItem>(); // Min 15 item buruk
+
+    // --- STATE KONTROL & TRACKING ---
+    private QuizPhase currentPhase = QuizPhase.TeoriText;
     private bool isOfflineMode = false;
     private List<Question> quizDataList = new List<Question>();
-    private int currentQuestionIndex = 0;
-    private int totalQuestions = 5;
+    private List<GeneratedKantinQuestion> generatedKantinQuestions = new List<GeneratedKantinQuestion>();
+
+    private int currentQuestionIndex = 0; // Indeks Soal Teori
+    private int kantinCurrentIndex = 0;   // Indeks Soal Kantin (0 s/d 4)
+    private int totalQuestions = 5;       // Pilihan awal jumlah soal teori (5, 10, atau 15)
     private float timePerQuestion = 20f;
     private Coroutine timerCoroutine;
     private bool isAnswering = false;
@@ -124,20 +172,18 @@ public class GeminiQuizManager : MonoBehaviour
     // ==========================================
     // ALUR PEMILIHAN MODE & JUMLAH SOAL
     // ==========================================
-    // Memilih Latihan Soal
     public void pilihLatihanSoal()
     {
-        panelAwal.SetActive(false);
-        panelPilihMode.SetActive(true);
+        if (panelAwal != null) panelAwal.SetActive(false);
+        if (panelPilihMode != null) panelPilihMode.SetActive(true);
     }
 
     public void batalLatihanSoal()
     {
-        panelPilihMode.SetActive(false);
-        panelAwal.SetActive(true);
+        if (panelPilihMode != null) panelPilihMode.SetActive(false);
+        if (panelAwal != null) panelAwal.SetActive(true);
     }
 
-    // Hubungkan ke Tombol "Solo Quiz (Online AI)"
     public void PilihModeSoloOnline()
     {
         isOfflineMode = false;
@@ -146,7 +192,6 @@ public class GeminiQuizManager : MonoBehaviour
         Debug.Log("[Solo Mode] Online Mode Dipilih.");
     }
 
-    // Hubungkan ke Tombol "Solo Quiz (Offline / Tanpa Internet)"
     public void PilihModeSoloOffline()
     {
         isOfflineMode = true;
@@ -155,22 +200,26 @@ public class GeminiQuizManager : MonoBehaviour
         Debug.Log("[Solo Mode] Offline Mode Dipilih.");
     }
 
-    // Hubungkan ke Tombol Batal di Panel Pilih Jumlah Soal
     public void BatalPilihJumlahSoal()
     {
         if (panelPilihJumlahSoal != null) panelPilihJumlahSoal.SetActive(false);
         if (panelPilihMode != null) panelPilihMode.SetActive(true);
     }
 
-    // Hubungkan ke Tombol Angka (5, 10, 15) di Panel Pilih Jumlah Soal
     public void PilihJumlahSoalDanMulai(int jumlah)
     {
         totalQuestions = jumlah;
+        currentPhase = QuizPhase.TeoriText;
 
         if (panelPilihJumlahSoal != null) panelPilihJumlahSoal.SetActive(false);
         if (canvasQuizMenu != null) canvasQuizMenu.SetActive(false);
         if (canvasQuizGameplay != null) canvasQuizGameplay.SetActive(true);
         if (panelGameplaySiswa != null) panelGameplaySiswa.SetActive(true);
+
+        // Reset Tampilan Sub-Panel Gameplay
+        if (panelGameplayTeori != null) panelGameplayTeori.SetActive(true);
+        if (panelKantinSehat != null) panelKantinSehat.SetActive(false);
+        if (panelTransisiKantin != null) panelTransisiKantin.SetActive(false);
 
         if (isOfflineMode)
         {
@@ -183,7 +232,7 @@ public class GeminiQuizManager : MonoBehaviour
     }
 
     // ==========================================
-    // LOGIKA SOAL OFFLINE (LOCAL JSON BANK)
+    // LOGIKA SOAL TEORI OFFLINE & ONLINE
     // ==========================================
     private void StartSoloQuizOffline()
     {
@@ -201,25 +250,11 @@ public class GeminiQuizManager : MonoBehaviour
 
                 if (container != null && container.questions != null && container.questions.Count > 0)
                 {
-                    List<Question> masterList = new List<Question>(container.questions);
-
-                    // --- ALGORITMA FISHER-YATES SHUFFLE (PENGACAKAN SOAL) ---
-                    System.Random rng = new System.Random();
-                    int n = masterList.Count;
-                    while (n > 1)
-                    {
-                        n--;
-                        int k = rng.Next(n + 1);
-                        Question value = masterList[k];
-                        masterList[k] = masterList[n];
-                        masterList[n] = value;
-                    }
-
-                    // Ambil sejumlah totalQuestions dari hasil pengacakan
+                    List<Question> masterList = ShuffleList(container.questions);
                     int limit = Mathf.Min(totalQuestions, masterList.Count);
                     quizDataList = masterList.GetRange(0, limit);
 
-                    Debug.Log($"[Offline Quiz] Sukses memuat dan mengacak {quizDataList.Count} soal dari bank lokal!");
+                    Debug.Log($"[Offline Quiz] Sukses memuat {quizDataList.Count} soal teori!");
                     DisplayQuestion();
                 }
                 else
@@ -240,9 +275,6 @@ public class GeminiQuizManager : MonoBehaviour
         }
     }
 
-    // ==========================================
-    // LOGIKA SOAL ONLINE (GEMINI API)
-    // ==========================================
     private void StartSoloQuizOnline()
     {
         currentQuestionIndex = 0;
@@ -336,51 +368,171 @@ public class GeminiQuizManager : MonoBehaviour
     }
 
     // ==========================================
-    // GAMEPLAY CONTROLLER (DUNIA APLIKASI)
+    // GAMEPLAY CONTROLLER (FASE 1 & FASE 2)
     // ==========================================
     void DisplayQuestion()
     {
-        if (currentQuestionIndex >= quizDataList.Count)
+        // Pengecekan Transisi: Jika Fase Teori Selesai -> Buka Popup Transisi Kantin
+        if (currentPhase == QuizPhase.TeoriText && currentQuestionIndex >= quizDataList.Count)
+        {
+            TampilkanPopupTransisiKantin();
+            return;
+        }
+
+        // Pengecekan Selesai: Jika 5 Soal Kantin Selesai -> Panggil EndQuiz()
+        if (currentPhase == QuizPhase.KantinSehat && kantinCurrentIndex >= 5)
         {
             EndQuiz();
             return;
         }
 
         isAnswering = true;
-        ToggleButtonsInteractable(true);
         canvasQuizFeedback.SetActive(false);
 
-        Question currentQuestion = quizDataList[currentQuestionIndex];
+        if (currentPhase == QuizPhase.TeoriText)
+        {
+            // --- TAMPILKAN UI SOAL TEORI AI ---
+            if (panelGameplayTeori != null) panelGameplayTeori.SetActive(true);
+            if (panelKantinSehat != null) panelKantinSehat.SetActive(false);
+            ToggleButtonsInteractable(true);
 
-        numberQuizText.text = (currentQuestionIndex + 1).ToString();
-        questionText.text = currentQuestion.questionText;
-        optionTexts[0].text = currentQuestion.optionA;
-        optionTexts[1].text = currentQuestion.optionB;
-        optionTexts[2].text = currentQuestion.optionC;
-        optionTexts[3].text = currentQuestion.optionD;
+            Question currentQuestion = quizDataList[currentQuestionIndex];
+
+            numberQuizText.text = $"Soal {currentQuestionIndex + 1}/{quizDataList.Count}";
+            questionText.text = currentQuestion.questionText;
+            optionTexts[0].text = currentQuestion.optionA;
+            optionTexts[1].text = currentQuestion.optionB;
+            optionTexts[2].text = currentQuestion.optionC;
+            optionTexts[3].text = currentQuestion.optionD;
+        }
+        else if (currentPhase == QuizPhase.KantinSehat)
+        {
+            // --- TAMPILKAN UI SOAL KANTIN SEHAT ---
+            if (panelGameplayTeori != null) panelGameplayTeori.SetActive(false);
+            if (panelKantinSehat != null) panelKantinSehat.SetActive(true);
+            if (panelTransisiKantin != null) panelTransisiKantin.SetActive(false); // Sembunyikan popup transisi
+            ToggleKantinButtonsInteractable(true);
+
+            GeneratedKantinQuestion kq = generatedKantinQuestions[kantinCurrentIndex];
+
+            numberQuizText.text = $"Tantangan Kantin: {kantinCurrentIndex + 1}/5";
+            if (kantinQuestionText != null) 
+                kantinQuestionText.text = "Pilih 1 makanan atau minuman yang paling SEHAT & BERGIZI!";
+
+            for (int i = 0; i < 4; i++)
+            {
+                FoodItem item = kq.options[i];
+                if (kantinOptionImages != null && i < kantinOptionImages.Length && kantinOptionImages[i] != null) 
+                    kantinOptionImages[i].sprite = item.foodSprite;
+                if (kantinOptionNameTexts != null && i < kantinOptionNameTexts.Length && kantinOptionNameTexts[i] != null) 
+                    kantinOptionNameTexts[i].text = item.foodName;
+            }
+        }
 
         if (timerCoroutine != null) StopCoroutine(timerCoroutine);
         timerCoroutine = StartCoroutine(StartTimerCountdown());
     }
 
-    IEnumerator StartTimerCountdown()
+    // ==========================================
+    // LOGIKA GENERATE & TRANSISI KANTIN SEHAT
+    // ==========================================
+    private void TampilkanPopupTransisiKantin()
     {
-        float timeLeft = timePerQuestion;
-        while (timeLeft > 0)
-        {
-            timerText.text = Mathf.CeilToInt(timeLeft).ToString();
-            yield return new WaitForSeconds(1f);
-            timeLeft -= 1f;
-        }
+        currentPhase = QuizPhase.TransitionPopup;
+        if (timerCoroutine != null) StopCoroutine(timerCoroutine);
 
-        timerText.text = "0";
-        HandleAnswerSelected(""); 
+        if (panelGameplayTeori != null) panelGameplayTeori.SetActive(false);
+        if (panelKantinSehat != null) panelKantinSehat.SetActive(true);
+        if (panelTransisiKantin != null) panelTransisiKantin.SetActive(true); // Tampilkan popup transisi di atas panel kantin
     }
 
+    // Hubungkan ke Tombol "Masuk Kantin Sehat" pada Popup Transisi
+    public void KlikMulaiTantanganKantin()
+    {
+        GenerateKantinQuestions(); // Racik 5 Soal Kantin Sehat secara acak (1 Sehat + 3 Buruk)
+        kantinCurrentIndex = 0;
+        currentPhase = QuizPhase.KantinSehat;
+
+        DisplayQuestion();
+    }
+
+    private void GenerateKantinQuestions()
+    {
+        generatedKantinQuestions.Clear();
+
+        List<FoodItem> shuffledHealthy = ShuffleList(healthyFoodList);
+
+        for (int i = 0; i < 5; i++) // Selalu 5 Soal Kantin Sehat
+        {
+            GeneratedKantinQuestion kq = new GeneratedKantinQuestion();
+            kq.options = new FoodItem[4];
+
+            // 1. Ambil 1 makanan sehat untuk soal ini
+            FoodItem healthyItem = (i < shuffledHealthy.Count) ? shuffledHealthy[i] : healthyFoodList[UnityEngine.Random.Range(0, healthyFoodList.Count)];
+
+            // 2. Ambil 3 makanan buruk secara acak tanpa duplikasi dalam 1 soal
+            List<FoodItem> shuffledUnhealthy = ShuffleList(unhealthyFoodList);
+            List<FoodItem> selectedUnhealthy = new List<FoodItem>();
+            for (int j = 0; j < 3 && j < shuffledUnhealthy.Count; j++)
+            {
+                selectedUnhealthy.Add(shuffledUnhealthy[j]);
+            }
+
+            // 3. Acak posisi slot kunci jawaban sehat (0 = A, 1 = B, 2 = C, 3 = D)
+            kq.correctIndex = UnityEngine.Random.Range(0, 4);
+            kq.options[kq.correctIndex] = healthyItem;
+
+            // 4. Isi 3 slot sisanya dengan makanan buruk
+            int unhealthyIdx = 0;
+            for (int slot = 0; slot < 4; slot++)
+            {
+                if (slot == kq.correctIndex) continue;
+                kq.options[slot] = selectedUnhealthy[unhealthyIdx];
+                unhealthyIdx++;
+            }
+
+            generatedKantinQuestions.Add(kq);
+        }
+    }
+
+    // ==========================================
+    // HANDLING JAWABAN & FEEDBACK
+    // ==========================================
     public void OnAnswerButtonClick(string selectedOption)
     {
-        if (!isAnswering) return;
+        if (!isAnswering || currentPhase != QuizPhase.TeoriText) return;
         HandleAnswerSelected(selectedOption);
+    }
+
+    // Hubungkan ke 4 Button Image Kantin Sehat (Passing int index 0, 1, 2, 3)
+    public void OnKantinAnswerButtonClick(int chosenIndex)
+    {
+        if (!isAnswering || currentPhase != QuizPhase.KantinSehat) return;
+
+        isAnswering = false;
+        if (timerCoroutine != null) StopCoroutine(timerCoroutine);
+        ToggleKantinButtonsInteractable(false);
+
+        GeneratedKantinQuestion kq = generatedKantinQuestions[kantinCurrentIndex];
+        FoodItem chosenFood = kq.options[chosenIndex];
+
+        canvasQuizFeedback.SetActive(true);
+        panelPopupFeedback.SetActive(true);
+        panelEndFeedback.SetActive(false);
+
+        if (chosenFood.isHealthy)
+        {
+            feedbackTitleText.text = "Mantap! Pilihan Sehat!";
+            feedbackTitleText.color = new Color32(46, 204, 113, 255);
+            score += 10;
+        }
+        else
+        {
+            feedbackTitleText.text = "Aduh, Kurang Sehat!";
+            feedbackTitleText.color = new Color32(231, 76, 60, 255);
+        }
+
+        feedbackExplanationText.text = $"<b>{chosenFood.foodName}</b>\n{chosenFood.eduText}";
     }
 
     void HandleAnswerSelected(string selectedOption)
@@ -417,8 +569,38 @@ public class GeminiQuizManager : MonoBehaviour
     public void NextQuestion()
     {
         canvasQuizFeedback.SetActive(false);
-        currentQuestionIndex++;
+
+        if (currentPhase == QuizPhase.TeoriText)
+        {
+            currentQuestionIndex++;
+        }
+        else if (currentPhase == QuizPhase.KantinSehat)
+        {
+            kantinCurrentIndex++;
+        }
+
         DisplayQuestion();
+    }
+
+    IEnumerator StartTimerCountdown()
+    {
+        float timeLeft = timePerQuestion;
+        while (timeLeft > 0)
+        {
+            timerText.text = Mathf.CeilToInt(timeLeft).ToString();
+            yield return new WaitForSeconds(1f);
+            timeLeft -= 1f;
+        }
+
+        timerText.text = "0";
+        if (currentPhase == QuizPhase.TeoriText)
+        {
+            HandleAnswerSelected("");
+        }
+        else if (currentPhase == QuizPhase.KantinSehat)
+        {
+            OnKantinAnswerButtonClick(0); // Default opsi 0 jika waktu habis
+        }
     }
 
     void ToggleButtonsInteractable(bool state)
@@ -429,10 +611,26 @@ public class GeminiQuizManager : MonoBehaviour
         }
     }
 
+    void ToggleKantinButtonsInteractable(bool state)
+    {
+        if (kantinOptionButtons != null)
+        {
+            foreach (Button btn in kantinOptionButtons)
+            {
+                if (btn != null) btn.interactable = state;
+            }
+        }
+    }
+
+    // ==========================================
+    // MULTIPLAYER & EXIT HANDLING
+    // ==========================================
     public void StartMultiplayerQuiz(string cleanJsonDariFirebase)
     {
         currentQuestionIndex = 0;
+        kantinCurrentIndex = 0;
         score = 0;
+        currentPhase = QuizPhase.TeoriText;
         quizDataList.Clear();
 
         try
@@ -451,6 +649,9 @@ public class GeminiQuizManager : MonoBehaviour
                 }
 
                 if (panelDashboardGuru != null) panelDashboardGuru.SetActive(false); 
+
+                if (panelGameplayTeori != null) panelGameplayTeori.SetActive(true);
+                if (panelKantinSehat != null) panelKantinSehat.SetActive(false);
 
                 DisplayQuestion();
             }
@@ -507,10 +708,29 @@ public class GeminiQuizManager : MonoBehaviour
 
         endFeedbackText.text = $"KUIS SELESAI!\n\nTotal Skor Kamu:\n<color=green>{score}</color>";
 
-        // Tembak skor ke Firebase hanya jika tidak dalam mode Offline
+        // Tembak Akumulasi Skor Total (Teori + Kantin) ke Firebase
         if (!isOfflineMode && firebaseStudentManager != null)
         {
             firebaseStudentManager.UpdateSkorAkhirSiswa(score);
         }
+    }
+
+    // ==========================================
+    // HELPER METHOD UNIVERSAL SHUFFLE
+    // ==========================================
+    private List<T> ShuffleList<T>(List<T> originalList)
+    {
+        List<T> list = new List<T>(originalList);
+        System.Random rng = new System.Random();
+        int n = list.Count;
+        while (n > 1)
+        {
+            n--;
+            int k = rng.Next(n + 1);
+            T value = list[k];
+            list[k] = list[n];
+            list[n] = value;
+        }
+        return list;
     }
 }
