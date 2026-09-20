@@ -2581,7 +2581,7 @@ GameObject:
   - component: {fileID: 1639109140}
   - component: {fileID: 1639109139}
   - component: {fileID: 1639109138}
-  - component: {fileID: 1639109142}
+  - component: {fileID: 1639109141}
   m_Layer: 0
   m_Name: SoundBGM
   m_TagString: Untagged
@@ -2602,7 +2602,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoundManager
   audioSource: {fileID: 1639109139}
-  SfxSource: {fileID: 1639109142}
+  SfxSource: {fileID: 1639109139}
   button: {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
 --- !u!82 &1639109139
 AudioSource:
@@ -2716,7 +2716,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!82 &1639109142
+--- !u!82 &1639109141
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2728,7 +2728,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
-  m_PlayOnAwake: 0
+  m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
