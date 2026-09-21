@@ -343,13 +343,14 @@ public class FirebaseRoomManager : MonoBehaviour
     public void KlikRilisKuisKeSiswa()
     {
         SimpanEditanFormSaatIni(); // Amankan editan soal terakhir
-
+    
         QuizContainer finalContainer = new QuizContainer();
         finalContainer.questions = reviewQuestionsList;
-
+    
         string finalCleanJson = JsonUtility.ToJson(finalContainer);
-
-        dbReference.Child("rooms").Child(roomId).Child("questions").SetValueAsync(finalCleanJson).ContinueWithOnMainThread(uploadTask => {
+    
+        // GANTI SetValueAsync MENJADI SetRawJsonValueAsync DI SINI
+        dbReference.Child("rooms").Child(roomId).Child("questions").SetRawJsonValueAsync(finalCleanJson).ContinueWithOnMainThread(uploadTask => {
             if (uploadTask.IsCompletedSuccessfully)
             {
                 dbReference.Child("rooms").Child(roomId).Child("students").ValueChanged -= HandleSiswaBergabung;
@@ -359,7 +360,7 @@ public class FirebaseRoomManager : MonoBehaviour
                 if (canvasQuizGameplay != null) canvasQuizGameplay.SetActive(true);
                 if (panelGameplaySiswa != null) panelGameplaySiswa.SetActive(false);
                 if (panelDashboardGuru != null) panelDashboardGuru.SetActive(true);
-
+    
                 dbReference.Child("rooms").Child(roomId).Child("students").ValueChanged += HandleRealtimeDashboardGuru;
                 
                 Debug.Log("[Guru] Soal terverifikasi berhasil dirilis ke siswa! Membuka Live Dashboard.");

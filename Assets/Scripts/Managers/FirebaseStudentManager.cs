@@ -139,24 +139,36 @@ public class FirebaseStudentManager : MonoBehaviour
     }
 
     // --- REALTIME PANTAU PERINTAH GURU (MULAI / BATAL) ---
+    
     private void HandleStatusRoomBerubah(object sender, ValueChangedEventArgs args)
     {
         if (args.DatabaseError != null) return;
-
+    
         if (args.Snapshot.Exists && args.Snapshot.Value != null)
         {
             string statusTerbaru = args.Snapshot.Value.ToString();
-
+    
             if (statusTerbaru == "started")
             {
                 textStatusLoadingSiswa.text = "Guru mulai memproses soal Gemini...";
-                LepasSemuaListener();
-
+    
+                // CATATAN: LepasSemuaListener() DIPINDAHKAN KE DALAM TASK ASYNC DI BAWAH!
+    
                 dbReference.Child("rooms").Child(savedCodeInput).Child("questions").GetValueAsync().ContinueWithOnMainThread(task => {
-                    // FIX FATAL C# TASK BUG: Cek !IsFaulted dan !IsCanceled agar aman dari AggregateException
                     if (!task.IsFaulted && !task.IsCanceled && task.Result != null && task.Result.Exists)
                     {
-                        string rawJsonQuestions = task.Result.Value.ToString();
+                        // Lepas listener HANYA SETELAH data soal fix berhasil di-fetch
+                        LepasSemuaListener();
+    
+                        // Ambil string JSON murni dari snapshot
+                        string rawJsonQuestions = task.Result.GetRawJsonValue();
+                        
+                        // Fallback jika data tersimpan sebagai string biasa
+                        if (string.IsNullOrEmpty(rawJsonQuestions) && task.Result.Value != null)
+                        {
+                            rawJsonQuestions = task.Result.Value.ToString();
+                        }
+    
                         panelWaitingRoom.SetActive(false);
                         
                         if (geminiQuizManager != null)
@@ -171,7 +183,7 @@ public class FirebaseStudentManager : MonoBehaviour
                     else
                     {
                         textStatusLoadingSiswa.text = "Gagal mengambil soal dari server. Periksa koneksi!";
-                        Debug.LogError("[Siswa] Task Fetch Soal Error: " + task.Exception);
+                        Debug.LogError("[Siswa] Task Fetch Soal Error: " + (task.Exception != null ? task.Exception.ToString() : "Task Faulted"));
                     }
                 });
             }

@@ -682,6 +682,7 @@ public class GeminiQuizManager : MonoBehaviour
 
         if (canvasQuizGameplay != null) canvasQuizGameplay.SetActive(false);
         if (canvasQuizMenu != null) canvasQuizMenu.SetActive(true); 
+        if (panelAwal != null) panelAwal.SetActive(true);
 
         if (firebaseStudentManager != null && !isOfflineMode)
         {
