@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using UnityEngine.SceneManagement; // Tambahkan namespace ini untuk LoadScene/Reload
 
 [System.Serializable]
 public struct BasketMapping
@@ -20,7 +21,12 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI timerText;
     public TextMeshProUGUI levelText;
     public GameObject heartsContainer;
+    
+    [Header("End Game Panel UI Elements")]
     public GameObject gameOverPanel;
+    public TextMeshProUGUI gameOverTitleText;  // Teks Judul ("GAME OVER" / "KAMU MENANG!")
+    public TextMeshProUGUI gameOverDescText;   // Teks Deskripsi Singkat/Edukasi
+    public TextMeshProUGUI gameOverScoreText;  // Teks Total Skor Akhir
 
     [Header("Prefabs & Data")]
     public GameObject foodPrefab;
@@ -46,6 +52,8 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        Time.timeScale = 1f; // Pastikan waktu berjalan normal saat start
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
         UpdateUI();
         StartLevel();
     }
@@ -55,8 +63,11 @@ public class GameManager : MonoBehaviour
         if (currentLevel >= 7 && !isGameOver)
         {
             timer -= Time.deltaTime;
-            timerText.text = "Waktu: " + Mathf.Ceil(timer).ToString() + "s";
-            if (timer <= 0) GameOver();
+            timerText.text = Mathf.Ceil(timer).ToString() + "s";
+            if (timer <= 0)
+            {
+                TampilkanEndGame(false, "Waktu kamu telah habis! Yuk tingkatkan kecepatan dan ketelitianmu lagi!");
+            }
         }
     }
 
@@ -77,8 +88,6 @@ public class GameManager : MonoBehaviour
             basketCount = 4; 
             foodCount = 6;
             
-            // FIX TIMER: Hanya set ke 120 detik saat baru PERTAMA KALI menginjak level 7
-            // Di level 8, 9, dan 10 dia gak akan meriset timernya lagi
             if (currentLevel == 7 && timer > 100f) {
                 timer = 100f;
             }
@@ -113,7 +122,7 @@ public class GameManager : MonoBehaviour
                 if (cocok.gambarKeranjang != null) {
                     basketImage.sprite = cocok.gambarKeranjang; 
                 } else {
-                    Debug.LogError("Waduh pan, gambar keranjang buat gizi " + gizi + " belum lu masukin di Inspector!");
+                    Debug.LogError("Gambar keranjang buat gizi " + gizi + " belum dimasukkan di Inspector!");
                 }
             }
         }
@@ -148,7 +157,7 @@ public class GameManager : MonoBehaviour
         remainingFoodsInLevel--; 
 
         if (lives <= 0) {
-            GameOver();
+            TampilkanEndGame(false, "Nyawa kamu telah habis! Jangan menyerah, yuk pelajari lagi jenis zat gizinya!");
         } else {
             CheckWinCondition(); 
         }
@@ -162,24 +171,73 @@ public class GameManager : MonoBehaviour
                 currentLevel++;
                 Invoke("StartLevel", 1f); 
             } else {
-                Debug.Log("GAME TAMAT! Poin Akhir: " + score);
+                TampilkanEndGame(true, "LUAR BIASA! Kamu berhasil menyelesaikan semua level dan menguasai Klasifikasi Zat Gizi!");
             }
         }
     }
 
     void UpdateUI()
     {
-        scoreText.text = "Skor: " + score;
+        scoreText.text = " " + score;
         for (int i = 0; i < heartsContainer.transform.childCount; i++) {
             heartsContainer.transform.GetChild(i).gameObject.SetActive(i < lives);
         }
     }
 
-    void GameOver()
+    // ========================================================
+    // PENANGANAN PANEL END GAME (GAME OVER / COMPLETED)
+    // ========================================================
+    void TampilkanEndGame(bool isWin, string deskripsi)
     {
         isGameOver = true;
-        gameOverPanel.SetActive(true);
-        Time.timeScale = 0;
+        Time.timeScale = 0f; // Hentikan timer dan pergerakan di latar belakang
+
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+
+            if (gameOverTitleText != null)
+                gameOverTitleText.text = isWin ? "<color=#2ECC71>KAMU MENANG!</color>" : "<color=#E74C3C>GAME OVER</color>";
+
+            if (gameOverDescText != null)
+                gameOverDescText.text = deskripsi;
+
+            if (gameOverScoreText != null)
+                gameOverScoreText.text = "Total Skor: " + score;
+        }
+    }
+
+    // ========================================================
+    // SISTEM LOOP: TOMBOL RELOAD & KELUAR
+    // ========================================================
+    
+    // Hubungkan ke Tombol Ikon Reload (↻) di Panel GameOver
+    public void KlikMainLagi()
+    {
+        Time.timeScale = 1f; // Kembalikan skala waktu
+        isGameOver = false;
+
+        // Reset variabel game state
+        currentLevel = 1;
+        score = 0;
+        lives = 5;
+        timer = 120f;
+
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
+
+        UpdateUI();
+        StartLevel(); // Reset arena dan mulai dari level 1
+    }
+
+    // Hubungkan ke Tombol Ikon Silang (✕) di Panel GameOver
+    public void KlikKembaliKeMenuUtama()
+    {
+        Time.timeScale = 1f; // Pastikan timeScale selalu di-reset sebelum pindah scene!
+
+        // Opsi 1: Jika menggunakan SceneManager (Nama scene sesuaikan dengan scene menu utama lu)
+        SceneManager.LoadScene("MainMenu"); 
+
+        // Opsi 2: Jika menggunakan SceneCanvasSwitcher bawaan project lu, tinggal panggil method switcher-nya di Unity Inspector
     }
 
     System.Collections.IEnumerator DisableLayoutsDelayed()
