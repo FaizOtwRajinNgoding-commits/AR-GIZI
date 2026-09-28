@@ -1,21 +1,35 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+
+[System.Serializable]
+public class SlideData
+{
+    public GameObject slideObject;
+    public TextMeshProUGUI teksUI;
+    public string idAudioUnik;
+}
 
 public class Carousel1 : MonoBehaviour
 {
-[Header ("Daftar Halaman")]
-    public GameObject[] daftarHalaman;
+    [Header ("Daftar Slide Halaman")]
+    public SlideData[] daftarSlide;
+    [Header ("AudioOutput")]
+    public AudioSource audioSource;
+    private int indexSekarang = 0;
 
+    [Header ("Daftar Halaman")]
+    public GameObject[] daftarHalaman;
     [Header ("Navigate Button")]
     public Button prev;
     public Button next;
-
     private int indeksHalamanSekarang = 0;
 
     void Start()
     {
         if (prev != null) prev.onClick.AddListener(PrevHalaman);
         if (next != null) next.onClick.AddListener(NeksHalaman);
+        if (audioSource == null) audioSource = GetComponent<AudioSource>();
 
         HideButton();
     }
@@ -23,6 +37,7 @@ public class Carousel1 : MonoBehaviour
     public void ResetCarousel()
     {
         indeksHalamanSekarang = 0;
+        indexSekarang = 0;
         UpdateCarousel();
     }
 
@@ -33,6 +48,11 @@ public class Carousel1 : MonoBehaviour
             indeksHalamanSekarang++;
             UpdateCarousel();
         }
+        if (indexSekarang < daftarSlide.Length - 1)
+        {
+            indexSekarang++;
+            UpdateCarousel();
+        }
     }
 
     public void PrevHalaman()
@@ -40,6 +60,11 @@ public class Carousel1 : MonoBehaviour
         if (indeksHalamanSekarang > 0)
         {
             indeksHalamanSekarang--;
+            UpdateCarousel();
+        }
+        if (indexSekarang > 0)
+        {
+            indexSekarang--;
             UpdateCarousel();
         }
     }
@@ -55,6 +80,37 @@ public class Carousel1 : MonoBehaviour
 
         if (prev != null) prev.gameObject.SetActive(indeksHalamanSekarang > 0);
         if (next != null) next.gameObject.SetActive(indeksHalamanSekarang < daftarHalaman.Length - 1);
+
+        for(int i = 0; i < daftarSlide.Length; i++)
+        {
+            if (daftarSlide[i].slideObject != null)
+            {
+                daftarSlide[i].slideObject.SetActive(i == indexSekarang);
+            }
+        }
+    }
+
+    public void PlayCurrentSlide()
+    {
+        SlideData slideAktif = daftarSlide[indexSekarang];
+        if (slideAktif.teksUI != null)
+        {
+            string isiText = slideAktif.teksUI.text;
+            string namaFile = string.IsNullOrEmpty(slideAktif.idAudioUnik)
+                ? $"Slide_Audio_{indexSekarang}" : slideAktif.idAudioUnik;
+            if (!string.IsNullOrEmpty(isiText))
+            {
+                EdgeTTS.instance.GetTTSAudio(isiText, namaFile, (clip) =>
+                {
+                    if (clip != null && audioSource != null)
+                    {
+                        audioSource.Stop();
+                        audioSource.clip = clip;
+                        audioSource.Play();
+                    }
+                });
+            }
+        }
     }
 
     public void HideButton()
