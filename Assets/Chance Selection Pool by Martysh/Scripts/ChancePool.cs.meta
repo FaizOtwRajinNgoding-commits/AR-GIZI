@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 01a94e91c8fa8634cb892e193b467421
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 206563
+  packageName: Chance Selection Pool
+  packageVersion: 1.0
+  assetPath: Assets/Chance Selection Pool by Martysh/Scripts/ChancePool.cs
+  uploadId: 462067
