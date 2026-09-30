@@ -27,14 +27,13 @@ public class SceneCanvasSwitcher : MonoBehaviour
         canvasZatGizi.SetActive(false);
         canvasPiringku.SetActive(true);
 
-        // Matikan GameManager Zat Gizi biar timernya gak jalan di background
         if (gameManagerZatGizi != null) gameManagerZatGizi.SetActive(false);
 
-        // // Jalankan game piringku menggunakan fungsi acak bawaan script baru
-        // if (PiringGameManager.Instance != null)
-        // {
-        //     PiringGameManager.Instance.KlikRefreshStudiKasus();
-        // }
+        // Panggil fungsi inisialisasi lengkap
+        if (PiringGameManager.Instance != null)
+        {
+            PiringGameManager.Instance.MulaiGamePiringku();
+        }
     }
 
     private void BukaSistemZatGizi()
