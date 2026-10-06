@@ -20,11 +20,11 @@ public class PanduanPopupManager : MonoBehaviour
 
     private int indexHalaman = 0;
 
-    void OnEnable()
-    {
-        // Otomatis buka panduan saat Canvas/Panel pertama kali diaktifkan
-        BukaPanduan();
-    }
+    // void OnEnable()
+    // {
+    //     // Otomatis buka panduan saat Canvas/Panel pertama kali diaktifkan
+    //     BukaPanduan();
+    // }
 
     public void BukaPanduan()
     {
