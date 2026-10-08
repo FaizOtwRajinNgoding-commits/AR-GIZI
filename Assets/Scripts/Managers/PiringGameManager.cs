@@ -219,18 +219,73 @@ public class PiringGameManager : MonoBehaviour
     }
 
     public void KlikCekIsiPiringku()
-    {
-        if (panelPopupFeedback != null) panelPopupFeedback.SetActive(true);
+{
+    if (panelPopupFeedback != null) panelPopupFeedback.SetActive(true);
 
-        if (countKarbo >= 2 && countProtein >= 1 && countSerat >= 2 && countVitamin >= 1)
-        {
-            textFeedbackMessege.text = "HEBAT!\nKomposisi Piringmu Sudah Memenuhi Gizi Seimbang!";
-        }
-        else
-        {
-            textFeedbackMessege.text = "BELUM SEIMBANG!\nCoba perhatikan lagi grafik persentase gizi piringmu ya!";
-        }
+    int totalItem = countKarbo + countProtein + countSerat + countVitamin;
+
+    // 1. Cek piring kosong
+    if (totalItem == 0)
+    {
+        textFeedbackMessege.text = "<color=red>PIRING MASIH KOSONG!</color>\nSeret makanan dari rak etalase ke piring terlebih dahulu ya!";
+        return;
     }
+
+    // 2. Cek apakah ada kelompok gizi yang sama sekali belum dimasukkan
+    if (countKarbo == 0 || countProtein == 0 || countSerat == 0 || countVitamin == 0)
+    {
+        textFeedbackMessege.text = "<color=red>BELUM SEIMBANG!</color>\nSemua jenis gizi (Karbohidrat, Lauk, Sayur, dan Buah) harus ada di atas piringmu!";
+        return;
+    }
+
+    // 3. Hitung persentase proporsi gizi real-time (%)
+    float pctKarbo = ((float)countKarbo / totalItem) * 100f;
+    float pctProtein = ((float)countProtein / totalItem) * 100f;
+    float pctSerat = ((float)countSerat / totalItem) * 100f;
+    float pctVitamin = ((float)countVitamin / totalItem) * 100f;
+
+    /*
+     * KAIDAH ISI PIRINGKU (Rasio 2 : 1 : 2 : 1 dari Total 6 Bagian):
+     * - Makanan Pokok (Karbo) = 33.3% (Toleransi: 28% - 38%)
+     * - Lauk Pauk (Protein)    = 16.7% (Toleransi: 12% - 22%)
+     * - Sayuran (Serat)        = 33.3% (Toleransi: 28% - 38%)
+     * - Buah (Vitamin)        = 16.7% (Toleransi: 12% - 22%)
+     */
+
+    bool karboPass = pctKarbo >= 28f && pctKarbo <= 38f;
+    bool proteinPass = pctProtein >= 12f && pctProtein <= 22f;
+    bool seratPass = pctSerat >= 28f && pctSerat <= 38f;
+    bool vitaminPass = pctVitamin >= 12f && pctVitamin <= 22f;
+
+    // 4. Evaluasi hasil
+    if (karboPass && proteinPass && seratPass && vitaminPass)
+    {
+        textFeedbackMessege.text = "<color=green>HEBAT! SANGAT SEIMBANG! </color>\nKomposisi piringmu sudah sesuai dengan kaidah Isi Piringku:\n" +
+                                   "• Makanan Pokok: 2/3 Setengah Piring (~33%)\n" +
+                                   "• Lauk Pauk: 1/3 Setengah Piring (~17%)\n" +
+                                   "• Sayuran: 2/3 Setengah Piring (~33%)\n" +
+                                   "• Buah-buahan: 1/3 Setengah Piring (~17%)";
+    }
+    else
+    {
+        // Berikan petunjuk edukatif bagian mana yang kurang/kelebihan
+        string saran = "";
+        if (pctKarbo > 38f) saran += "• Makanan Pokok (Karbohidrat) terlalu banyak.\n";
+        else if (pctKarbo < 28f) saran += "• Makanan Pokok (Karbohidrat) masih kurang.\n";
+
+        if (pctSerat < 28f) saran += "• Sayuran (Serat) masih kurang.\n";
+        else if (pctSerat > 38f) saran += "• Sayuran (Serat) terlalu banyak.\n";
+
+        if (pctProtein < 12f) saran += "• Lauk Pauk (Protein) masih kurang.\n";
+        else if (pctProtein > 22f) saran += "• Lauk Pauk (Protein) terlalu banyak.\n";
+
+        if (pctVitamin < 12f) saran += "• Buah-buahan (Vitamin) masih kurang.\n";
+        else if (pctVitamin > 22f) saran += "• Buah-buahan (Vitamin) terlalu banyak.\n";
+
+        textFeedbackMessege.text = "<color=red>BELUM SEIMBANG! </color>\n" + saran +
+                                   "\nIngat rasio Isi Piringku: Makanan Pokok & Sayur masing-masing 2/3 dari setengah piring!";
+    }
+}
 
     public void TutupPopupFeedback()
     {

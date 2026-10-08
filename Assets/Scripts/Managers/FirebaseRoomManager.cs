@@ -169,84 +169,95 @@ public class FirebaseRoomManager : MonoBehaviour
 
     // --- GENERATE SOAL GEMINI & DIVERSIKAN KE REVIEW PANEL ---
     private IEnumerator FetchGeminiQuestionsCoroutine()
+{
+    textStatusLoading.text = "Menghubungi AI Gemini...";
+
+    // 1. Tentukan Proporsi Soal Olah Hati berdasarkan Jumlah Soal
+    int jumlahOlahHati = 2; // Default untuk 5 soal (1-2 soal)
+    if (selectedJumlahSoal == 10) jumlahOlahHati = 4;
+    else if (selectedJumlahSoal == 15) jumlahOlahHati = 5;
+
+    int jumlahKognitif = selectedJumlahSoal - jumlahOlahHati;
+
+    GeminiRequest geminiRequest = new GeminiRequest();
+    geminiRequest.contents = new List<GeminiContent>();
+    GeminiContent contentObj = new GeminiContent();
+    contentObj.parts = new List<GeminiPart>();
+    GeminiPart partObj = new GeminiPart();
+    
+    // 2. Prompt Dinamis Integrasi Kognitif + Olah Hati
+    partObj.text = $"Buatlah total {selectedJumlahSoal} soal pilihan ganda interaktif berbentuk cerita pendek untuk anak Sekolah Dasar. " +
+                    $"Soal HARUS terdiri dari kombinasi 2 aspek berikut:\n" +
+                    $"1. {jumlahKognitif} soal Kognitif (pemahaman materi gizi seimbang, jenis zat gizi, dan manfaat makanan sehat).\n" +
+                    $"2. {jumlahOlahHati} soal Olah Hati / Empati Sosial (sikap peduli sosial terkait gizi di sekolah, seperti melihat teman tidak membawa bekal, berbagi makanan sehat, empati kepada teman lemas/sakit, dan etika berteman saat makan bersama).\n\n" +
+                    "WAJIB mengacak (randomize) urutan posisi soal Olah Hati dan Kognitif agar tersebar acak di antara soal nomor 1 sampai akhir, jangan dikelompokkan di depan atau belakang saja. " +
+                    "Format output WAJIB dalam bentuk JSON mentah dengan struktur tepat seperti ini: " +
+                    "{\"questions\": [{\"questionText\":\"...\", \"optionA\":\"...\", \"optionB\":\"...\", \"optionC\":\"...\", \"optionD\":\"...\", \"correctAnswer\":\"A/B/C/D\", \"explanation\":\"...\"}]}. " +
+                    "Jangan berikan teks tambahan atau penjelasan di luar format JSON. Jangan pakai format markdown ```json.";
+
+    contentObj.parts.Add(partObj);
+    geminiRequest.contents.Add(contentObj);
+
+    string jsonPayload = JsonUtility.ToJson(geminiRequest);
+    byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonPayload);
+
+    using (UnityWebRequest request = new UnityWebRequest(geminiUrl + apiKey, "POST"))
     {
-        textStatusLoading.text = "Menghubungi AI Gemini...";
+        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
 
-        GeminiRequest geminiRequest = new GeminiRequest();
-        geminiRequest.contents = new List<GeminiContent>();
-        GeminiContent contentObj = new GeminiContent();
-        contentObj.parts = new List<GeminiPart>();
-        GeminiPart partObj = new GeminiPart();
-        
-        partObj.text = $"Buatlah {selectedJumlahSoal} soal pilihan ganda interaktif tentang materi gizi seimbang dan zat gizi pada makanan untuk anak Sekolah Dasar berbentuk cerita pendek. " +
-                        "Format output WAJIB dalam bentuk JSON mentah dengan struktur tepat seperti ini: " +
-                        "{\"questions\": [{\"questionText\":\"...\", \"optionA\":\"...\", \"optionB\":\"...\", \"optionC\":\"...\", \"optionD\":\"...\", \"correctAnswer\":\"A/B/C/D\", \"explanation\":\"...\"}]}. " +
-                        "Jangan berikan teks tambahan atau penjelasan di luar format JSON. Jangan pakai format markdown ```json.";
+        yield return request.SendWebRequest();
 
-        contentObj.parts.Add(partObj);
-        geminiRequest.contents.Add(contentObj);
-
-        string jsonPayload = JsonUtility.ToJson(geminiRequest);
-        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonPayload);
-
-        using (UnityWebRequest request = new UnityWebRequest(geminiUrl + apiKey, "POST"))
+        if (request.result == UnityWebRequest.Result.Success)
         {
-            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
+            string rawJsonFromGemini = request.downloadHandler.text;
 
-            yield return request.SendWebRequest();
-
-            if (request.result == UnityWebRequest.Result.Success)
+            try
             {
-                string rawJsonFromGemini = request.downloadHandler.text;
-
-                try
+                GeminiResponse response = JsonUtility.FromJson<GeminiResponse>(rawJsonFromGemini);
+                if (response != null && response.candidates != null && response.candidates.Count > 0)
                 {
-                    GeminiResponse response = JsonUtility.FromJson<GeminiResponse>(rawJsonFromGemini);
-                    if (response != null && response.candidates != null && response.candidates.Count > 0)
+                    string cleanJson = response.candidates[0].content.parts[0].text;
+                    
+                    if (cleanJson.StartsWith("```json")) cleanJson = cleanJson.Replace("```json", "");
+                    if (cleanJson.EndsWith("```")) cleanJson = cleanJson.Substring(0, cleanJson.Length - 3);
+                    cleanJson = cleanJson.Trim();
+
+                    QuizContainer container = JsonUtility.FromJson<QuizContainer>(cleanJson);
+                    if (container != null && container.questions != null && container.questions.Count > 0)
                     {
-                        string cleanJson = response.candidates[0].content.parts[0].text;
-                        
-                        if (cleanJson.StartsWith("```json")) cleanJson = cleanJson.Replace("```json", "");
-                        if (cleanJson.EndsWith("```")) cleanJson = cleanJson.Substring(0, cleanJson.Length - 3);
-                        cleanJson = cleanJson.Trim();
+                        reviewQuestionsList = container.questions;
+                        reviewCurrentIndex = 0;
 
-                        QuizContainer container = JsonUtility.FromJson<QuizContainer>(cleanJson);
-                        if (container != null && container.questions != null && container.questions.Count > 0)
-                        {
-                            reviewQuestionsList = container.questions;
-                            reviewCurrentIndex = 0;
+                        panelWaitingRoom.SetActive(false);
+                        if (panelReviewSoalGuru != null) panelReviewSoalGuru.SetActive(true);
 
-                            // ALIH KAN UI KE PANEL REVIEW GURU
-                            panelWaitingRoom.SetActive(false);
-                            if (panelReviewSoalGuru != null) panelReviewSoalGuru.SetActive(true);
-
-                            TampilkanSoalKeFormReview(reviewCurrentIndex);
-                            Debug.Log($"[Guru Review] {reviewQuestionsList.Count} soal berhasil dimuat untuk di-review!");
-                        }
-                        else
-                        {
-                            textStatusLoading.text = "Format soal dari AI tidak sesuai.";
-                            if (buttonLanjut != null) buttonLanjut.interactable = true;
-                        }
+                        TampilkanSoalKeFormReview(reviewCurrentIndex);
+                        Debug.Log($"[Guru Review] {reviewQuestionsList.Count} soal ({jumlahKognitif} Kognitif + {jumlahOlahHati} Olah Hati) berhasil dimuat!");
+                    }
+                    else
+                    {
+                        textStatusLoading.text = "Format soal dari AI tidak sesuai.";
+                        if (buttonLanjut != null) buttonLanjut.interactable = true;
                     }
                 }
-                catch (System.Exception e)
-                {
-                    textStatusLoading.text = "Gagal memproses struktur AI Gemini.";
-                    Debug.LogError("Guru Parsing Error: " + e.Message);
-                    if (buttonLanjut != null) buttonLanjut.interactable = true;
-                }
             }
-            else
+            catch (System.Exception e)
             {
-                textStatusLoading.text = "Gagal mengambil soal Gemini.";
-                Debug.LogError($"Gemini API Error: {request.error}");
+                textStatusLoading.text = "Gagal memproses struktur AI Gemini.";
+                Debug.LogError("Guru Parsing Error: " + e.Message);
                 if (buttonLanjut != null) buttonLanjut.interactable = true;
             }
         }
+        else
+        {
+            textStatusLoading.text = "Gagal mengambil soal Gemini.";
+            Debug.LogError($"Gemini API Error: {request.error}");
+            if (buttonLanjut != null) buttonLanjut.interactable = true;
+        }
     }
+}
 
     // ========================================================
     // MODUL MODERASI & EDIT SOAL GURU (REVIEW SYSTEM)

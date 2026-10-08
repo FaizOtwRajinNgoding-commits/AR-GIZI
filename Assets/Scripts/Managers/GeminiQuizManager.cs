@@ -288,46 +288,58 @@ public class GeminiQuizManager : MonoBehaviour
     }
 
     IEnumerator FetchQuestionsFromGemini()
+{
+    string fullUrl = geminiUrl + apiKey;
+
+    // 1. Hitung pembagian soal Olah Hati & Kognitif secara dinamis
+    int jumlahOlahHati = 2; // Default untuk 5 soal
+    if (totalQuestions == 10) jumlahOlahHati = 4;
+    else if (totalQuestions == 15) jumlahOlahHati = 5;
+
+    int jumlahKognitif = totalQuestions - jumlahOlahHati;
+
+    // 2. Prompt Integrasi Olah Hati + Kognitif
+    string prompt = $"Buat total {totalQuestions} soal pilihan ganda interaktif berbentuk cerita pendek untuk anak Sekolah Dasar. " +
+                    $"Soal HARUS terdiri dari kombinasi 2 aspek berikut:\n" +
+                    $"1. {jumlahKognitif} soal Kognitif (pemahaman materi gizi seimbang, jenis zat gizi, dan manfaat makanan sehat).\n" +
+                    $"2. {jumlahOlahHati} soal Olah Hati / Empati Sosial (sikap peduli sosial terkait gizi di sekolah, seperti melihat teman tidak membawa bekal, berbagi makanan sehat, empati kepada teman lemas/sakit, dan etika berteman saat makan bersama).\n\n" +
+                    "WAJIB mengacak (randomize) urutan posisi soal Olah Hati dan Kognitif agar tersebar acak di antara soal nomor 1 sampai akhir, jangan dikelompokkan di depan atau belakang saja. " +
+                    "Format output WAJIB dalam bentuk JSON mentah dengan struktur tepat seperti ini: " +
+                    "{\"questions\": [{\"questionText\":\"...\", \"optionA\":\"...\", \"optionB\":\"...\", \"optionC\":\"...\", \"optionD\":\"...\", \"correctAnswer\":\"A/B/C/D\", \"explanation\":\"...\"}]}. " +
+                    "Jangan berikan teks tambahan atau penjelasan di luar format JSON. Jangan pakai format markdown ```json.";
+
+    GeminiRequest requestBody = new GeminiRequest();
+    requestBody.contents = new List<GeminiContent>
     {
-        string fullUrl = geminiUrl + apiKey;
-
-        string prompt = $"Buat {totalQuestions} soal pilihan ganda interaktif tentang nutrisi, zat gizi, dan makanan sehat untuk anak Sekolah Dasar berbentuk cerita pendek. " +
-                        "Format output WAJIB dalam bentuk JSON mentah dengan struktur tepat seperti ini: " +
-                        "{\"questions\": [{\"questionText\":\"...\", \"optionA\":\"...\", \"optionB\":\"...\", \"optionC\":\"...\", \"optionD\":\"...\", \"correctAnswer\":\"A/B/C/D\", \"explanation\":\"...\"}]}. " +
-                        "Jangan berikan teks tambahan atau penjelasan di luar format JSON. Jangan pakai format markdown ```json.";
-
-        GeminiRequest requestBody = new GeminiRequest();
-        requestBody.contents = new List<GeminiContent>
+        new GeminiContent
         {
-            new GeminiContent
-            {
-                parts = new List<GeminiPart> { new GeminiPart { text = prompt } }
-            }
-        };
+            parts = new List<GeminiPart> { new GeminiPart { text = prompt } }
+        }
+    };
 
-        string jsonBody = JsonUtility.ToJson(requestBody);
+    string jsonBody = JsonUtility.ToJson(requestBody);
 
-        using (UnityWebRequest request = new UnityWebRequest(fullUrl, "POST"))
+    using (UnityWebRequest request = new UnityWebRequest(fullUrl, "POST"))
+    {
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonBody);
+        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
         {
-            byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonBody);
-            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
-
-            yield return request.SendWebRequest();
-
-            if (request.result == UnityWebRequest.Result.Success)
-            {
-                string rawResponse = request.downloadHandler.text;
-                ParseAndStartQuiz(rawResponse);
-            }
-            else
-            {
-                questionText.text = "Gagal terhubung ke AI. Silakan periksa jaringan internet atau gunakan Mode Offline.";
-                Debug.LogError("Error Gemini API: " + request.error + " | Response: " + request.downloadHandler.text);
-            }
+            string rawResponse = request.downloadHandler.text;
+            ParseAndStartQuiz(rawResponse);
+        }
+        else
+        {
+            questionText.text = "Gagal terhubung ke AI. Silakan periksa jaringan internet atau gunakan Mode Offline.";
+            Debug.LogError("Error Gemini API: " + request.error + " | Response: " + request.downloadHandler.text);
         }
     }
+}
 
     void ParseAndStartQuiz(string rawJson)
     {

@@ -3,28 +3,31 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+// Struct untuk menggabungkan teks dan gambar dalam 1 halaman panduan
+[System.Serializable]
+public class HalamanPanduanData
+{
+    [TextArea(2, 5)] public string teksPanduan;
+    public Sprite gambarPanduan; // Boleh diisi Sprite atau dikosongkan
+}
+
 public class PanduanPopupManager : MonoBehaviour
 {
     [Header("UI Component References")]
     [SerializeField] private GameObject panelPanduan;
     [SerializeField] private TextMeshProUGUI textJudulPanduan;
     [SerializeField] private TextMeshProUGUI textIsiPanduan;
+    [SerializeField] private Image imagePanduan; // Slot Komponen UI Image
     [SerializeField] private TextMeshProUGUI textIndikatorHalaman;
     [SerializeField] private Button buttonNext;
     [SerializeField] private Button buttonPrev;
-    [SerializeField] private Button buttonSelesai; // Tombol Ceklis / OK
+    [SerializeField] private Button buttonSelesai;
 
     [Header("Pengaturan Panduan")]
-    [SerializeField] private string judulPanduan = "Panduan Game Isi Piringku";
-    [SerializeField] [TextArea(3, 8)] private List<string> daftarHalamanPanduan;
+    [SerializeField] private string judulPanduan = "Panduan Fitur";
+    [SerializeField] private List<HalamanPanduanData> daftarHalamanPanduan;
 
     private int indexHalaman = 0;
-
-    // void OnEnable()
-    // {
-    //     // Otomatis buka panduan saat Canvas/Panel pertama kali diaktifkan
-    //     BukaPanduan();
-    // }
 
     public void BukaPanduan()
     {
@@ -37,26 +40,36 @@ public class PanduanPopupManager : MonoBehaviour
     {
         if (daftarHalamanPanduan == null || daftarHalamanPanduan.Count == 0) return;
 
-        // Set Teks Judul & Isi Panduan
-        if (textJudulPanduan != null) textJudulPanduan.text = judulPanduan;
-        if (textIsiPanduan != null) textIsiPanduan.text = daftarHalamanPanduan[indexHalaman];
+        HalamanPanduanData dataSekarang = daftarHalamanPanduan[indexHalaman];
 
-        // Set Indikator Halaman (Contoh: "1 / 3")
+        // 1. Set Judul & Teks Panduan
+        if (textJudulPanduan != null) textJudulPanduan.text = judulPanduan;
+        if (textIsiPanduan != null) textIsiPanduan.text = dataSekarang.teksPanduan;
+
+        // 2. Set Gambar Panduan (Otomatis Sembunyi Jika Sprite Kosong)
+        if (imagePanduan != null)
+        {
+            if (dataSekarang.gambarPanduan != null)
+            {
+                imagePanduan.gameObject.SetActive(true);
+                imagePanduan.sprite = dataSekarang.gambarPanduan;
+            }
+            else
+            {
+                imagePanduan.gameObject.SetActive(false);
+            }
+        }
+
+        // 3. Set Indikator Halaman (Contoh: "1 / 4")
         if (textIndikatorHalaman != null)
         {
             textIndikatorHalaman.text = $"{indexHalaman + 1} / {daftarHalamanPanduan.Count}";
         }
 
-        // Logika Tombol Prev
-        if (buttonPrev != null)
-        {
-            buttonPrev.gameObject.SetActive(indexHalaman > 0);
-        }
+        // 4. Logika Tombol Prev, Next, dan Selesai
+        if (buttonPrev != null) buttonPrev.gameObject.SetActive(indexHalaman > 0);
 
-        // Cek Apakah Halaman Terakhir
         bool isHalamanTerakhir = (indexHalaman == daftarHalamanPanduan.Count - 1);
-
-        // Jika halaman terakhir: Sembunyikan 'Next', Tampilkan 'Selesai/OK'
         if (buttonNext != null) buttonNext.gameObject.SetActive(!isHalamanTerakhir);
         if (buttonSelesai != null) buttonSelesai.gameObject.SetActive(isHalamanTerakhir);
     }
