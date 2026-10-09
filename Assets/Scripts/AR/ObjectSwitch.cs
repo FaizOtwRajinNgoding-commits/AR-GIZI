@@ -55,7 +55,11 @@ public class ObjectSwitch : MonoBehaviour
             } else
             {
                 if (panel != null) panel.Sembunyikan();
-                if (carousel != null) carousel.HideButton();
+                if (carousel != null)
+            {
+                carousel.HideButton();
+                //carousel.StopAudio();
+            } 
             }
     }
 
