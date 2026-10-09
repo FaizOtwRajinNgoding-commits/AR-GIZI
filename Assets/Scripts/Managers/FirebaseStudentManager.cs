@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using Firebase;
 using Firebase.Auth;
@@ -16,29 +17,32 @@ public class FirebaseStudentManager : MonoBehaviour
     [Header("UI Siswa Inputs")]
     [SerializeField] private TMP_InputField inputKodeRoom;
     [SerializeField] private TMP_InputField inputNamaSiswa;
-    [SerializeField] private TextMeshProUGUI textStatusSiswa; // Teks info di menu join awal
+    [SerializeField] private TextMeshProUGUI textStatusSiswa;
 
     [Header("Waiting Room UI Student References")]
-    [SerializeField] private GameObject panelJoinRoom;         // Panel menu ngetik kode awal siswa
-    [SerializeField] private GameObject panelWaitingRoom;        // Panel waiting room siswa
+    [SerializeField] private GameObject panelJoinRoom;
+    [SerializeField] private GameObject panelWaitingRoom;
     [SerializeField] private GameObject panelPopupKeluar;
-    // [SerializeField] private GameObject popupKeluarGameplay;
-    [SerializeField] private TextMeshProUGUI textWaitingKodeSiswa; // Menampilkan Kode Room di atas
-    [SerializeField] private TextMeshProUGUI textStatusLoadingSiswa; // Menampilkan status ("Menunggu guru...")
-    [SerializeField] private Transform studentListContainer;     // Content dari Scroll View sisi Siswa
-    [SerializeField] private GameObject studentNamePrefab;       // Prefab teks nama siswa
+    [SerializeField] private TextMeshProUGUI textWaitingKodeSiswa;
+    [SerializeField] private TextMeshProUGUI textStatusLoadingSiswa;
+    [SerializeField] private Transform studentListContainer;
+    [SerializeField] private GameObject studentNamePrefab;
+    
+    [Header("Fitur Coba Lagi / Reload Soal (Baru)")]
+    [SerializeField] private Button buttonReloadSoal; // Tombol Coba Lagi jika gagal load soal
 
     [Header("Script References")]
     [SerializeField] private GeminiQuizManager geminiQuizManager;
-    [SerializeField] private QuizFlowManager quizFlowManager;   // Referensi untuk balik ke menu utama kuis
+    [SerializeField] private QuizFlowManager quizFlowManager;
 
     void Start()
     {
+        if (buttonReloadSoal != null) buttonReloadSoal.gameObject.SetActive(false);
+
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
             DependencyStatus dependencyStatus = task.Result;
             if (dependencyStatus == DependencyStatus.Available)
             {
-                // 2. JALANKAN LOGIN ANONIM SISWA
                 FirebaseAuth.DefaultInstance.SignInAnonymouslyAsync().ContinueWithOnMainThread(authTask => {
                     if (authTask.IsCompletedSuccessfully)
                     {
@@ -60,73 +64,67 @@ public class FirebaseStudentManager : MonoBehaviour
         });
     }
 
-    // --- FUNGSI MASUK ROOM ---
     public void KlikJoinRoomSiswa()
     {
-    // PENGAMAN: Cek apakah Firebase sudah benar-benar selesai loading di Start()
-    if (dbReference == null)
-    {
-        textStatusSiswa.text = "Firebase belum siap atau internet terputus. Tunggu sebentar!";
-        Debug.LogWarning("Mencoba Join Room, tapi dbReference masih null!");
-        return; // Gagalkan proses di bawahnya agar tidak crash!
-    }
-
-    savedCodeInput = inputKodeRoom.text.Trim().ToUpper();
-    savedNameInput = inputNamaSiswa.text.Trim();
-
-    if (string.IsNullOrEmpty(savedCodeInput) || string.IsNullOrEmpty(savedNameInput)) {
-        textStatusSiswa.text = "Nama dan Kode tidak boleh kosong!";
-        return;
-    }
-
-    // Sekarang baris ini dijamin 100% aman dari NullReferenceException, bro!
-    dbReference.Child("rooms").Child(savedCodeInput).GetValueAsync().ContinueWithOnMainThread(task => {
-        if (task.IsFaulted || task.IsCanceled) {
-            textStatusSiswa.text = "Koneksi bermasalah.";
+        if (dbReference == null)
+        {
+            textStatusSiswa.text = "Firebase belum siap atau internet terputus. Tunggu sebentar!";
             return;
         }
 
-        DataSnapshot snapshot = task.Result;
-        if (snapshot.Exists)
-        {
-            string roomStatus = snapshot.Child("roomStatus").Value.ToString();
+        savedCodeInput = inputKodeRoom.text.Trim().ToUpper();
+        savedNameInput = inputNamaSiswa.text.Trim();
 
-            if (roomStatus == "waiting")
+        if (string.IsNullOrEmpty(savedCodeInput) || string.IsNullOrEmpty(savedNameInput)) {
+            textStatusSiswa.text = "Nama dan Kode tidak boleh kosong!";
+            return;
+        }
+
+        dbReference.Child("rooms").Child(savedCodeInput).GetValueAsync().ContinueWithOnMainThread(task => {
+            if (task.IsFaulted || task.IsCanceled) {
+                textStatusSiswa.text = "Koneksi bermasalah.";
+                return;
+            }
+
+            DataSnapshot snapshot = task.Result;
+            if (snapshot.Exists)
             {
-                dbReference.Child("rooms").Child(savedCodeInput).Child("students").Child(savedNameInput).Child("score").SetValueAsync(0);
-                dbReference.Child("rooms").Child(savedCodeInput).Child("students").Child(savedNameInput).Child("status").SetValueAsync("joined");
+                string roomStatus = snapshot.Child("roomStatus").Value.ToString();
 
-                panelJoinRoom.SetActive(false);
-                panelPopupKeluar.SetActive(false);
-                panelWaitingRoom.SetActive(true);
-                
-                textWaitingKodeSiswa.text = "KODE ROOM: " + savedCodeInput;
-                textStatusLoadingSiswa.text = "Room siap! Menunggu guru memulai...";
+                if (roomStatus == "waiting")
+                {
+                    dbReference.Child("rooms").Child(savedCodeInput).Child("students").Child(savedNameInput).Child("score").SetValueAsync(0);
+                    dbReference.Child("rooms").Child(savedCodeInput).Child("students").Child(savedNameInput).Child("status").SetValueAsync("joined");
 
-                dbReference.Child("rooms").Child(savedCodeInput).Child("roomStatus").ValueChanged += HandleStatusRoomBerubah;
-                dbReference.Child("rooms").Child(savedCodeInput).Child("students").ValueChanged += HandleSiswaBergabungSiswa;
+                    panelJoinRoom.SetActive(false);
+                    panelPopupKeluar.SetActive(false);
+                    panelWaitingRoom.SetActive(true);
+                    if (buttonReloadSoal != null) buttonReloadSoal.gameObject.SetActive(false);
+                    
+                    textWaitingKodeSiswa.text = "KODE ROOM: " + savedCodeInput;
+                    textStatusLoadingSiswa.text = "Room siap! Menunggu guru memulai...";
+
+                    dbReference.Child("rooms").Child(savedCodeInput).Child("roomStatus").ValueChanged += HandleStatusRoomBerubah;
+                    dbReference.Child("rooms").Child(savedCodeInput).Child("students").ValueChanged += HandleSiswaBergabungSiswa;
+                }
+                else {
+                    textStatusSiswa.text = "Room sudah mulai atau ditutup!";
+                }
             }
             else {
-                textStatusSiswa.text = "Room sudah mulai atau ditutup!";
+                textStatusSiswa.text = "Kode Room tidak ditemukan!";
             }
-        }
-        else {
-            textStatusSiswa.text = "Kode Room tidak ditemukan!";
-        }
-    });
-}
+        });
+    }
 
-    // --- REALTIME MENGUPDATE DAFTAR NAMA SISI SISWA ---
     private void HandleSiswaBergabungSiswa(object sender, ValueChangedEventArgs args)
     {
         if (args.DatabaseError != null) return;
 
-        // Bersihkan daftar nama lama di Scroll View siswa
         foreach (Transform child in studentListContainer) {
             Destroy(child.gameObject);
         }
 
-        // Cetak ulang semua siswa yang terdata di Firebase secara live
         if (args.Snapshot.Exists)
         {
             foreach (DataSnapshot studentSnapshot in args.Snapshot.Children)
@@ -138,54 +136,17 @@ public class FirebaseStudentManager : MonoBehaviour
         }
     }
 
-    // --- REALTIME PANTAU PERINTAH GURU (MULAI / BATAL) ---
-    
     private void HandleStatusRoomBerubah(object sender, ValueChangedEventArgs args)
     {
         if (args.DatabaseError != null) return;
-    
+
         if (args.Snapshot.Exists && args.Snapshot.Value != null)
         {
             string statusTerbaru = args.Snapshot.Value.ToString();
-    
+
             if (statusTerbaru == "started")
             {
-                textStatusLoadingSiswa.text = "Guru mulai memproses soal Gemini...";
-    
-                // CATATAN: LepasSemuaListener() DIPINDAHKAN KE DALAM TASK ASYNC DI BAWAH!
-    
-                dbReference.Child("rooms").Child(savedCodeInput).Child("questions").GetValueAsync().ContinueWithOnMainThread(task => {
-                    if (!task.IsFaulted && !task.IsCanceled && task.Result != null && task.Result.Exists)
-                    {
-                        // Lepas listener HANYA SETELAH data soal fix berhasil di-fetch
-                        LepasSemuaListener();
-    
-                        // Ambil string JSON murni dari snapshot
-                        string rawJsonQuestions = task.Result.GetRawJsonValue();
-                        
-                        // Fallback jika data tersimpan sebagai string biasa
-                        if (string.IsNullOrEmpty(rawJsonQuestions) && task.Result.Value != null)
-                        {
-                            rawJsonQuestions = task.Result.Value.ToString();
-                        }
-    
-                        panelWaitingRoom.SetActive(false);
-                        
-                        if (geminiQuizManager != null)
-                        {
-                            geminiQuizManager.StartMultiplayerQuiz(rawJsonQuestions);
-                        }
-                        else
-                        {
-                            Debug.LogError("[Siswa] GeminiQuizManager NULL di Inspector!");
-                        }
-                    }
-                    else
-                    {
-                        textStatusLoadingSiswa.text = "Gagal mengambil soal dari server. Periksa koneksi!";
-                        Debug.LogError("[Siswa] Task Fetch Soal Error: " + (task.Exception != null ? task.Exception.ToString() : "Task Faulted"));
-                    }
-                });
+                FetchSoalDariServer();
             }
             else if (statusTerbaru == "cancelled" || statusTerbaru == "finished")
             {
@@ -197,30 +158,54 @@ public class FirebaseStudentManager : MonoBehaviour
         }
     }
 
-    // ========================================================
-    // FUNGSI BARU: UPDATE SKOR AKHIR DAN STATUS SISWA KE FIREBASE
-    // ========================================================
+    // --- FUNGSI AMBIL SOAL DENGAN SISTEM RETRY (BISA DIPANGGIL ULANG) ---
+    public void FetchSoalDariServer()
+    {
+        if (buttonReloadSoal != null) buttonReloadSoal.gameObject.SetActive(false);
+        textStatusLoadingSiswa.text = "Memuat soal dari server, mohon tunggu...";
+
+        dbReference.Child("rooms").Child(savedCodeInput).Child("questions").GetValueAsync().ContinueWithOnMainThread(task => {
+            if (!task.IsFaulted && !task.IsCanceled && task.Result != null && task.Result.Exists)
+            {
+                LepasSemuaListener();
+
+                string rawJsonQuestions = task.Result.GetRawJsonValue();
+                
+                if (string.IsNullOrEmpty(rawJsonQuestions) && task.Result.Value != null)
+                {
+                    rawJsonQuestions = task.Result.Value.ToString();
+                }
+
+                panelWaitingRoom.SetActive(false);
+                
+                if (geminiQuizManager != null)
+                {
+                    geminiQuizManager.StartMultiplayerQuiz(rawJsonQuestions);
+                }
+                else
+                {
+                    Debug.LogError("[Siswa] GeminiQuizManager NULL di Inspector!");
+                }
+            }
+            else
+            {
+                textStatusLoadingSiswa.text = "<color=red>Gagal mengambil soal dari server!</color>\nCek koneksi internetmu lalu tekan tombol Coba Lagi di bawah.";
+                if (buttonReloadSoal != null) buttonReloadSoal.gameObject.SetActive(true);
+                
+                Debug.LogError("[Siswa] Task Fetch Soal Error: " + (task.Exception != null ? task.Exception.ToString() : "Task Faulted"));
+            }
+        });
+    }
+
     public void UpdateSkorAkhirSiswa(int skorAkhir)
     {
         if (dbReference != null && !string.IsNullOrEmpty(savedCodeInput) && !string.IsNullOrEmpty(savedNameInput))
         {
-            // Tembak skor akhir hasil pengerjaan siswa
             dbReference.Child("rooms").Child(savedCodeInput).Child("students").Child(savedNameInput).Child("score").SetValueAsync(skorAkhir);
-            
-            // Ubah status menjadi finished agar di dashboard guru langsung berubah jadi hijau "SELESAI"
             dbReference.Child("rooms").Child(savedCodeInput).Child("students").Child(savedNameInput).Child("status").SetValueAsync("finished");
-            
             Debug.Log($"[Firebase] Berhasil submit skor untuk {savedNameInput}: {skorAkhir} dengan status SELESAI!");
         }
-        else
-        {
-            Debug.LogError("[Firebase] Gagal update skor akhir karena data Room ID atau Nama Siswa kosong!");
-        }
     }
-
-    // ========================================================
-    // AKSI KETIKA MURID KLIK POPUP KELUAR (YA)
-    // ========================================================
 
     public void BukaPopupKeluar()
     {
@@ -231,20 +216,15 @@ public class FirebaseStudentManager : MonoBehaviour
     {
         panelPopupKeluar.SetActive(false);
     }
+
     public void KlikKeluarWaitingRoomSiswa()
     {
         if (!string.IsNullOrEmpty(savedCodeInput) && !string.IsNullOrEmpty(savedNameInput))
         {
-            // 1. Matikan pendengaran data biar gak bentrok
             LepasSemuaListener();
-
-            // 2. HAPUS folder nama murid ini dari database Firebase secara permanen!
-            dbReference.Child("rooms").Child(savedCodeInput).Child("students").Child(savedNameInput).RemoveValueAsync().ContinueWithOnMainThread(task => {
-                Debug.Log($"Siswa {savedNameInput} telah menghapus diri dari Room {savedCodeInput}");
-            });
+            dbReference.Child("rooms").Child(savedCodeInput).Child("students").Child(savedNameInput).RemoveValueAsync();
         }
 
-        // 3. Kembalikan UI Siswa ke menu ketik kode room awal
         panelWaitingRoom.SetActive(false);
         panelJoinRoom.SetActive(true);
         textStatusSiswa.text = "Kamu keluar dari ruang tunggu kuis.";
@@ -254,25 +234,15 @@ public class FirebaseStudentManager : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(savedCodeInput) && !string.IsNullOrEmpty(savedNameInput))
         {
-            // 1. Matikan pendengaran data biar gak bentrok atau memory leak
             LepasSemuaListener();
-
-            // 2. Set status siswa di Firebase menjadi "canceled" (TIDAK DINGANUR/DIHAPUS, tapi diubah statusnya)
-            dbReference.Child("rooms").Child(savedCodeInput).Child("students").Child(savedNameInput).Child("status").SetValueAsync("canceled").ContinueWithOnMainThread(task => {
-                if (task.IsCompleted)
-                {
-                    Debug.Log($"[Gameplay] Siswa {savedNameInput} berhasil set status 'canceled' di Firebase.");
-                }
-            });
+            dbReference.Child("rooms").Child(savedCodeInput).Child("students").Child(savedNameInput).Child("status").SetValueAsync("canceled");
         }
 
-        // 3. Kembalikan UI ke menu join room awal
         panelWaitingRoom.SetActive(false);
         panelJoinRoom.SetActive(true);
         textStatusSiswa.text = "Kamu keluar dari permainan kuis tengah jalan.";
     }
 
-    
     private void LepasSemuaListener()
     {
         if (dbReference != null && !string.IsNullOrEmpty(savedCodeInput))
@@ -284,6 +254,6 @@ public class FirebaseStudentManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        LepasSemuaListener(); // Jaga-jaga kalau aplikasi ditutup paksa
+        LepasSemuaListener();
     }
 }
