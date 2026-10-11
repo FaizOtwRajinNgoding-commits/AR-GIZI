@@ -29,9 +29,9 @@
     },
     {
       "questionText": "(C2) Dini rajin mengonsumsi tahu, tempe, dan ikan setiap hari. Ibu menjelaskan bahwa makanan tersebut membantu pertumbuhan badan Dini agar cepat tinggi dan memperbaiki sel tubuh yang rusak. Berdasarkan penjelasan Ibu, fungsi utama dari protein adalah...",
-      "optionA": "Sebagai pembangun dan pembentuk jaringan tubuh",
+      "optionA": "Sebagai zat pembangun dan pembentuk jaringan tubuh",
       "optionB": "Memberikan rasa manis pada makanan",
-      "optionC": "Melarutkan vitamin A, D, E, dan K saja",
+      "optionC": "Sebagai penghasil warna pada kulit",
       "optionD": "Menggantikan fungsi air dalam tubuh",
       "correctAnswer": "A",
       "explanation": "Protein berfungsi sebagai zat pembangun utama dalam tubuh yang mendukung pertumbuhan dan memperbaiki sel-sel yang rusak."
@@ -103,7 +103,7 @@
       "questionText": "(C2) Mengapa tubuh anak sekolah dasar seperti kita membutuhkan air minum yang cukup minimal 7-8 gelas setiap hari?",
       "optionA": "Agar perut terasa selalu kenyang tanpa perlu makan",
       "optionB": "Untuk mencegah dehidrasi dan membantu mengangkut zat gizi ke seluruh tubuh",
-      "optionC": "Agar berat badan dapat bertambah dengan sangat cepat",
+      "optionC": "Agar berat badan dap]at bertambah dengan sangat cepat",
       "optionD": "Untuk menggantikan seluruh kebutuhan protein dan karbohidrat",
       "correctAnswer": "B",
       "explanation": "Air minum berfungsi mencegah kekurangan cairan (dehidrasi), menjaga suhu tubuh, serta membantu mengedarkan zat gizi ke seluruh organ."
@@ -127,15 +127,17 @@
       "explanation": "Panduan 'Isi Piringku' menganjurkan separuh piring diisi porsi makanan pokok dan lauk-pauk, serta separuh piring lainnya diisi sayuran dan buah-buahan."
     },
     {
-      "questionText": "(C4) Nisa sering merasa lesu, wajahnya pucat, dan sulit berkonsentrasi saat menerima pelajaran di kelas. Setelah diperiksa, dokter menyebutkan Nisa mengalami kekurangan zat besi (anemia). Analisis tindakan yang tepat untuk memulihkan kondisi Nisa adalah...",
-      "optionA": "Memperbanyak konsumsi makanan tinggi zat besi seperti hati ayam, bayam, dan daging merah",
-      "optionB": "Mengurangi minum air putih dan memperbanyak tidur siang",
-      "optionC": "Mengonsumsi makanan manis seperti permen dan gulali setiap jam",
-      "optionD": "Menghindari makan sayuran hijau dan buah-buahan",
-      "correctAnswer": "A", "explanation": "Kekurangan zat besi dapat diatasi dengan meningkatkan konsumsi makanan kaya zat besi seperti bayam, hati ayam, dan daging merah."
+      "questionText": "(C4) Ani sering merasa cepat lelah saat belajar di sekolah karena tidak suka makan sayur dan buah. Mengapa jarang makan sayur dan buah dapat membuat tubuh Ani mudah lelah?",
+      "optionA": "Karena tubuh kekurangan vitamin dan mineral yang menjaga kebugaran serta daya tahan tubuh",
+      "optionB": "Karena sayur dan buah mengandung zat gula yang paling tinggi",
+      "optionC": "Karena tidak makan sayur membuat perut terasa terlalu penuh",
+      "optionD": "Karena sayur dan buah adalah satu-satunya sumber energi utama",
+      "correctAnswer": "A",
+      "explanation": "Sayur dan buah mengandung vitamin dan mineral penting. Jika kekurangan, daya tahan tubuh menurun sehingga tubuh terasa lemas dan mudah lelah."
     },
     {
-      "questionText": "(C1) Susu, keju, dan ikan teri merupakan contoh makanan yang kaya akan mineral penting untuk pertumbuhan tulang dan pembentukan gigi yang kuat. Mineral tersebut dinamakan...", "optionA": "Kalsium",
+      "questionText": "(C1) Susu, keju, dan ikan teri merupakan contoh makanan yang kaya akan mineral penting untuk pertumbuhan tulang dan pembentukan gigi yang kuat. Mineral tersebut dinamakan...",
+      "optionA": "Kalsium",
       "optionB": "Yodium",
       "optionC": "Natrium",
       "optionD": "Lemak",
@@ -152,13 +154,13 @@
       "explanation": "Menyapa ramah dan merangkul teman yang pemalu dengan berbagi makanan adalah wujud nyata sikap Olah Hati dan persahabatan."
     },
     {
-      "questionText": "(C2) Protein terbagi menjadi protein hewani dan protein nabati. Manakah pernyataan berikut yang menjelaskan perbedaan asal kedua jenis protein tersebut dengan benar?",
-      "optionA": "Protein hewani berasal dari tumbuhan, sedangkan nabati berasal dari hewan",
-      "optionB": "Protein hewani berasal dari hewan (seperti ikan dan daging), sedangkan nabati berasal dari tumbuhan (seperti tahu dan tempe)",
-      "optionC": "Protein hewani dan nabati sama-sama berasal dari olahan minyak bumi",
-      "optionD": "Protein nabati hanya didapatkan dari air minum biasa",
-      "correctAnswer": "B",
-      "explanation": "Protein hewani bersumber dari hewan seperti telur, ikan, dan daging, sedangkan protein nabati bersumber dari olahan tanaman seperti kedelai, tahu, dan tempe."
+      "questionText": "(C2) Setiap hari kita dianjurkan makan sayur dan buah-buahan. Ibu menjelaskan bahwa sayur dan buah berperan sebagai zat pengatur dalam tubuh. Maksud dari zat pengatur adalah...",
+      "optionA": "Membantu mengatur fungsi organ tubuh dan melindungi tubuh dari penyakit",
+      "optionB": "Menjadikan tubuh langsung menjadi sangat gemuk dalam sehari",
+      "optionC": "Membantu menghasilkan aliran listrik di dalam tubuh",
+      "optionD": "Menggantikan waktu istirahat dan tidur di malam hari",
+      "correctAnswer": "A",
+      "explanation": "Sayur dan buah kaya akan vitamin dan mineral yang berfungsi sebagai zat pengatur untuk menjaga daya tahan tubuh dan melindungi organ tubuh."
     },
     {
       "questionText": "(C3) Anton ingin terhindar dari masalah sembelit atau susah buang air besar. Pilihan makanan harian yang paling tepat untuk membantu Anton adalah...",
