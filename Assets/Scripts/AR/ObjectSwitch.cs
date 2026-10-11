@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class ObjectSwitch : MonoBehaviour
 {
+    public static ObjectSwitch activeSwitch;
     [Header("Hubungkan GameObject dari Hierarchy")]
     public GameObject makananObject;
     public GameObject characterObject;
@@ -11,7 +12,7 @@ public class ObjectSwitch : MonoBehaviour
     private FoodPopUp makananAnim;
     private FoodPopUp panel;
     private FoodPopUp characterAnim;
-    private Carousel1 carousel;
+    private CarouselSet Carousel;
     private ARMenu manageAR;
     private bool isPanelActive = false;
     private bool isCharacterActive = false;
@@ -24,20 +25,33 @@ public class ObjectSwitch : MonoBehaviour
         if (UI != null) manageAR = UI.GetComponent<ARMenu>(); 
         if (panelInfo != null) 
         {
-            panel = panelInfo.GetComponent<FoodPopUp>();
-            carousel = panelInfo.GetComponentInChildren<Carousel1>();
+            panel = panelInfo.GetComponentInChildren<FoodPopUp>(true);
+            Carousel = panelInfo.GetComponentInChildren<CarouselSet>(true);
         }
         
         ResetStatus();
+    }
+
+    public void OnTargetFound()
+    {
+        activeSwitch = this;
+        ResetStatus();
+        if (manageAR != null) manageAR.ShowButton();
+    }
+
+    public static void GlobalInfoPanel()
+    {
+        if (activeSwitch != null) activeSwitch.InfoPanel();
     }
 
     public void ResetStatus()
     {
         isPanelActive = false;
         isCharacterActive = false;
+
         if (manageAR != null) manageAR.HideButton();
         if (panel != null) panel.Sembunyikan();
-        if (carousel != null) carousel.HideButton();
+        if (Carousel != null) Carousel.HideCarousel();
         if (makananAnim != null) makananAnim.Sembunyikan(); 
         if (characterAnim != null) characterAnim.MainkanAnimasi();
     }
@@ -51,15 +65,11 @@ public class ObjectSwitch : MonoBehaviour
         if (isPanelActive)
             {
                 if (panel != null) panel.MainkanAnimasi();
-                if (carousel != null) carousel.ResetCarousel();
+                if (Carousel != null) Carousel.ShowCarousel();
             } else
             {
                 if (panel != null) panel.Sembunyikan();
-                if (carousel != null)
-            {
-                carousel.HideButton();
-                //carousel.StopAudio();
-            } 
+                if (Carousel != null) Carousel.HideCarousel();
             }
     }
 
