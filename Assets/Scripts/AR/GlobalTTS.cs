@@ -8,16 +8,4 @@ public class GlobalTTS : MonoBehaviour
     {
         instance = this;
     }
-    public void ToggleTTSButton()
-    {
-        gameObject.SetActive(!gameObject.activeSelf);
-    }
-    public void HideButton()
-    {
-        gameObject.SetActive(false);
-    }
-    public void OnClickTTS()
-    {
-        //Carousel1.TriggerTTS();
-    }
 }
