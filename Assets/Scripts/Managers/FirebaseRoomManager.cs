@@ -172,12 +172,17 @@ public class FirebaseRoomManager : MonoBehaviour
 {
     textStatusLoading.text = "Menghubungi AI Gemini...";
 
-    // 1. Tentukan Proporsi Soal Olah Hati berdasarkan Jumlah Soal
-    int jumlahOlahHati = 2; // Default untuk 5 soal (1-2 soal)
-    if (selectedJumlahSoal == 10) jumlahOlahHati = 4;
-    else if (selectedJumlahSoal == 15) jumlahOlahHati = 5;
+    // 1. Hitung Proporsi Taksonomi Bloom (C1-C4) & Olah Hati (OH) untuk Anak Kelas 4 SD
+    int countC1 = 1, countC2 = 1, countC3 = 1, countC4 = 1, countOH = 1; // Default 5 Soal
 
-    int jumlahKognitif = selectedJumlahSoal - jumlahOlahHati;
+    if (selectedJumlahSoal == 10)
+    {
+        countC1 = 2; countC2 = 3; countC3 = 3; countC4 = 1; countOH = 1; // Total 10 (Fokus C1-C3 + OH)
+    }
+    else if (selectedJumlahSoal == 15)
+    {
+        countC1 = 3; countC2 = 4; countC3 = 4; countC4 = 2; countOH = 2; // Total 15 (C4 & OH secukupnya)
+    }
 
     GeminiRequest geminiRequest = new GeminiRequest();
     geminiRequest.contents = new List<GeminiContent>();
@@ -185,12 +190,17 @@ public class FirebaseRoomManager : MonoBehaviour
     contentObj.parts = new List<GeminiPart>();
     GeminiPart partObj = new GeminiPart();
     
-    // 2. Prompt Dinamis Integrasi Kognitif + Olah Hati
-    partObj.text = $"Buatlah total {selectedJumlahSoal} soal pilihan ganda interaktif berbentuk cerita pendek untuk anak Sekolah Dasar. " +
-                    $"Soal HARUS terdiri dari kombinasi 2 aspek berikut:\n" +
-                    $"1. {jumlahKognitif} soal Kognitif (pemahaman materi gizi seimbang, jenis zat gizi, dan manfaat makanan sehat).\n" +
-                    $"2. {jumlahOlahHati} soal Olah Hati / Empati Sosial (sikap peduli sosial terkait gizi di sekolah, seperti melihat teman tidak membawa bekal, berbagi makanan sehat, empati kepada teman lemas/sakit, dan etika berteman saat makan bersama).\n\n" +
-                    "WAJIB mengacak (randomize) urutan posisi soal Olah Hati dan Kognitif agar tersebar acak di antara soal nomor 1 sampai akhir, jangan dikelompokkan di depan atau belakang saja. " +
+    // 2. Prompt Integrasi Taksonomi Bloom (C1-C4) + Olah Hati (OH)
+    partObj.text = $"Buatlah total {selectedJumlahSoal} soal pilihan ganda interaktif berbentuk cerita pendek tentang gizi seimbang dan zat gizi untuk anak Sekolah Dasar Kelas 4.\n" +
+                    $"Soal HARUS terbagi secara seimbang berdasarkan Taksonomi Bloom (C1-C4) dan Olah Hati (OH) dengan rincian berikut:\n" +
+                    $"- {countC1} soal C1 (Mengingat: mengidentifikasi nama/kandungan zat gizi makanan)\n" +
+                    $"- {countC2} soal C2 (Memahami: menjelaskan fungsi/manfaat gizi bagi tubuh)\n" +
+                    $"- {countC3} soal C3 (Menerapkan: memilih menu makanan sehat yang tepat)\n" +
+                    $"- {countC4} soal C4 (Menganalisis: menganalisis dampak/masalah gizi sederhana)\n" +
+                    $"- {countOH} soal OH (Olah Hati: empati sosial, berbagi bekal, peduli teman lemas)\n\n" +
+                    $"WAJIB: Setiap nilai 'questionText' HARUS diawali dengan kode kategorinya dalam tanda kurung di paling depan! " +
+                    $"Contoh format: '(C1) Nasi yang dimakan saat sarapan mengandung...', '(C2) Mengapa tubuh membutuhkan...', atau '(OH) Saat melihat teman tidak membawa bekal...'.\n" +
+                    $"WAJIB mengacak (randomize) urutan posisi soal agar tingkat C1-C4 dan OH tersebar acak dari nomor 1 sampai akhir.\n" +
                     "Format output WAJIB dalam bentuk JSON mentah dengan struktur tepat seperti ini: " +
                     "{\"questions\": [{\"questionText\":\"...\", \"optionA\":\"...\", \"optionB\":\"...\", \"optionC\":\"...\", \"optionD\":\"...\", \"correctAnswer\":\"A/B/C/D\", \"explanation\":\"...\"}]}. " +
                     "Jangan berikan teks tambahan atau penjelasan di luar format JSON. Jangan pakai format markdown ```json.";
@@ -234,7 +244,7 @@ public class FirebaseRoomManager : MonoBehaviour
                         if (panelReviewSoalGuru != null) panelReviewSoalGuru.SetActive(true);
 
                         TampilkanSoalKeFormReview(reviewCurrentIndex);
-                        Debug.Log($"[Guru Review] {reviewQuestionsList.Count} soal ({jumlahKognitif} Kognitif + {jumlahOlahHati} Olah Hati) berhasil dimuat!");
+                        Debug.Log($"[Guru Review] {reviewQuestionsList.Count} soal (C1-C4 + OH) berhasil diracik!");
                     }
                     else
                     {

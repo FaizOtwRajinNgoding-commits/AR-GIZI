@@ -1,184 +1,182 @@
 {
   "questions": [
     {
-      "questionText": "Budi merasa lemas saat berolahraga di sekolah. Makanan apa yang sebaiknya dikonsumsi Budi sebagai sumber energi utama?",
-      "optionA": "Nasi putih dan roti",
-      "optionB": "Air putih saja",
-      "optionC": "Garam dapur",
-      "optionD": "Permen manis",
-      "correctAnswer": "A",
-      "explanation": "Nasi dan roti mengandung karbohidrat yang berfungsi sebagai sumber energi utama bagi tubuh."
+      "questionText": "(C3) Budi ingin membeli sarapan di kantin sekolah. Ada pilihan gorengan, mi instan, dan nasi uduk lengkap dengan telur dadar serta irisan timun. Menu mana yang paling seimbang untuk memberikan energi belajar Budi pagi ini?",
+      "optionA": "Mi instan dengan kerupuk",
+      "optionB": "Gorengan sebanyak lima buah",
+      "optionC": "Nasi uduk dengan telur dadar dan timun",
+      "optionD": "Permen manis dan es teh manis",
+      "correctAnswer": "C",
+      "explanation": "Nasi uduk dengan telur dadar dan timun mengandung karbohidrat, protein, dan serat yang seimbang untuk energi belajar pagi hari."
     },
     {
-      "questionText": "Siti ingin memiliki tulang dan gigi yang kuat. Zat gizi serta minuman apa yang sangat membantu pertumbuhan tulangnya?",
-      "optionA": "Kalsium dari Susu",
-      "optionB": "Lemak dari Minyak",
-      "optionC": "Vitamin C dari Jeruk",
-      "optionD": "Zat Besi dari Bayam",
-      "correctAnswer": "A",
-      "explanation": "Kalsium yang terkandung dalam susu sangat penting untuk pembentukan dan kekuatan tulang serta gigi."
-    },
-    {
-      "questionText": "Doni sering mengalami sariawan dan gusi berdarah. Buah apa yang baik dikonsumsi Doni untuk mengatasi masalah tersebut?",
-      "optionA": "Jeruk yang kaya Vitamin C",
-      "optionB": "Daging sapi",
-      "optionC": "Nasi goreng",
-      "optionD": "Tahu goreng",
-      "correctAnswer": "A",
-      "explanation": "Vitamin C pada buah jeruk menjaga kesehatan gusi dan membantu menyembuhkan sariawan."
-    },
-    {
-      "questionText": "Mengapa kita harus mengonsumsi makanan yang bervariasi setiap hari?",
-      "optionA": "Agar tidak ada satu pun zat gizi yang kekurangan dalam tubuh",
-      "optionB": "Agar perut terasa sangat penuh",
-      "optionC": "Karena harga makanan berbeda-beda",
-      "optionD": "Supaya tidak perlu minum air",
-      "correctAnswer": "A",
-      "explanation": "Tidak ada satu jenis makanan yang mengandung seluruh zat gizi lengkap, sehingga kita perlu makan beragam makanan."
-    },
-    {
-      "questionText": "Ibu memasak ikan dan telur untuk lauk makan siang. Protein di dalam ikan dan telur berguna untuk...",
-      "optionA": "Pertumbuhan dan memperbaiki sel tubuh yang rusak",
-      "optionB": "Mencerna makanan di usus",
-      "optionC": "Memberikan rasa manis pada darah",
-      "optionD": "Membuat napas menjadi lebih panjang",
-      "correctAnswer": "A",
-      "explanation": "Protein berfungsi sebagai zat pembangun untuk pertumbuhan dan perbaikan jaringan tubuh."
-    },
-    {
-      "questionText": "Manakah di antara pilihan berikut yang merupakan contoh zat gizi mikro yang dibutuhkan tubuh dalam jumlah sedikit namun penting?",
-      "optionA": "Vitamin dan Mineral",
-      "optionB": "Karbohidrat dan Air",
-      "optionC": "Protein dan Lemak",
-      "optionD": "Glukosa dan Sereal",
-      "correctAnswer": "A",
-      "explanation": "Vitamin dan mineral disebut zat gizi mikro karena dibutuhkan tubuh dalam jumlah kecil tetapi vital."
-    },
-    {
-      "questionText": "Edo jarang makan sayuran hijau seperti bayam dan kangkung. Edo berisiko kekurangan zat besi yang menyebabkan...",
-      "optionA": "Tubuh cepat lelah dan kurang darah (Anemia)",
-      "optionB": "Gigi patah",
-      "optionC": "Mata kabur saat terang",
-      "optionD": "Kulit menjadi gatal",
-      "correctAnswer": "A",
-      "explanation": "Zat besi berfungsi membentu sel darah merah. Kekurangannya menyebabkan anemia dan tubuh cepat lelah."
-    },
-    {
-      "questionText": "Apa fungsi utama dari air minum bagi tubuh anak-anak saat beraktivitas seharian?",
-      "optionA": "Mencukupi cairan tubuh dan mencegah dehidrasi",
-      "optionB": "Menggantikan fungsi nasi",
-      "optionC": "Membuat otot menjadi besar secara instant",
-      "optionD": "Menambah rasa manis di lidah",
-      "correctAnswer": "A",
-      "explanation": "Air membantu menjaga keseimbangan cairan tubuh dan mencegah dehidrasi."
-    },
-    {
-      "questionText": "Buah wortel dikenal sangat baik untuk kesehatan mata karena banyak mengandung...",
-      "optionA": "Vitamin A",
-      "optionB": "Vitamin D",
-      "optionC": "Vitamin K",
-      "optionD": "Kalsium",
-      "correctAnswer": "A",
-      "explanation": "Vitamin A penting untuk menjaga fungsi penglihatan mata."
-    },
-    {
-      "questionText": "Makanan apa yang tergolong sebagai sumber protein nabati?",
-      "optionA": "Tempe dan Tahu",
-      "optionB": "Daging Ayam",
-      "optionC": "Ikan Tongkol",
-      "optionD": "Telur Puyuh",
-      "correctAnswer": "A",
-      "explanation": "Tempe dan tahu dibuat dari kedelai, sehingga tergolong sumber protein nabati (tumbuhan)."
-    },
-    {
-      "questionText": "Apa dampak negatif jika kita terlalu sering mengonsumsi makanan cepat saji (junk food) dan minuman bersoda?",
-      "optionA": "Risiko kegemukan (obesitas) dan kekurangan zat gizi penting",
-      "optionB": "Tubuh menjadi makin tinggi dengan cepat",
-      "optionC": "Daya ingat menjadi sangat tajam",
-      "optionD": "Tulang menjadi semakin kuat",
-      "correctAnswer": "A",
-      "explanation": "Junk food tinggi kalori dan gula tetapi rendah zat gizi, sehingga memicu obesitas."
-    },
-    {
-      "questionText": "Sinar matahari pagi membantu tubuh kita untuk memproduksi secara alami...",
-      "optionA": "Vitamin D",
-      "optionB": "Vitamin B12",
-      "optionC": "Protein",
-      "optionD": "Karbohidrat",
-      "correctAnswer": "A",
-      "explanation": "Paparan sinar matahari pagi membantu mengubah provitamin D di kulit menjadi Vitamin D aktif."
-    },
-    {
-      "questionText": "Sebelum makan, kebiasaan baik apa yang wajib dilakukan untuk mencegah kuman masuk ke dalam saluran pencernaan?",
-      "optionA": "Mencuci tangan dengan sabun dan air mengalir",
-      "optionB": "Berlari-lari kecil",
-      "optionC": "Menggosok gigi dengan garam",
-      "optionD": "Minum es teh manis",
-      "correctAnswer": "A",
-      "explanation": "Mencuci tangan memakai sabun menghilangkan kuman dan bakteri berbahaya sebelum memegang makanan."
-    },
-    {
-      "questionText": "Serat yang terdapat pada buah dan sayuran bermanfaat untuk...",
-      "optionA": "Melancarkan proses buang air besar (pencernaan)",
-      "optionB": "Menguatkan rambut",
-      "optionC": "Meningkatkan tinggi badan",
-      "optionD": "Membuat warna kulit lebih cerah",
-      "correctAnswer": "A",
-      "explanation": "Serat membantu melancarkan kerja usus dan mencegah sembelit/susah buang air besar."
-    },
-    {
-      "questionText": "Manakah kelompok makanan di bawah ini yang semuanya merupakan sumber karbohidrat?",
-      "optionA": "Singkong, Kentang, Nasi, dan Jagung",
-      "optionB": "Bayam, Daging, Susu, dan Telur",
-      "optionC": "Minyak, Mentega, Keju, dan Ikan",
-      "optionD": "Apel, Jeruk, Mangga, dan Pisang",
-      "correctAnswer": "A",
-      "explanation": "Singkong, kentang, nasi, dan jagung adalah bahan pangan kaya karbohidrat penyuplai energi."
-    },
-    {
-      "questionText": "Zat pembungkus dan pelindung organ dalam tubuh serta cadangan energi jangka panjang adalah fungsi dari...",
-      "optionA": "Lemak baik",
+      "questionText": "(C1) Rani membawa bekal berupa nasi, ayam goreng, dan buah jeruk. Ketika makan jeruk, Rani merasakan rasa asam yang segar. Jeruk dikenal sebagai buah yang kaya akan zat gizi...",
+      "optionA": "Protein",
       "optionB": "Vitamin C",
-      "optionC": "Zat Besi",
-      "optionD": "Kalsium",
-      "correctAnswer": "A",
-      "explanation": "Lemak berfungsi sebagai pelindung organ tubuh, isolator suhu, dan cadangan energi."
+      "optionC": "Karbohidrat",
+      "optionD": "Lemak",
+      "correctAnswer": "B",
+      "explanation": "Buah jeruk merupakan sumber utama Vitamin C yang berguna untuk menjaga daya tahan tubuh dan kesehatan kulit."
     },
     {
-      "questionText": "Rani merasa penglihatannya agak kabur saat malam hari atau di tempat redup. Rani disarankan mengonsumsi...",
-      "optionA": "Wortel dan Hati Ayam",
-      "optionB": "Garam dapur",
-      "optionC": "Air kelapa",
-      "optionD": "Kerupuk",
-      "correctAnswer": "A",
-      "explanation": "Wortel dan hati ayam kaya Vitamin A untuk mencegah rabun ayam/rabun dekat malam hari."
+      "questionText": "(OH) Saat jam istirahat, Edo melihat Doni duduk sendirian di sudut kelas tanpa membawa bekal dan terlihat lesu. Bekal Edo cukup banyak berisi roti isi dan buah apel. Sikap Olah Hati yang tepat ditunjukkan Edo adalah...",
+      "optionA": "Menghabiskan bekalnya dengan cepat di depan Doni",
+      "optionB": "Menawari dan membagi sebagian roti atau buahnya kepada Doni",
+      "optionC": "Minta Doni membeli makanan sendiri di luar sekolah",
+      "optionD": "Pura-pura tidak melihat Doni agar bekalnya tidak berkurang",
+      "correctAnswer": "B",
+      "explanation": "Membagi bekal kepada teman yang tidak membawa makanan menunjukkan rasa empati, kepedulian sosial, dan kebaikan hati."
     },
     {
-      "questionText": "Garam beryodium digunakan dalam masakan untuk mencegah penyakit...",
-      "optionA": "Gondok",
-      "optionB": "Sariawan",
-      "optionC": "Batuk",
-      "optionD": "Maag",
+      "questionText": "(C2) Dini rajin mengonsumsi tahu, tempe, dan ikan setiap hari. Ibu menjelaskan bahwa makanan tersebut membantu pertumbuhan badan Dini agar cepat tinggi dan memperbaiki sel tubuh yang rusak. Berdasarkan penjelasan Ibu, fungsi utama dari protein adalah...",
+      "optionA": "Sebagai pembangun dan pembentuk jaringan tubuh",
+      "optionB": "Memberikan rasa manis pada makanan",
+      "optionC": "Melarutkan vitamin A, D, E, dan K saja",
+      "optionD": "Menggantikan fungsi air dalam tubuh",
       "correctAnswer": "A",
-      "explanation": "Yodium adalah mineral penting untuk mencegah pembengkakan kelenjar tiroid (gondok)."
+      "explanation": "Protein berfungsi sebagai zat pembangun utama dalam tubuh yang mendukung pertumbuhan dan memperbaiki sel-sel yang rusak."
     },
     {
-      "questionText": "Gizi Seimbang digambarkan dengan slogan 'Isi Piringku'. Porsi terbanyak dalam satu piring terdiri dari...",
-      "optionA": "Makanan Pokok dan Sayuran",
-      "optionB": "Lauk Pauk dan Buah Manis",
-      "optionC": "Kue dan Es Krim",
-      "optionD": "Minyak dan Saus",
-      "correctAnswer": "A",
-      "explanation": "Panduan Isi Piringku menyeimbangkan 2/3 piring untuk makanan pokok & sayuran, serta 1/3 untuk lauk & buah."
+      "questionText": "(C4) Setiap hari Dimas hanya mau makan nasi putih dengan lauk kerupuk tanpa sayur, buah, maupun protein. Setelah beberapa minggu, Dimas merasa tubuhnya makin lemas dan mudah terserang flu. Mengapa hal tersebut bisa terjadi pada Dimas?",
+      "optionA": "Karena kerupuk mengandung terlalu banyak vitamin C",
+      "optionB": "Karena tubuh Dimas kekurangan protein, vitamin, dan mineral untuk daya tahan tubuh",
+      "optionC": "Karena nasi putih membuat tubuh menjadi cepat lelah",
+      "optionD": "Karena Dimas kurang banyak mengonsumsi makanan manis",
+      "correctAnswer": "B",
+      "explanation": "Makan tanpa protein, sayur, dan buah menyebabkan tubuh kekurangan zat gizi penting, sehingga sistem kekebalan tubuh melemah dan mudah sakit."
     },
     {
-      "questionText": "Kekurangan protein pada anak-anak dalam jangka waktu lama dapat menyebabkan kondisi gangguan pertumbuhan yang disebut...",
-      "optionA": "Stunting",
-      "optionB": "Influenza",
-      "optionC": "Alergi",
-      "optionD": "Hiperaktif",
+      "questionText": "(OH) Ketika berolahraga di lapangan, Sarah melihat Lani tiba-tiba berhenti dan bersandar di pohon karena pusing dan lemas akibat belum sarapan. Tindakan peduli yang sebaiknya dilakukan Sarah adalah...",
+      "optionA": "Menyuruh Lani tetap berlari sampai selesai",
+      "optionB": "Menertawakan Lani karena tidak kuat berolahraga",
+      "optionC": "Membantu Lani duduk di tempat berteduh dan melaporkannya kepada guru",
+      "optionD": "Membiarkan Lani sendirian di bawah pohon",
+      "correctAnswer": "C",
+      "explanation": "Membantu teman yang lemas dan melaporkan ke guru menunjukkan rasa peduli, tanggap, dan empati terhadap sesama."
+    },
+    {
+      "questionText": "(C1) Setelah berolahraga lari, Arya merasa haus dan lelah. Guru menjelaskan bahwa nasi, gandum, dan kentang yang dimakan Arya saat pagi berfungsi sebagai sumber energi utama. Zat gizi yang dimaksud adalah...",
+      "optionA": "Karbohidrat",
+      "optionB": "Kalsium",
+      "optionC": "Vitamin D",
+      "optionD": "Zat besi",
       "correctAnswer": "A",
-      "explanation": "Stunting adalah kondisi gagal tumbuh pada anak akibat kekurangan gizi kronis, terutama protein."
+      "explanation": "Karbohidrat adalah zat gizi utama yang diolah tubuh menjadi energi untuk beraktivitas sehari-hari."
+    },
+    {
+      "questionText": "(C2) Ibu selalu menyajikan bayam dan wortel di meja makan. Ibu memberi tahu Andi bahwa sayuran hijau dan jingga sangat baik untuk kesehatan mata dan melancarkan pencernaan. Mengapa pencernaan kita membutuhkan sayuran?",
+      "optionA": "Karena sayuran mengandung serat yang membantu proses pencernaan",
+      "optionB": "Karena sayuran mengandung banyak minyak dan lemak",
+      "optionC": "Karena sayuran bisa menggantikan air minum",
+      "optionD": "Karena sayuran langsung diubah menjadi zat gula",
+      "correctAnswer": "A",
+      "explanation": "Serat yang terkandung dalam sayuran berguna untuk melancarkan saluran pencernaan dan mencegah sembelit."
+    },
+    {
+      "questionText": "(C3) Siti memiliki aktivitas yang padat di sekolah, mulai dari belajar di kelas hingga latihan pramuka. Agar staminanya tetap terjaga sepanjang hari, pilihan bekal sehat yang paling tepat untuk Siti bawa adalah...",
+      "optionA": "Cokelat bar dan minuman bersoda",
+      "optionB": "Nasi, tempe bacem, tumis buncis, dan buah pisang",
+      "optionC": "Keripik kentang balado dan es sirup",
+      "optionD": "Mi instan goreng dengan sosis bakar",
+      "correctAnswer": "B",
+      "explanation": "Kombinasi nasi, tempe, tumis buncis, dan pisang menyediakan karbohidrat, protein, serat, serta vitamin yang lengkap untuk menjaga energi seharian."
+    },
+    {
+      "questionText": "(C4) Dua orang siswa, Ali dan Banu, memiliki kebiasaan makan yang berbeda. Ali menyukai makanan beragam sesuai pedoman gizi seimbang, sedangkan Banu hanya suka makan makanan cepat saji kaya lemak. Apa perbedaan dampak kesehatan yang paling mungkin terjadi pada keduanya dalam jangka panjang?",
+      "optionA": "Ali akan sering sakit, sedangkan Banu tambah sehat",
+      "optionB": "Banu memiliki daya tahan tubuh lebih kuat dibandingkan Ali",
+      "optionC": "Ali memiliki tubuh sehat bugar, sedangkan Banu berisiko mengalami kegemukan dan gangguan kesehatan",
+      "optionD": "Tidak ada perbedaan dampak kesehatan antara Ali dan Banu",
+      "correctAnswer": "C",
+      "explanation": "Pola gizi seimbang menjaga kesehatan dan kebugaran Ali, sedangkan konsumsi makanan cepat saji berlebih membuat Banu berisiko obesitas dan masalah kesehatan."
+    },
+    {
+      "questionText": "(C1) Sinar matahari pagi membantu tubuh kita memproduksi salah satu jenis vitamin yang sangat penting untuk kesehatan tulang dan gigi, yaitu...",
+      "optionA": "Vitamin A",
+      "optionB": "Vitamin B",
+      "optionC": "Vitamin C",
+      "optionD": "Vitamin D",
+      "correctAnswer": "D",
+      "explanation": "Sinar matahari pagi membantu proses pembentukan Vitamin D dalam tubuh yang penting untuk penyerapan kalsium pada tulang dan gigi."
+    },
+    {
+      "questionText": "(C2) Mengapa tubuh anak sekolah dasar seperti kita membutuhkan air minum yang cukup minimal 7-8 gelas setiap hari?",
+      "optionA": "Agar perut terasa selalu kenyang tanpa perlu makan",
+      "optionB": "Untuk mencegah dehidrasi dan membantu mengangkut zat gizi ke seluruh tubuh",
+      "optionC": "Agar berat badan dapat bertambah dengan sangat cepat",
+      "optionD": "Untuk menggantikan seluruh kebutuhan protein dan karbohidrat",
+      "correctAnswer": "B",
+      "explanation": "Air minum berfungsi mencegah kekurangan cairan (dehidrasi), menjaga suhu tubuh, serta membantu mengedarkan zat gizi ke seluruh organ."
+    },
+    {
+      "questionText": "(OH) Di kantin sekolah, Rian melihat temannya, Bayu, ketumpahan air minum hingga bekal makannya basah dan tidak bisa dimakan. Apa yang seharusnya Rian lakukan sebagai bentuk empati?",
+      "optionA": "Mengejek Bayu karena tidak hati-hati saat minum",
+      "optionB": "Mengajak Bayu makan bersama dan membagi bekal yang dimilikinya",
+      "optionC": "Menyuruh Bayu memakan bekal yang sudah basah tersebut",
+      "optionD": "Acuh tak acuh dan tetap makan bekal sendiri",
+      "correctAnswer": "B",
+      "explanation": "Membagi bekal dan mengajak teman yang tertimpa musibah untuk makan bersama merupakan wujud kepedulian dan kepekaan sosial."
+    },
+    {
+      "questionText": "(C3) Pak Guru meminta murid kelas 4 menyusun piring makan dengan prinsip 'Isi Piringku'. Dari pilihan berikut, susunan piring yang memenuhi porsi gizi seimbang adalah...",
+      "optionA": "Setengah piring nasi, setengah piring mi goreng",
+      "optionB": "Makanan pokok dan lauk pauk mengisi separuh piring, separuh piring sisanya diisi sayur dan buah",
+      "optionC": "Seluruh piring diisi dengan daging dan telur tanpa makanan pokok",
+      "optionD": "Tiga perempat piring diisi buah-buahan saja",
+      "correctAnswer": "B",
+      "explanation": "Panduan 'Isi Piringku' menganjurkan separuh piring diisi porsi makanan pokok dan lauk-pauk, serta separuh piring lainnya diisi sayuran dan buah-buahan."
+    },
+    {
+      "questionText": "(C4) Nisa sering merasa lesu, wajahnya pucat, dan sulit berkonsentrasi saat menerima pelajaran di kelas. Setelah diperiksa, dokter menyebutkan Nisa mengalami kekurangan zat besi (anemia). Analisis tindakan yang tepat untuk memulihkan kondisi Nisa adalah...",
+      "optionA": "Memperbanyak konsumsi makanan tinggi zat besi seperti hati ayam, bayam, dan daging merah",
+      "optionB": "Mengurangi minum air putih dan memperbanyak tidur siang",
+      "optionC": "Mengonsumsi makanan manis seperti permen dan gulali setiap jam",
+      "optionD": "Menghindari makan sayuran hijau dan buah-buahan",
+      "correctAnswer": "A", "explanation": "Kekurangan zat besi dapat diatasi dengan meningkatkan konsumsi makanan kaya zat besi seperti bayam, hati ayam, dan daging merah."
+    },
+    {
+      "questionText": "(C1) Susu, keju, dan ikan teri merupakan contoh makanan yang kaya akan mineral penting untuk pertumbuhan tulang dan pembentukan gigi yang kuat. Mineral tersebut dinamakan...", "optionA": "Kalsium",
+      "optionB": "Yodium",
+      "optionC": "Natrium",
+      "optionD": "Lemak",
+      "correctAnswer": "A",
+      "explanation": "Kalsium adalah mineral utama yang dibutuhkan tubuh untuk membentuk dan menjaga kepadatan tulang serta gigi."
+    },
+    {
+      "questionText": "(OH) Saat kegiatan piknik sekolah, Dhea membawa kue buatan ibunya. Ia melihat Tono yang pemalu duduk sendirian di bangku taman tanpa teman. Apa tindakan terpuji yang dapat dilakukan Dhea untuk mencerminkan nilai Olah Hati?",
+      "optionA": "Menghampiri Tono, menyapa dengan ramah, dan menawarkan kuenya",
+      "optionB": "Memakan kuenya sendirian di depan Tono tanpa menyapa",
+      "optionC": "Menyembunyikan kuenya agar tidak diminta oleh Tono",
+      "optionD": "Meminta Tono membeli kuenya jika ingin mencoba",
+      "correctAnswer": "A",
+      "explanation": "Menyapa ramah dan merangkul teman yang pemalu dengan berbagi makanan adalah wujud nyata sikap Olah Hati dan persahabatan."
+    },
+    {
+      "questionText": "(C2) Protein terbagi menjadi protein hewani dan protein nabati. Manakah pernyataan berikut yang menjelaskan perbedaan asal kedua jenis protein tersebut dengan benar?",
+      "optionA": "Protein hewani berasal dari tumbuhan, sedangkan nabati berasal dari hewan",
+      "optionB": "Protein hewani berasal dari hewan (seperti ikan dan daging), sedangkan nabati berasal dari tumbuhan (seperti tahu dan tempe)",
+      "optionC": "Protein hewani dan nabati sama-sama berasal dari olahan minyak bumi",
+      "optionD": "Protein nabati hanya didapatkan dari air minum biasa",
+      "correctAnswer": "B",
+      "explanation": "Protein hewani bersumber dari hewan seperti telur, ikan, dan daging, sedangkan protein nabati bersumber dari olahan tanaman seperti kedelai, tahu, dan tempe."
+    },
+    {
+      "questionText": "(C3) Anton ingin terhindar dari masalah sembelit atau susah buang air besar. Pilihan makanan harian yang paling tepat untuk membantu Anton adalah...",
+      "optionA": "Membanyak makan daging panggang tanpa sayur",
+      "optionB": "Rutin mengonsumsi buah pepaya, pisang, dan sayuran berserat tinggi",
+      "optionC": "Minum minuman bersoda dingin setiap sore",
+      "optionD": "Makan jajanan gorengan bertepung tebal",
+      "correctAnswer": "B",
+      "explanation": "Buah seperti pepaya dan pisang serta sayuran tinggi serat sangat efektif membantu melancarkan buang air besar."
+    },
+    {
+      "questionText": "(C4) Saat jam istirahat, Reza lebih memilih membeli es lilin berwarna sangat mencolok dan jajanan asin yang tidak tertutup dibanding bekal buah dari rumah. Mengapa kebiasaan Reza tersebut berisiko bagi kesehatan tubuhnya?",
+      "optionA": "Karena jajanan tersebut mengandung banyak zat gizi mikro yang dibutuhkan tubuh",
+      "optionB": "Karena makanan tidak tertutup berisiko terkontaminasi kuman serta pewarna buatan berlebih yang berbahaya bagi organ tubuh",
+      "optionC": "Karena es lilin berwarna membuat tubuh menjadi lebih cepat tinggi",
+      "optionD": "Karena buah dari rumah tidak memiliki kandungan vitamin yang berguna",
+      "correctAnswer": "B",
+      "explanation": "Makanan terbuka mudah tercemar kuman dan debu, sedangkan pewarna sintesis tak terstandar dapat merusak organ tubuh jika dikonsumsi terus-menerus."
     }
   ]
 }
