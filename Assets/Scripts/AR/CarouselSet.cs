@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class CarouselSet : MonoBehaviour
 {
@@ -13,19 +14,27 @@ public class CarouselSet : MonoBehaviour
     public Button nextButton;
     public Button prevButton;
     public Button TTSButton;
+    [Header("Audio Source")]
+    public AudioSource audioSource;
 
     private int currentIndex = 0;
 
+    void Start()
+    {
+        if (audioSource == null) audioSource = GetComponent<AudioSource>();
+    }
     public void ShowCarousel()
     {
         activeCarousel = this;
         currentIndex = 0;
+        StopAudio();
         UpdateCarousel();
     }
 
     // Otomatis berjalan saat Panel di-SetActive(false) atau Target Lost
     public void HideCarousel()
     {
+        StopAudio();
         currentIndex = 0;
         if (activeCarousel == this || activeCarousel == null)
         {
@@ -34,22 +43,21 @@ public class CarouselSet : MonoBehaviour
         }
     }
 
+    public static void GlobalPlayTTS()
+    {
+        if (activeCarousel != null) activeCarousel.PlayCurrentSlideTTS();
+    }
+
     // Dipanggil oleh OnClick () pada ButtonNext di Canvas
     public static void GlobalNext()
     {
-        if (activeCarousel != null)
-        {
-            activeCarousel.NextSlide();
-        }
+        if (activeCarousel != null) activeCarousel.NextSlide();
     }
 
     // Dipanggil oleh OnClick () pada ButtonPrev di Canvas
     public static void GlobalPrev()
     {
-        if (activeCarousel != null)
-        {
-            activeCarousel.PrevSlide();
-        }
+        if (activeCarousel != null) activeCarousel.PrevSlide();
     }
 
     public void NextSlide()
@@ -58,6 +66,7 @@ public class CarouselSet : MonoBehaviour
 
         if (currentIndex < slides.Length - 1)
         {
+            StopAudio();
             currentIndex++;
             UpdateCarousel();
         }
@@ -69,6 +78,7 @@ public class CarouselSet : MonoBehaviour
 
         if (currentIndex > 0)
         {
+            StopAudio();
             currentIndex--;
             UpdateCarousel();
         }
@@ -78,7 +88,6 @@ public class CarouselSet : MonoBehaviour
     {
         if (slides == null || slides.Length == 0) return;
 
-        // Aktifkan slide sesuai index, sisanya matikan
         for (int i = 0; i < slides.Length; i++)
         {
             if (slides[i] != null)
@@ -87,20 +96,58 @@ public class CarouselSet : MonoBehaviour
             }
         }
 
-        // Atur visibilitas tombol Next & Prev berdasarkan halaman
-        if (nextButton != null)
-        {
-            nextButton.gameObject.SetActive(currentIndex < slides.Length - 1);
-        }
+        if (nextButton != null) nextButton.gameObject.SetActive(currentIndex < slides.Length - 1);
+        if (prevButton != null) prevButton.gameObject.SetActive(currentIndex > 0);
+        if (TTSButton != null) TTSButton.gameObject.SetActive(true);
+    }
 
-        if (prevButton != null)
-        {
-            prevButton.gameObject.SetActive(currentIndex > 0);
-        }
+    public void PlayCurrentSlideTTS()
+    {
+        if (slides == null || slides.Length == 0) return;
 
-        if (TTSButton != null)
+        GameObject slideAktif = slides[currentIndex];
+        if (slideAktif == null) return;
+
+        // Ambil teks UI dari slide yang sedang aktif
+        TextMeshProUGUI teksUI = slideAktif.GetComponentInChildren<TextMeshProUGUI>(true);
+
+        if (teksUI != null && !string.IsNullOrEmpty(teksUI.text))
         {
-            TTSButton.gameObject.SetActive(true);
+            string isiText = teksUI.text;
+            
+            // Nama file audio dibuat unik berdasarkan nama marker dan slide index
+            string namaFile = $"Audio_{transform.root.name}_{gameObject.name}_Slide_{currentIndex}";
+
+            if (EdgeTTS.instance != null)
+            {
+                EdgeTTS.instance.GetTTSAudio(isiText, namaFile, (clip) =>
+                {
+                    // Pastikan audio hanya diputar jika panel marker ini MASIH aktif di layar
+                    if (clip != null && activeCarousel == this)
+                    {
+                        if (audioSource == null) audioSource = GetComponent<AudioSource>();
+                        if (audioSource != null)
+                        {
+                            audioSource.Stop();
+                            audioSource.clip = clip;
+                            audioSource.Play();
+                        }
+                    }
+                });
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"[CarouselSet] Teks TextMeshProUGUI tidak ditemukan pada slide index {currentIndex}!");
+        }
+    }
+
+    public void StopAudio()
+    {
+        if (audioSource != null)
+        {
+            audioSource.Stop();
+            audioSource.clip = null;
         }
     }
 

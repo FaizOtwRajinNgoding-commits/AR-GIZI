@@ -3297,7 +3297,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 537081811}
   m_Direction: 0
   m_Value: 1
-  m_Size: 0.9999999
+  m_Size: 0.9999998
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4287,7 +4287,7 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 457686744}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.00000011920929, y: 0}
+  m_AnchorMin: {x: 0.00000017881393, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
@@ -8771,7 +8771,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 282886472}
   m_Direction: 0
   m_Value: 1
-  m_Size: 0.9999999
+  m_Size: 0.9999998
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -9571,17 +9571,17 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0.2
       value: 1.5
-      inSlope: 3.592712
-      outSlope: 3.592712
+      inSlope: 3.4354239
+      outSlope: 3.4354239
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 1
+      time: 0.6
       value: 1.248339
-      inSlope: -0.31457618
-      outSlope: -0.31457618
+      inSlope: -0.6291523
+      outSlope: -0.6291523
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -9885,7 +9885,7 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1430906586}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.00000011920929, y: 0}
+  m_AnchorMin: {x: 0.00000017881393, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
@@ -18518,8 +18518,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1199152424}
   m_HandleRect: {fileID: 1199152423}
   m_Direction: 2
-  m_Value: 0.99999976
-  m_Size: 0.6162916
+  m_Value: 1
+  m_Size: 0.6162915
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -20567,17 +20567,17 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0.2
       value: 1.5
-      inSlope: 3.592712
-      outSlope: 3.592712
+      inSlope: 3.4354239
+      outSlope: 3.4354239
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 1
+      time: 0.6
       value: 1.248339
-      inSlope: -0.31457618
-      outSlope: -0.31457618
+      inSlope: -0.6291523
+      outSlope: -0.6291523
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -25251,8 +25251,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 917009139}
   m_HandleRect: {fileID: 917009138}
   m_Direction: 2
-  m_Value: 0.99999976
-  m_Size: 0.6162916
+  m_Value: 1
+  m_Size: 0.6162915
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -26574,7 +26574,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Yakin keluar Menu?
+  m_text: "kembali ke \npilih mode?"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1cc1d82e7c1b2174a9f1549052916a20, type: 2}
   m_sharedMaterial: {fileID: -8157647435672314013, guid: 1cc1d82e7c1b2174a9f1549052916a20,
@@ -26602,8 +26602,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -29973,7 +29973,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Yakin keluar Menu?
+  m_text: "kembali ke \npilih mode?"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1cc1d82e7c1b2174a9f1549052916a20, type: 2}
   m_sharedMaterial: {fileID: -8157647435672314013, guid: 1cc1d82e7c1b2174a9f1549052916a20,
@@ -30001,8 +30001,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -30040,7 +30040,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -252.45865, w: -9.213722}
+  m_margin: {x: 0, y: 0, z: -252.45865, w: -60.855743}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
