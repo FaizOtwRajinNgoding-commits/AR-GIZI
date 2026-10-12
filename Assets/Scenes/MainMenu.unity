@@ -3299,8 +3299,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 48.5, y: 35.6}
-  m_SizeDelta: {x: 144, y: 145}
+  m_AnchoredPosition: {x: 47, y: 35.6}
+  m_SizeDelta: {x: 154, y: 154}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1674684174
 MonoBehaviour:
@@ -3390,7 +3390,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 9b22914ffef8d7c409a756def0a7379e, type: 3}
+  m_Sprite: {fileID: 896764183, guid: 156ec492e516ccb4099add479601d65e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3909,20 +3909,20 @@ MonoBehaviour:
   buttonSelesai: {fileID: 1678461546}
   judulPanduan: Panduan Fitur
   daftarHalamanPanduan:
-  - teksPanduan: '1. Game
+  - teksPanduan: 'Game
 
       Bermain sambil belajar tentang zat gizi dan komposisi
       Isi Piringku melalui permainan interaktif.'
     gambarPanduan: {fileID: 0}
-  - teksPanduan: '1. Kamera AR
+  - teksPanduan: 'Kamera AR
 
-      Memindai marker zat gizi untuk mendapatkan
-      informasi dan mengikuti aktivitas gerak melalui Augmented Reality.'
+      Memindai marker zat gizi untuk mendapatkan informasi
+      dan mengikuti aktivitas gerak melalui Augmented Reality.'
     gambarPanduan: {fileID: 0}
-  - teksPanduan: '1. Kuis
+  - teksPanduan: 'Kuis
 
-      Menguji pemahaman zat gizi melalui kuis bersama
-      maupun kuis yang dikerjakan secara mandiri.'
+      Menguji pemahaman zat gizi melalui kuis bersama maupun
+      kuis yang dikerjakan secara mandiri.'
     gambarPanduan: {fileID: 0}
 --- !u!1 &1709320397
 GameObject:
@@ -4445,7 +4445,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: TEST OTAK KAMU!
+  m_text: "TEST \nOTAK KAMU!"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1cc1d82e7c1b2174a9f1549052916a20, type: 2}
   m_sharedMaterial: {fileID: -8157647435672314013, guid: 1cc1d82e7c1b2174a9f1549052916a20,
@@ -4473,14 +4473,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -4512,7 +4512,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 85.21771, w: 0}
+  m_margin: {x: 0, y: 0, z: 85.21771, w: -59.582867}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
