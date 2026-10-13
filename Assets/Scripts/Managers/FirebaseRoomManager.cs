@@ -45,6 +45,7 @@ public class FirebaseRoomManager : MonoBehaviour
     [SerializeField] private TMP_InputField inputReviewExplanation;
     [SerializeField] private Button btnPrevReview;
     [SerializeField] private Button btnNextReview;
+    [SerializeField] private Button btnRilisKuis;
 
     [Header("Arsitektur Canvas Gameplay Baru")]
     [SerializeField] private GameObject canvasQuizGameplay;      
@@ -128,10 +129,10 @@ public class FirebaseRoomManager : MonoBehaviour
     {
         if (args.DatabaseError != null) return;
 
-        foreach (Transform child in studentListContainer) {
-            child.SetParent(null);
-            child.gameObject.SetActive(false);
-            Destroy(child.gameObject);
+        // FIX: Hapus elemen UI lama dari belakang secara bersih tanpa melompati item
+        for (int i = studentListContainer.childCount - 1; i >= 0; i--)
+        {
+            Destroy(studentListContainer.GetChild(i).gameObject);
         }
 
         if (args.Snapshot.Exists)
@@ -298,11 +299,19 @@ public class FirebaseRoomManager : MonoBehaviour
                 case "D": dropdownReviewCorrectAns.value = 3; break;
                 default: dropdownReviewCorrectAns.value = 0; break;
             }
-            dropdownReviewCorrectAns.RefreshShownValue(); // Memastikan teks UI dropdown ter-refresh detik itu juga
+            dropdownReviewCorrectAns.RefreshShownValue();
         }
 
+        // --- NAVIGASI TOMBOL PREV & NEXT ---
         if (btnPrevReview != null) btnPrevReview.interactable = (index > 0);
         if (btnNextReview != null) btnNextReview.interactable = (index < reviewQuestionsList.Count - 1);
+
+        // --- LOGIKA REVISI: TOMBOL CEKLIS HANYA MUNCUL DI SOAL TERAKHIR ---
+        bool isSoalTerakhir = (index == reviewQuestionsList.Count - 1);
+        if (btnRilisKuis != null)
+        {
+            btnRilisKuis.gameObject.SetActive(isSoalTerakhir);
+        }
     }
 
     private void SimpanEditanFormSaatIni()
@@ -469,18 +478,18 @@ public class FirebaseRoomManager : MonoBehaviour
     private void HandleRealtimeDashboardGuru(object sender, ValueChangedEventArgs args)
     {
         if (args.DatabaseError != null) return;
-
-        foreach (Transform child in tableContentContainer) {
-            child.SetParent(null);
-            child.gameObject.SetActive(false);
-            Destroy(child.gameObject);
+    
+        // FIX: Hapus elemen baris tabel lama dari belakang secara bersih
+        for (int i = tableContentContainer.childCount - 1; i >= 0; i--)
+        {
+            Destroy(tableContentContainer.GetChild(i).gameObject);
         }
-
+    
         int totalSiswa = 0;
         int siswaSelesai = 0;
         int siswaDihitungNilai = 0; 
         float totalNilaiSemuaSiswa = 0;
-
+    
         if (args.Snapshot.Exists)
         {
             foreach (DataSnapshot studentSnapshot in args.Snapshot.Children)
@@ -493,13 +502,13 @@ public class FirebaseRoomManager : MonoBehaviour
                 {
                     skorSiswa = int.Parse(studentSnapshot.Child("score").Value.ToString());
                 }
-
+    
                 string statusSiswa = "joined";
                 if (studentSnapshot.Child("status").Exists)
                 {
                     statusSiswa = studentSnapshot.Child("status").Value.ToString();
                 }
-
+    
                 if (statusSiswa == "finished")
                 {
                     siswaSelesai++;
@@ -514,7 +523,7 @@ public class FirebaseRoomManager : MonoBehaviour
                     totalNilaiSemuaSiswa += skorSiswa;
                     siswaDihitungNilai++;
                 }
-
+    
                 GameObject newRow = Instantiate(tableRowPrefab, tableContentContainer);
                 TableRowItem rowItem = newRow.GetComponent<TableRowItem>();
                 
@@ -540,13 +549,13 @@ public class FirebaseRoomManager : MonoBehaviour
                 }
             }
         }
-
+    
         float rataRataKelas = 0;
         if (siswaDihitungNilai > 0)
         {
             rataRataKelas = totalNilaiSemuaSiswa / siswaDihitungNilai;
         }
-
+    
         textRataRataNilai.text = rataRataKelas.ToString("F1"); 
         textStatusSelesai.text = $"{siswaSelesai}/{totalSiswa} Siswa Sudah Selesai Mengerjakan";
     }

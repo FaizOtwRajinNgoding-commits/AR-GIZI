@@ -984,6 +984,7 @@ MonoBehaviour:
   inputReviewExplanation: {fileID: 191040777}
   btnPrevReview: {fileID: 942873892}
   btnNextReview: {fileID: 990717794}
+  btnRilisKuis: {fileID: 114222181}
   canvasQuizGameplay: {fileID: 1977933406}
   panelGameplaySiswa: {fileID: 1659571170}
   panelDashboardGuru: {fileID: 1073315732}
