@@ -13,11 +13,13 @@ public class FirebaseStudentManager : MonoBehaviour
     private DatabaseReference dbReference;
     private string savedCodeInput;
     private string savedNameInput;
+    private bool isInitializing = false;
 
     [Header("UI Siswa Inputs")]
     [SerializeField] private TMP_InputField inputKodeRoom;
     [SerializeField] private TMP_InputField inputNamaSiswa;
     [SerializeField] private TextMeshProUGUI textStatusSiswa;
+    [SerializeField] private Button buttonJoinRoom; // Tombol Join Room di menu awal siswa
 
     [Header("Waiting Room UI Student References")]
     [SerializeField] private GameObject panelJoinRoom;
@@ -29,7 +31,7 @@ public class FirebaseStudentManager : MonoBehaviour
     [SerializeField] private GameObject studentNamePrefab;
     
     [Header("Fitur Coba Lagi / Reload Soal (Baru)")]
-    [SerializeField] private Button buttonReloadSoal; // Tombol Coba Lagi jika gagal load soal
+    [SerializeField] private Button buttonReloadSoal;
 
     [Header("Script References")]
     [SerializeField] private GeminiQuizManager geminiQuizManager;
@@ -38,37 +40,81 @@ public class FirebaseStudentManager : MonoBehaviour
     void Start()
     {
         if (buttonReloadSoal != null) buttonReloadSoal.gameObject.SetActive(false);
+        InisialisasiFirebase();
+    }
+
+    void OnEnable()
+    {
+        // Jika belum terhubung saat panel aktif, coba hubungkan otomatis
+        if (dbReference == null && !isInitializing)
+        {
+            InisialisasiFirebase();
+        }
+    }
+
+    // --- FUNGSI INISIALISASI TERPROTEKSI (PREVENT STUCK) ---
+    public void InisialisasiFirebase()
+    {
+        if (dbReference != null)
+        {
+            SetStatusFirebaseSiap();
+            return;
+        }
+
+        isInitializing = true;
+
+        // Lock tombol join & beri info indikator loading
+        if (buttonJoinRoom != null) buttonJoinRoom.interactable = false;
+        if (textStatusSiswa != null) textStatusSiswa.text = "<color=#f39c12>Menghubungkan ke server...</color>";
 
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
             DependencyStatus dependencyStatus = task.Result;
             if (dependencyStatus == DependencyStatus.Available)
             {
                 FirebaseAuth.DefaultInstance.SignInAnonymouslyAsync().ContinueWithOnMainThread(authTask => {
+                    isInitializing = false;
                     if (authTask.IsCompletedSuccessfully)
                     {
                         dbReference = FirebaseDatabase.GetInstance("https://zibo-ar-lidm-default-rtdb.asia-southeast1.firebasedatabase.app/").RootReference;
-                        textStatusSiswa.text = "Firebase Siswa Siap (Authenticated).";
+                        SetStatusFirebaseSiap();
                         Debug.Log("[Siswa] Login Anonim & Firebase RTDB Berhasil!");
                     }
                     else
                     {
-                        textStatusSiswa.text = "Gagal Auth Firebase.";
+                        if (textStatusSiswa != null) 
+                            textStatusSiswa.text = "<color=red>Gagal Auth Firebase. Ketuk Join untuk coba lagi.</color>";
+                        if (buttonJoinRoom != null) buttonJoinRoom.interactable = true;
                         Debug.LogError("[Siswa] Gagal Login Anonim: " + authTask.Exception);
                     }
                 });
             }
             else
             {
-                textStatusSiswa.text = "Gagal inisialisasi Firebase.";
+                isInitializing = false;
+                if (textStatusSiswa != null) 
+                    textStatusSiswa.text = "<color=red>Koneksi internet bermasalah.</color>";
+                if (buttonJoinRoom != null) buttonJoinRoom.interactable = true;
+                Debug.LogError("Gagal inisialisasi Firebase: " + dependencyStatus);
             }
         });
     }
 
+    private void SetStatusFirebaseSiap()
+    {
+        if (textStatusSiswa != null) 
+            textStatusSiswa.text = "<color=#2ecc71>Siap! Silakan masukkan nama dan kode room.</color>";
+        if (buttonJoinRoom != null) 
+            buttonJoinRoom.interactable = true;
+    }
+
     public void KlikJoinRoomSiswa()
     {
+        // Proteksi: Jika belum siap saat tombol diklik, coba hubungkan ulang secara otomatis
         if (dbReference == null)
         {
-            textStatusSiswa.text = "Firebase belum siap atau internet terputus. Tunggu sebentar!";
+            if (textStatusSiswa != null) 
+                textStatusSiswa.text = "<color=#f39c12>Sedang mencoba menghubungkan ulang ke server...</color>";
+            InisialisasiFirebase();
             return;
         }
 
@@ -76,13 +122,17 @@ public class FirebaseStudentManager : MonoBehaviour
         savedNameInput = inputNamaSiswa.text.Trim();
 
         if (string.IsNullOrEmpty(savedCodeInput) || string.IsNullOrEmpty(savedNameInput)) {
-            textStatusSiswa.text = "Nama dan Kode tidak boleh kosong!";
+            if (textStatusSiswa != null) textStatusSiswa.text = "<color=red>Nama dan Kode tidak boleh kosong!</color>";
             return;
         }
 
+        if (buttonJoinRoom != null) buttonJoinRoom.interactable = false;
+
         dbReference.Child("rooms").Child(savedCodeInput).GetValueAsync().ContinueWithOnMainThread(task => {
+            if (buttonJoinRoom != null) buttonJoinRoom.interactable = true;
+
             if (task.IsFaulted || task.IsCanceled) {
-                textStatusSiswa.text = "Koneksi bermasalah.";
+                if (textStatusSiswa != null) textStatusSiswa.text = "<color=red>Koneksi bermasalah. Coba lagi!</color>";
                 return;
             }
 
@@ -108,11 +158,11 @@ public class FirebaseStudentManager : MonoBehaviour
                     dbReference.Child("rooms").Child(savedCodeInput).Child("students").ValueChanged += HandleSiswaBergabungSiswa;
                 }
                 else {
-                    textStatusSiswa.text = "Room sudah mulai atau ditutup!";
+                    if (textStatusSiswa != null) textStatusSiswa.text = "<color=red>Room sudah mulai atau ditutup!</color>";
                 }
             }
             else {
-                textStatusSiswa.text = "Kode Room tidak ditemukan!";
+                if (textStatusSiswa != null) textStatusSiswa.text = "<color=red>Kode Room tidak ditemukan!</color>";
             }
         });
     }
@@ -121,8 +171,10 @@ public class FirebaseStudentManager : MonoBehaviour
     {
         if (args.DatabaseError != null) return;
 
-        foreach (Transform child in studentListContainer) {
-            Destroy(child.gameObject);
+        // Menghapus elemen UI dari belakang agar tidak duplikat
+        for (int i = studentListContainer.childCount - 1; i >= 0; i--)
+        {
+            Destroy(studentListContainer.GetChild(i).gameObject);
         }
 
         if (args.Snapshot.Exists)
@@ -153,12 +205,11 @@ public class FirebaseStudentManager : MonoBehaviour
                 LepasSemuaListener();
                 panelWaitingRoom.SetActive(false);
                 panelJoinRoom.SetActive(true);
-                textStatusSiswa.text = "Room telah dibubarkan oleh Guru!";
+                if (textStatusSiswa != null) textStatusSiswa.text = "Room telah dibubarkan oleh Guru!";
             }
         }
     }
 
-    // --- FUNGSI AMBIL SOAL DENGAN SISTEM RETRY (BISA DIPANGGIL ULANG) ---
     public void FetchSoalDariServer()
     {
         if (buttonReloadSoal != null) buttonReloadSoal.gameObject.SetActive(false);
@@ -189,7 +240,7 @@ public class FirebaseStudentManager : MonoBehaviour
             }
             else
             {
-                textStatusLoadingSiswa.text = "<color=red>Gagal mengambil soal dari server!</color>\nCek koneksi internetmu lalu tekan tombol Coba Lagi di bawah.";
+                textStatusLoadingSiswa.text = "<color=red>Gagal mengambil soal dari server!</color>\nCek koneksi internetmu lalu coba lagi!";
                 if (buttonReloadSoal != null) buttonReloadSoal.gameObject.SetActive(true);
                 
                 Debug.LogError("[Siswa] Task Fetch Soal Error: " + (task.Exception != null ? task.Exception.ToString() : "Task Faulted"));
@@ -227,7 +278,7 @@ public class FirebaseStudentManager : MonoBehaviour
 
         panelWaitingRoom.SetActive(false);
         panelJoinRoom.SetActive(true);
-        textStatusSiswa.text = "Kamu keluar dari ruang tunggu kuis.";
+        if (textStatusSiswa != null) textStatusSiswa.text = "Kamu keluar dari ruang tunggu kuis.";
     }
 
     public void SiswaKeluarTengahGameplay()
@@ -240,7 +291,7 @@ public class FirebaseStudentManager : MonoBehaviour
 
         panelWaitingRoom.SetActive(false);
         panelJoinRoom.SetActive(true);
-        textStatusSiswa.text = "Kamu keluar dari permainan kuis tengah jalan.";
+        if (textStatusSiswa != null) textStatusSiswa.text = "Kamu keluar dari permainan kuis tengah jalan.";
     }
 
     private void LepasSemuaListener()
