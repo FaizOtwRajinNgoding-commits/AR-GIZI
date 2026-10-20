@@ -1559,7 +1559,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 615157754}
-  - component: {fileID: 615157755}
   m_Layer: 5
   m_Name: Popup_GameMenu
   m_TagString: Untagged
@@ -1588,51 +1587,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &615157755
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 615157753}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4ae6a6279969044e894c276fd177955, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PopUp
-  scaleCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 20
-      outSlope: 20
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.2
-      value: 5
-      inSlope: 9.375
-      outSlope: 9.375
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.6
-      value: 4.5
-      inSlope: -1.2499999
-      outSlope: -1.2499999
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!1 &659084810
 GameObject:
   m_ObjectHideFlags: 0
@@ -2055,6 +2009,7 @@ GameObject:
   - component: {fileID: 923066924}
   - component: {fileID: 923066926}
   - component: {fileID: 923066925}
+  - component: {fileID: 923066927}
   m_Layer: 5
   m_Name: popupBody
   m_TagString: Untagged
@@ -2123,6 +2078,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 923066923}
   m_CullTransparentMesh: 1
+--- !u!114 &923066927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 923066923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4ae6a6279969044e894c276fd177955, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PopUp
+  scaleCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 7.5
+      outSlope: 7.5
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.2
+      value: 1.5
+      inSlope: 3.125
+      outSlope: 3.125
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.6
+      value: 1
+      inSlope: -1.2499999
+      outSlope: -1.2499999
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &993960867
 GameObject:
   m_ObjectHideFlags: 0
@@ -5285,6 +5285,7 @@ GameObject:
   - component: {fileID: 1803420280}
   - component: {fileID: 1803420279}
   - component: {fileID: 1803420281}
+  - component: {fileID: 1803420282}
   m_Layer: 5
   m_Name: boxDialog
   m_TagString: Untagged
@@ -5374,6 +5375,51 @@ MonoBehaviour:
   prevButton: {fileID: 1886495581}
   confirmButton: {fileID: 1330332369}
   panelPanduan: {fileID: 1149755204}
+--- !u!114 &1803420282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1803420277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4ae6a6279969044e894c276fd177955, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PopUp
+  scaleCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 4
+      outSlope: 4
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.2
+      value: 0.8
+      inSlope: 1.7861776
+      outSlope: 1.7861776
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.6
+      value: 0.6289421
+      inSlope: -0.42764482
+      outSlope: -0.42764482
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1806649844
 GameObject:
   m_ObjectHideFlags: 0
@@ -5385,6 +5431,7 @@ GameObject:
   - component: {fileID: 1806649845}
   - component: {fileID: 1806649847}
   - component: {fileID: 1806649846}
+  - component: {fileID: 1806649848}
   m_Layer: 5
   m_Name: boxDialog
   m_TagString: Untagged
@@ -5455,6 +5502,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1806649844}
   m_CullTransparentMesh: 1
+--- !u!114 &1806649848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1806649844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4ae6a6279969044e894c276fd177955, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PopUp
+  scaleCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 4
+      outSlope: 4
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.2
+      value: 0.8
+      inSlope: 1.7861776
+      outSlope: 1.7861776
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.6
+      value: 0.6289421
+      inSlope: -0.42764482
+      outSlope: -0.42764482
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1812801547
 GameObject:
   m_ObjectHideFlags: 0

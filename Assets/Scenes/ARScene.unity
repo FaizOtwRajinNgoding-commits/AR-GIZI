@@ -327,9 +327,9 @@ RectTransform:
   - {fileID: 1710680656}
   - {fileID: 783950631}
   - {fileID: 1809468369}
+  - {fileID: 211251799}
   - {fileID: 1562157182}
   - {fileID: 818342824}
-  - {fileID: 211251799}
   - {fileID: 737829019}
   - {fileID: 1240436247}
   - {fileID: 1904835937}
@@ -3847,6 +3847,7 @@ GameObject:
   - component: {fileID: 687743725}
   - component: {fileID: 687743724}
   - component: {fileID: 687743726}
+  - component: {fileID: 687743727}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -3938,6 +3939,51 @@ MonoBehaviour:
   prevButton: {fileID: 1323671285}
   confirmButton: {fileID: 284388613}
   panelPanduan: {fileID: 1904835936}
+--- !u!114 &687743727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 687743722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4ae6a6279969044e894c276fd177955, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PopUp
+  scaleCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 4
+      outSlope: 4
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.2
+      value: 0.8
+      inSlope: 1.7861776
+      outSlope: 1.7861776
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.6
+      value: 0.6289421
+      inSlope: -0.42764482
+      outSlope: -0.42764482
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &689913974
 GameObject:
   m_ObjectHideFlags: 0
@@ -8097,14 +8143,14 @@ MonoBehaviour:
   PreviewVisible: 1
   RuntimeOcclusion: 0
   RuntimeCollider: 0
-  mTrackableName: 2
+  mTrackableName: Untitled design_20261014_081410_0000
   mInitializedInEditor: 1
   mDataSetPath: 
   mAspectRatio: 1
   mImageTargetType: 3
   mWidth: 0.2
   mHeight: 0.2
-  mRuntimeTexture: {fileID: 2800000, guid: 853204db85ca00843b414e3c7eebe0ff, type: 3}
+  mRuntimeTexture: {fileID: 2800000, guid: 164b028b412426e4abc8718ff4265016, type: 3}
   mMotionHint: 1
   mTrackingOptimization: 0
   mTrackingOptimizationNeedsUpgrade: 0
@@ -8157,7 +8203,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Vuforia.Unity.Engine.dll::Vuforia.ImageTargetPreview
   mObserverBehaviour: {fileID: 1199453558}
   mHiddenRoot: {fileID: 0}
-  mTargetName: 2
+  mTargetName: Untitled design_20261014_081410_0000
   mDatasetName: 
   mCastedBehaviour: {fileID: 1199453558}
   mMeshFilter: {fileID: 0}
@@ -10029,14 +10075,14 @@ MonoBehaviour:
   PreviewVisible: 1
   RuntimeOcclusion: 0
   RuntimeCollider: 0
-  mTrackableName: 5
+  mTrackableName: 8_20261014_055843_0007
   mInitializedInEditor: 1
   mDataSetPath: 
   mAspectRatio: 1
   mImageTargetType: 3
   mWidth: 0.2
   mHeight: 0.2
-  mRuntimeTexture: {fileID: 2800000, guid: 812f13f9545d8714f9724f44601d976c, type: 3}
+  mRuntimeTexture: {fileID: 2800000, guid: 3d236f03b6ec9b44cbb1f1b2f84d1ad2, type: 3}
   mMotionHint: 1
   mTrackingOptimization: 0
   mTrackingOptimizationNeedsUpgrade: 0
@@ -10089,7 +10135,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Vuforia.Unity.Engine.dll::Vuforia.ImageTargetPreview
   mObserverBehaviour: {fileID: 1575142793}
   mHiddenRoot: {fileID: 0}
-  mTargetName: 5
+  mTargetName: 8_20261014_055843_0007
   mDatasetName: 
   mCastedBehaviour: {fileID: 1575142793}
   mMeshFilter: {fileID: 0}
@@ -11961,14 +12007,14 @@ MonoBehaviour:
   PreviewVisible: 1
   RuntimeOcclusion: 0
   RuntimeCollider: 0
-  mTrackableName: 1
+  mTrackableName: 20261014_081342_0000
   mInitializedInEditor: 1
   mDataSetPath: 
   mAspectRatio: 1
   mImageTargetType: 3
   mWidth: 0.2
   mHeight: 0.2
-  mRuntimeTexture: {fileID: 2800000, guid: 79a9442c41b4a3944bd72afd61356911, type: 3}
+  mRuntimeTexture: {fileID: 2800000, guid: 7cc867fda65aff24dad04653e1a4e792, type: 3}
   mMotionHint: 1
   mTrackingOptimization: 0
   mTrackingOptimizationNeedsUpgrade: 0
@@ -12021,7 +12067,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Vuforia.Unity.Engine.dll::Vuforia.ImageTargetPreview
   mObserverBehaviour: {fileID: 1728992478}
   mHiddenRoot: {fileID: 0}
-  mTargetName: 1
+  mTargetName: 20261014_081342_0000
   mDatasetName: 
   mCastedBehaviour: {fileID: 1728992478}
   mMeshFilter: {fileID: 0}
