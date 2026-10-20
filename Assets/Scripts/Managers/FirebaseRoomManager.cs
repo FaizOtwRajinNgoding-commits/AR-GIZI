@@ -67,34 +67,57 @@ public class FirebaseRoomManager : MonoBehaviour
     private int reviewCurrentIndex = 0;
     private int selectedJumlahSoal = 5; // Default 5 soal
 
+    private bool isInitializing = false;
+
     void Start()
     {
+        InisialisasiFirebase();
+        LoadLocalKey();
+        if (panelReviewSoalGuru != null) panelReviewSoalGuru.SetActive(false);
+    }
+
+    void OnEnable()
+    {
+        if (dbReference == null && !isInitializing)
+        {
+            InisialisasiFirebase();
+        }
+    }
+
+    public void InisialisasiFirebase()
+    {
+        if (dbReference != null) return;
+
+        isInitializing = true;
+        if (textStatusLoading != null) textStatusLoading.text = "Menghubungkan ke Firebase...";
+
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
             DependencyStatus dependencyStatus = task.Result;
             if (dependencyStatus == DependencyStatus.Available)
             {
                 FirebaseAuth.DefaultInstance.SignInAnonymouslyAsync().ContinueWithOnMainThread(authTask => {
+                    isInitializing = false;
                     if (authTask.IsCompletedSuccessfully)
                     {
                         FirebaseDatabase dbInstance = FirebaseDatabase.GetInstance("https://zibo-ar-lidm-default-rtdb.asia-southeast1.firebasedatabase.app/");
                         dbReference = dbInstance.RootReference;
+                        if (textStatusLoading != null) textStatusLoading.text = "Firebase Siap! Silakan buat room.";
                         Debug.Log("[Guru] Login Anonim & Firebase RTDB Berhasil!");
                     }
                     else
                     {
+                        if (textStatusLoading != null) textStatusLoading.text = "Gagal Login Auth Firebase.";
                         Debug.LogError("[Guru] Gagal Login Anonim: " + authTask.Exception);
                     }
                 });
             }
             else
             {
+                isInitializing = false;
+                if (textStatusLoading != null) textStatusLoading.text = "Gagal inisialisasi Firebase.";
                 Debug.LogError("Gagal inisialisasi Firebase Guru: " + dependencyStatus);
             }
         });
-
-        LoadLocalKey();
-
-        if (panelReviewSoalGuru != null) panelReviewSoalGuru.SetActive(false);
     }
 
     // --- FITUR PILIH JUMLAH SOAL (MULTIPLAYER GURU) ---
@@ -107,19 +130,27 @@ public class FirebaseRoomManager : MonoBehaviour
     // --- LOGIKA PEMBUATAN ROOM ---
     public void KlikTombolGenerateCode()
     {
+        if (dbReference == null)
+        {
+            if (textStatusLoading != null) textStatusLoading.text = "Firebase belum siap. Mencoba menghubungkan ulang...";
+            InisialisasiFirebase();
+            return;
+        }
+
         roomId = GenerateRandomRoomCode(5);
         textKodeRoom.text = "KODE ROOM: " + roomId;
-        
+
         panelCreateRoom.SetActive(false);
         panelWaitingRoom.SetActive(true);
+
         if (buttonLanjut != null)
         {
             buttonLanjut.gameObject.SetActive(true);
             buttonLanjut.interactable = true;
         } 
-        
+
         dbReference.Child("rooms").Child(roomId).Child("roomStatus").SetValueAsync("waiting");
-        textStatusLoading.text = "Room siap! Menunggu siswa bergabung...";
+        if (textStatusLoading != null) textStatusLoading.text = "Room siap! Menunggu siswa bergabung...";
 
         dbReference.Child("rooms").Child(roomId).OnDisconnect().RemoveValue();
         dbReference.Child("rooms").Child(roomId).Child("students").ValueChanged += HandleSiswaBergabung;
@@ -170,106 +201,106 @@ public class FirebaseRoomManager : MonoBehaviour
 
     // --- GENERATE SOAL GEMINI & DIVERSIKAN KE REVIEW PANEL ---
     private IEnumerator FetchGeminiQuestionsCoroutine()
-{
-    textStatusLoading.text = "Menghubungi AI Gemini...";
-
-    // 1. Hitung Proporsi Taksonomi Bloom (C1-C4) & Olah Hati (OH) untuk Anak Kelas 4 SD
-    int countC1 = 1, countC2 = 1, countC3 = 1, countC4 = 1, countOH = 1; // Default 5 Soal
-
-    if (selectedJumlahSoal == 10)
     {
-        countC1 = 2; countC2 = 3; countC3 = 3; countC4 = 1; countOH = 1; // Total 10 (Fokus C1-C3 + OH)
-    }
-    else if (selectedJumlahSoal == 15)
-    {
-        countC1 = 3; countC2 = 4; countC3 = 4; countC4 = 2; countOH = 2; // Total 15 (C4 & OH secukupnya)
-    }
-
-    GeminiRequest geminiRequest = new GeminiRequest();
-    geminiRequest.contents = new List<GeminiContent>();
-    GeminiContent contentObj = new GeminiContent();
-    contentObj.parts = new List<GeminiPart>();
-    GeminiPart partObj = new GeminiPart();
+        int maxRetries = 3;
+        int currentRetry = 0;
+        bool requestSuccessful = false;
     
-    // 2. Prompt Integrasi Taksonomi Bloom (C1-C4) + Olah Hati (OH)
-    partObj.text = $"Buatlah total {selectedJumlahSoal} soal pilihan ganda interaktif berbentuk cerita pendek tentang gizi seimbang dan zat gizi untuk anak Sekolah Dasar Kelas 4.\n" +
-                    $"Soal HARUS terbagi secara seimbang berdasarkan Taksonomi Bloom (C1-C4) dan Olah Hati (OH) dengan rincian berikut:\n" +
-                    $"- {countC1} soal C1 (Mengingat: mengidentifikasi nama/kandungan zat gizi makanan)\n" +
-                    $"- {countC2} soal C2 (Memahami: menjelaskan fungsi/manfaat gizi bagi tubuh)\n" +
-                    $"- {countC3} soal C3 (Menerapkan: memilih menu makanan sehat yang tepat)\n" +
-                    $"- {countC4} soal C4 (Menganalisis: menganalisis dampak/masalah gizi sederhana)\n" +
-                    $"- {countOH} soal OH (Olah Hati: empati sosial, berbagi bekal, peduli teman lemas)\n\n" +
-                    $"WAJIB: Setiap nilai 'questionText' HARUS diawali dengan kode kategorinya dalam tanda kurung di paling depan! " +
-                    $"Contoh format: '(C1) Nasi yang dimakan saat sarapan mengandung...', '(C2) Mengapa tubuh membutuhkan...', atau '(OH) Saat melihat teman tidak membawa bekal...'.\n" +
-                    $"WAJIB mengacak (randomize) urutan posisi soal agar tingkat C1-C4 dan OH tersebar acak dari nomor 1 sampai akhir.\n" +
-                    "Format output WAJIB dalam bentuk JSON mentah dengan struktur tepat seperti ini: " +
-                    "{\"questions\": [{\"questionText\":\"...\", \"optionA\":\"...\", \"optionB\":\"...\", \"optionC\":\"...\", \"optionD\":\"...\", \"correctAnswer\":\"A/B/C/D\", \"explanation\":\"...\"}]}. " +
-                    "Jangan berikan teks tambahan atau penjelasan di luar format JSON. Jangan pakai format markdown ```json.";
-
-    contentObj.parts.Add(partObj);
-    geminiRequest.contents.Add(contentObj);
-
-    string jsonPayload = JsonUtility.ToJson(geminiRequest);
-    byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonPayload);
-
-    using (UnityWebRequest request = new UnityWebRequest(geminiUrl + apiKey, "POST"))
-    {
-        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-        request.downloadHandler = new DownloadHandlerBuffer();
-        request.SetRequestHeader("Content-Type", "application/json");
-
-        yield return request.SendWebRequest();
-
-        if (request.result == UnityWebRequest.Result.Success)
+        int countC1 = 1, countC2 = 1, countC3 = 1, countC4 = 1, countOH = 1;
+        if (selectedJumlahSoal == 10) { countC1 = 2; countC2 = 3; countC3 = 3; countC4 = 1; countOH = 1; }
+        else if (selectedJumlahSoal == 15) { countC1 = 3; countC2 = 4; countC3 = 4; countC4 = 2; countOH = 2; }
+    
+        GeminiRequest geminiRequest = new GeminiRequest();
+        geminiRequest.contents = new List<GeminiContent>();
+        GeminiContent contentObj = new GeminiContent();
+        contentObj.parts = new List<GeminiPart>();
+        GeminiPart partObj = new GeminiPart();
+        
+        partObj.text = $"Buatlah total {selectedJumlahSoal} soal pilihan ganda interaktif berbentuk cerita pendek tentang gizi seimbang dan zat gizi untuk anak Sekolah Dasar Kelas 4.\n" +
+                        $"Soal HARUS terbagi secara seimbang berdasarkan Taksonomi Bloom (C1-C4) dan Olah Hati (OH) dengan rincian berikut:\n" +
+                        $"- {countC1} soal C1 (Mengingat: mengidentifikasi nama/kandungan zat gizi makanan)\n" +
+                        $"- {countC2} soal C2 (Memahami: menjelaskan fungsi/manfaat gizi bagi tubuh)\n" +
+                        $"- {countC3} soal C3 (Menerapkan: memilih menu makanan sehat yang tepat)\n" +
+                        $"- {countC4} soal C4 (Menganalisis: menganalisis dampak/masalah gizi sederhana)\n" +
+                        $"- {countOH} soal OH (Olah Hati: empati sosial, berbagi bekal, peduli teman lemas)\n\n" +
+                        $"WAJIB: Setiap nilai 'questionText' HARUS diawali dengan kode kategorinya dalam tanda kurung di paling depan! " +
+                        $"Contoh format: '(C1) Nasi yang dimakan saat sarapan mengandung...', '(C2) Mengapa tubuh membutuhkan...', atau '(OH) Saat melihat teman tidak membawa bekal...'.\n" +
+                        $"WAJIB mengacak (randomize) urutan posisi soal agar tingkat C1-C4 dan OH tersebar acak dari nomor 1 sampai akhir.\n" +
+                        "Format output WAJIB dalam bentuk JSON mentah dengan struktur tepat seperti ini: " +
+                        "{\"questions\": [{\"questionText\":\"...\", \"optionA\":\"...\", \"optionB\":\"...\", \"optionC\":\"...\", \"optionD\":\"...\", \"correctAnswer\":\"A/B/C/D\", \"explanation\":\"...\"}]}. " +
+                        "Jangan berikan teks tambahan atau penjelasan di luar format JSON. Jangan pakai format markdown ```json.";
+    
+        contentObj.parts.Add(partObj);
+        geminiRequest.contents.Add(contentObj);
+    
+        string jsonPayload = JsonUtility.ToJson(geminiRequest);
+    
+        while (currentRetry < maxRetries && !requestSuccessful)
         {
-            string rawJsonFromGemini = request.downloadHandler.text;
-
-            try
+            currentRetry++;
+            if (currentRetry == 1)
+                textStatusLoading.text = "Menghubungi AI Gemini...";
+            else
+                textStatusLoading.text = $"Server sibuk, mencoba ulang ke-{currentRetry}...";
+    
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonPayload);
+    
+            using (UnityWebRequest request = new UnityWebRequest(geminiUrl + apiKey, "POST"))
             {
-                GeminiResponse response = JsonUtility.FromJson<GeminiResponse>(rawJsonFromGemini);
-                if (response != null && response.candidates != null && response.candidates.Count > 0)
+                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Content-Type", "application/json");
+    
+                yield return request.SendWebRequest();
+    
+                if (request.result == UnityWebRequest.Result.Success)
                 {
-                    string cleanJson = response.candidates[0].content.parts[0].text;
-                    
-                    if (cleanJson.StartsWith("```json")) cleanJson = cleanJson.Replace("```json", "");
-                    if (cleanJson.EndsWith("```")) cleanJson = cleanJson.Substring(0, cleanJson.Length - 3);
-                    cleanJson = cleanJson.Trim();
-
-                    QuizContainer container = JsonUtility.FromJson<QuizContainer>(cleanJson);
-                    if (container != null && container.questions != null && container.questions.Count > 0)
+                    string rawJsonFromGemini = request.downloadHandler.text;
+                    try
                     {
-                        reviewQuestionsList = container.questions;
-                        reviewCurrentIndex = 0;
-
-                        panelWaitingRoom.SetActive(false);
-                        if (panelReviewSoalGuru != null) panelReviewSoalGuru.SetActive(true);
-
-                        TampilkanSoalKeFormReview(reviewCurrentIndex);
-                        Debug.Log($"[Guru Review] {reviewQuestionsList.Count} soal (C1-C4 + OH) berhasil diracik!");
+                        GeminiResponse response = JsonUtility.FromJson<GeminiResponse>(rawJsonFromGemini);
+                        if (response != null && response.candidates != null && response.candidates.Count > 0)
+                        {
+                            string cleanJson = response.candidates[0].content.parts[0].text;
+                            if (cleanJson.StartsWith("```json")) cleanJson = cleanJson.Replace("```json", "");
+                            if (cleanJson.EndsWith("```")) cleanJson = cleanJson.Substring(0, cleanJson.Length - 3);
+                            cleanJson = cleanJson.Trim();
+    
+                            QuizContainer container = JsonUtility.FromJson<QuizContainer>(cleanJson);
+                            if (container != null && container.questions != null && container.questions.Count > 0)
+                            {
+                                reviewQuestionsList = container.questions;
+                                reviewCurrentIndex = 0;
+    
+                                panelWaitingRoom.SetActive(false);
+                                if (panelReviewSoalGuru != null) panelReviewSoalGuru.SetActive(true);
+    
+                                TampilkanSoalKeFormReview(reviewCurrentIndex);
+                                requestSuccessful = true;
+                                Debug.Log($"[Guru Review] {reviewQuestionsList.Count} soal berhasil diracik!");
+                            }
+                        }
                     }
-                    else
+                    catch (System.Exception e)
                     {
-                        textStatusLoading.text = "Format soal dari AI tidak sesuai.";
-                        if (buttonLanjut != null) buttonLanjut.interactable = true;
+                        Debug.LogError("Guru Parsing Error: " + e.Message);
                     }
                 }
-            }
-            catch (System.Exception e)
-            {
-                textStatusLoading.text = "Gagal memproses struktur AI Gemini.";
-                Debug.LogError("Guru Parsing Error: " + e.Message);
-                if (buttonLanjut != null) buttonLanjut.interactable = true;
+                else
+                {
+                    Debug.LogWarning($"[Gemini Attempt {currentRetry}] Error: {request.error} | Response Code: {request.responseCode}");
+                    // Jika error 503, beri jeda 1.5 detik sebelum retry
+                    yield return new WaitForSeconds(1.5f);
+                }
             }
         }
-        else
+    
+        if (!requestSuccessful)
         {
-            textStatusLoading.text = "Gagal mengambil soal Gemini.";
-            Debug.LogError($"Gemini API Error: {request.error}");
+            textStatusLoading.text = "Server AI Gemini sedang sangat padat (503). Silakan tekan tombol 'Mulai Kuis' sekali lagi!";
             if (buttonLanjut != null) buttonLanjut.interactable = true;
         }
     }
-}
-
     // ========================================================
     // MODUL MODERASI & EDIT SOAL GURU (REVIEW SYSTEM)
     // ========================================================
