@@ -80,6 +80,7 @@ public class PiringGameManager : MonoBehaviour
         giziPool.AddItem(FoodData.TipeGizi.Mineral, 0);
 
         giziPool.RedrawVisualizer();
+        UbahTeksLabelPieChart();
     }
 
     private void KumpulkanDataDariEtalase()
@@ -159,6 +160,7 @@ public class PiringGameManager : MonoBehaviour
         giziPool.SetChance(FoodData.TipeGizi.Mineral, countVitamin);
 
         giziPool.RedrawVisualizer();
+        UbahTeksLabelPieChart();
     }
 
     public void KlikRefreshStudiKasus()
@@ -291,4 +293,24 @@ public class PiringGameManager : MonoBehaviour
     {
         if (panelPopupFeedback != null) panelPopupFeedback.SetActive(false);
     }
+
+    private void UbahTeksLabelPieChart()
+    {
+        if (visualizerUI == null) return;
+
+        // Mencari semua komponen Text di dalam Chance Pool Visualizer (termasuk Name Label Prefab)
+        Text[] semuaTeks = visualizerUI.GetComponentsInChildren<Text>(true);
+        foreach (Text txt in semuaTeks)
+        {
+            if (txt.text.Contains("Karbohidrat"))
+                txt.text = txt.text.Replace("Karbohidrat", "Makanan Pokok");
+            else if (txt.text.Contains("Protein"))
+                txt.text = txt.text.Replace("Protein", "Lauk Pauk");
+            else if (txt.text.Contains("Serat"))
+                txt.text = txt.text.Replace("Serat", "Sayuran");
+            else if (txt.text.Contains("Mineral"))
+                txt.text = txt.text.Replace("Mineral", "Buah-buahan");
+        }
+    }
+
 }

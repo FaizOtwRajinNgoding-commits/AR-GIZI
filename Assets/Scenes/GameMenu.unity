@@ -6317,7 +6317,7 @@ PrefabInstance:
     - target: {fileID: 476071456512206009, guid: 6cb1b9d139c9e7443b988dbd12cf42d7,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -227
+      value: -333
       objectReference: {fileID: 0}
     - target: {fileID: 476071456512206009, guid: 6cb1b9d139c9e7443b988dbd12cf42d7,
         type: 3}
@@ -6396,6 +6396,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 12800000, guid: 8de77e14a64ef7c45acbb8abe8d36547,
         type: 3}
+    - target: {fileID: 476071457651414272, guid: 6cb1b9d139c9e7443b988dbd12cf42d7,
+        type: 3}
+      propertyPath: m_FontData.m_HorizontalOverflow
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 742542585897226519, guid: 6cb1b9d139c9e7443b988dbd12cf42d7,
         type: 3}
       propertyPath: m_AnchorMax.y
