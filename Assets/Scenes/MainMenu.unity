@@ -1025,7 +1025,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 619637920, guid: 156ec492e516ccb4099add479601d65e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0622f6a802a84b547b71577ca457c2e9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1232,7 +1232,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 619637920, guid: 156ec492e516ccb4099add479601d65e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0622f6a802a84b547b71577ca457c2e9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3637,7 +3637,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -3.8706055, y: 85.35458}
+  m_AnchoredPosition: {x: -3.8706665, y: 85.35458}
   m_SizeDelta: {x: -488.74158, y: 138.29077}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1057632949
@@ -3703,11 +3703,11 @@ MonoBehaviour:
     pjok fase b
 
     elemen
-    = memilih hidup yang menyenangkan
+    = memilih hidup yang menyehatkan
 
 
-    cp = mengeksplorasi pola makan sehat
-    dan bergizi seimbang sesuai rekomendasi kesehatan untuk menunjang aktivitas sehari-hari'
+    cp = mengeksplorasi pola makan sehat dan
+    bergizi seimbang sesuai rekomendasi kesehatan untuk menunjang aktivitas sehari-hari'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1cc1d82e7c1b2174a9f1549052916a20, type: 2}
   m_sharedMaterial: {fileID: -8157647435672314013, guid: 1cc1d82e7c1b2174a9f1549052916a20,
