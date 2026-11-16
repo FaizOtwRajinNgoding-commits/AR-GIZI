@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using TMPro;
+using Sych.ShareAssets.Runtime;
 
 public class BookDownloadManager : MonoBehaviour
 {
