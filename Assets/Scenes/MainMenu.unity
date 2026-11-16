@@ -589,6 +589,8 @@ MonoBehaviour:
   textProgressMB: {fileID: 300471636}
   textPersentase: {fileID: 916768638}
   textStatusDownload: {fileID: 1560624260}
+  btnBukaPanelMenuUtama: {fileID: 236939227}
+  btnTutupPanel: {fileID: 129955390}
   btnMulaiUnduh: {fileID: 188977535}
   btnBukaBuku: {fileID: 613080520}
   badgeDownloadingMini: {fileID: 0}
@@ -768,18 +770,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 60872683}
-        m_TargetAssemblyTypeName: BookDownloadManager, Assembly-CSharp
-        m_MethodName: TutupPanelKeBackground
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 541820739}
         m_TargetAssemblyTypeName: ButtonSFX, Assembly-CSharp
         m_MethodName: ClickSound
@@ -1003,18 +993,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 60872683}
-        m_TargetAssemblyTypeName: BookDownloadManager, Assembly-CSharp
-        m_MethodName: KlikMulaiDownload
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 541820739}
         m_TargetAssemblyTypeName: ButtonSFX, Assembly-CSharp
         m_MethodName: ClickSound
@@ -1225,18 +1203,6 @@ MonoBehaviour:
       - m_Target: {fileID: 541820739}
         m_TargetAssemblyTypeName: ButtonSFX, Assembly-CSharp
         m_MethodName: ClickSound
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 60872683}
-        m_TargetAssemblyTypeName: BookDownloadManager, Assembly-CSharp
-        m_MethodName: BukaPanelDownload
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2606,18 +2572,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 60872683}
-        m_TargetAssemblyTypeName: BookDownloadManager, Assembly-CSharp
-        m_MethodName: KlikBukaAtauBagikanBuku
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 541820739}
         m_TargetAssemblyTypeName: ButtonSFX, Assembly-CSharp
         m_MethodName: ClickSound
@@ -3343,7 +3297,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -4153,7 +4107,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -4173,7 +4127,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 0}
   m_FillRect: {fileID: 1858159876}
   m_HandleRect: {fileID: 0}
@@ -7642,7 +7596,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.13521993, g: 0.2083002, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:

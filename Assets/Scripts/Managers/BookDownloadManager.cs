@@ -23,8 +23,10 @@ public class BookDownloadManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textStatusDownload;
 
     [Header("Tombol Aksi")]
+    [SerializeField] private Button btnBukaPanelMenuUtama; // Tombol ikon unduh buku di Menu Utama
+    [SerializeField] private Button btnTutupPanel;         // Tombol X / Tutup di dalam popup
     [SerializeField] private Button btnMulaiUnduh;
-    [SerializeField] private Button btnBukaBuku; // Hubungkan ke tombol Buka / Bagikan Buku
+    [SerializeField] private Button btnBukaBuku;
 
     [Header("Indikator Latar Belakang (Opsional di Menu Utama)")]
     [SerializeField] private GameObject badgeDownloadingMini;
@@ -39,26 +41,102 @@ public class BookDownloadManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+
+            filePathTujuan = Path.Combine(Application.persistentDataPath, namaFileLokal);
+            tempFilePath = filePathTujuan + ".tmp";
+
+            HubungkanEventTombol();
         }
-        else
+        else if (Instance != this)
         {
+            // Oper seluruh referensi UI & tombol dari scene baru ke Instance yang bertahan hidup
+            Instance.PerbaruiReferensiSceneBaru(
+                panelDownloadBuku,
+                sliderProgress,
+                textProgressMB,
+                textPersentase,
+                textStatusDownload,
+                btnBukaPanelMenuUtama,
+                btnTutupPanel,
+                btnMulaiUnduh,
+                btnBukaBuku,
+                badgeDownloadingMini
+            );
+
             Destroy(gameObject);
             return;
         }
-
-        filePathTujuan = Path.Combine(Application.persistentDataPath, namaFileLokal);
-        tempFilePath = filePathTujuan + ".tmp";
     }
 
     private void Start()
     {
+        if (Instance != this) return;
+
         if (panelDownloadBuku != null) panelDownloadBuku.SetActive(false);
-        if (badgeDownloadingMini != null) badgeDownloadingMini.SetActive(false);
+        if (badgeDownloadingMini != null) badgeDownloadingMini.SetActive(isDownloading);
 
         PerbaruiStatusUI();
     }
 
-    // Helper agar Slider benar-benar bersih (tanpa titik biru) saat nilai 0
+    // --- MENGOPER REFERENSI UI SAAT KEMBALI KE MENU UTAMA ---
+    public void PerbaruiReferensiSceneBaru(
+        GameObject newPanel,
+        Slider newSlider,
+        TextMeshProUGUI newTextMB,
+        TextMeshProUGUI newTextPersen,
+        TextMeshProUGUI newTextStatus,
+        Button newBtnBukaPanel,
+        Button newBtnTutupPanel,
+        Button newBtnUnduh,
+        Button newBtnBukaBuku,
+        GameObject newBadgeMini)
+    {
+        panelDownloadBuku = newPanel;
+        sliderProgress = newSlider;
+        textProgressMB = newTextMB;
+        textPersentase = newTextPersen;
+        textStatusDownload = newTextStatus;
+        btnBukaPanelMenuUtama = newBtnBukaPanel;
+        btnTutupPanel = newBtnTutupPanel;
+        btnMulaiUnduh = newBtnUnduh;
+        btnBukaBuku = newBtnBukaBuku;
+        badgeDownloadingMini = newBadgeMini;
+
+        if (panelDownloadBuku != null) panelDownloadBuku.SetActive(false);
+        if (badgeDownloadingMini != null) badgeDownloadingMini.SetActive(isDownloading);
+
+        HubungkanEventTombol();
+        PerbaruiStatusUI();
+    }
+
+    // --- MENGHUBUNGKAN TOMBOL SECARA OTOMATIS AGAR TIDAK PERNAH MISSING ---
+    private void HubungkanEventTombol()
+    {
+        if (btnBukaPanelMenuUtama != null)
+        {
+            btnBukaPanelMenuUtama.onClick.RemoveListener(BukaPanelDownload);
+            btnBukaPanelMenuUtama.onClick.AddListener(BukaPanelDownload);
+        }
+
+        if (btnTutupPanel != null)
+        {
+            btnTutupPanel.onClick.RemoveListener(TutupPanelKeBackground);
+            btnTutupPanel.onClick.AddListener(TutupPanelKeBackground);
+        }
+
+        if (btnMulaiUnduh != null)
+        {
+            btnMulaiUnduh.onClick.RemoveListener(KlikMulaiDownload);
+            btnMulaiUnduh.onClick.AddListener(KlikMulaiDownload);
+        }
+
+        if (btnBukaBuku != null)
+        {
+            btnBukaBuku.onClick.RemoveListener(KlikBukaAtauBagikanBuku);
+            btnBukaBuku.onClick.AddListener(KlikBukaAtauBagikanBuku);
+        }
+    }
+
     private void SetSliderValueBersih(float nilai)
     {
         if (sliderProgress == null) return;
@@ -92,6 +170,7 @@ public class BookDownloadManager : MonoBehaviour
         {
             if (btnMulaiUnduh != null) btnMulaiUnduh.interactable = false;
             if (btnBukaBuku != null) btnBukaBuku.gameObject.SetActive(false);
+            if (textStatusDownload != null) textStatusDownload.text = "Lagi mengunduh buku... Tutup jendela ini dan mainkan game lain dulu yuk!";
             return;
         }
 
@@ -197,7 +276,6 @@ public class BookDownloadManager : MonoBehaviour
         }
     }
 
-    // --- DIPANGGIL OLEH TOMBOL "BUKA / BAGIKAN BUKU" ---
     public void KlikBukaAtauBagikanBuku()
     {
         if (!File.Exists(filePathTujuan))
@@ -207,10 +285,8 @@ public class BookDownloadManager : MonoBehaviour
         }
 
         #if UNITY_EDITOR || UNITY_STANDALONE
-            // Di Laptop/PC langsung buka aplikasi PDF default
             Application.OpenURL("file://" + filePathTujuan);
         #elif UNITY_ANDROID || UNITY_IOS
-            // Di HP menggunakan plugin Share sesuai dokumentasi
             Share.Items(new List<string> { filePathTujuan }, success =>
             {
                 if (success)
